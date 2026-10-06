@@ -38,10 +38,15 @@
 - [x] Bật Virtual Machine Platform và đặt `hypervisorlaunchtype auto` (06/10). Có hiệu lực sau khi khởi động lại máy.
 - [x] **[L]** Tạo OpenAI API key, dán vào `.env`. Đã kiểm tra: dùng được `gpt-6.1-sol`, `gpt-6-luna`, `text-embedding-3-small`.
 - [x] **[L]** Tạo tài khoản Langfuse Cloud (EU), dán key vào `.env`. Đã kiểm tra: `auth_check` OK.
-- [ ] **[L]** Khởi động lại máy để Virtual Machine Platform có hiệu lực
-- [ ] Bật Docker Desktop, chạy `docker compose up -d`
+- [x] **[L]** Khởi động lại máy để Virtual Machine Platform có hiệu lực
+- [x] Bật Docker Desktop (engine 29.8.2, giới hạn RAM ~2.8 GiB), chạy `docker compose up -d`
 
 **Hoàn thành khi:** CI xanh; `python scripts/check_env.py` báo tất cả đều ổn.
+
+**Kết quả (06/10):** đã hoàn thành.
+- CI xanh.
+- `check_env.py` đạt 13/13 mục.
+- `/api/health/ready` trả HTTP 200 cho postgres, qdrant và redis.
 
 ## P1. Golden set v1 (tuần 1–2)
 - [ ] Đối chiếu tình trạng hiệu lực và văn bản sửa đổi của từng luật trên vbpl.vn, cập nhật `data/manifest.json`
