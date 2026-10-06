@@ -35,10 +35,11 @@
 - [x] File `.env` local, `JWT_SECRET` đã sinh sẵn
 - [x] `scripts/check_env.py` kiểm tra key OpenAI và Langfuse, các model trong config, các service
 - [x] `%UserProfile%\.wslconfig` giới hạn WSL ở 3GB RAM
-- [ ] **[L]** Bật Virtual Machine Platform (cần Administrator và khởi động lại máy). Docker Desktop hiện không chạy được vì WSL2 đang tắt.
-- [ ] **[L]** Tạo OpenAI API key (project riêng, có giới hạn chi tiêu), dán vào `OPENAI_API_KEY` trong `.env`
-- [ ] **[L]** Tạo tài khoản Langfuse Cloud (vùng EU) và project, dán `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` vào `.env`
-- [ ] Chạy `docker compose up -d`
+- [x] Bật Virtual Machine Platform và đặt `hypervisorlaunchtype auto` (06/10). Có hiệu lực sau khi khởi động lại máy.
+- [x] **[L]** Tạo OpenAI API key, dán vào `.env`. Đã kiểm tra: dùng được `gpt-6.1-sol`, `gpt-6-luna`, `text-embedding-3-small`.
+- [x] **[L]** Tạo tài khoản Langfuse Cloud (EU), dán key vào `.env`. Đã kiểm tra: `auth_check` OK.
+- [ ] **[L]** Khởi động lại máy để Virtual Machine Platform có hiệu lực
+- [ ] Bật Docker Desktop, chạy `docker compose up -d`
 
 **Hoàn thành khi:** CI xanh; `python scripts/check_env.py` báo tất cả đều ổn.
 
