@@ -143,6 +143,7 @@ Các lệnh dưới đây là PowerShell, chạy từ thư mục gốc của rep
 pip install -r requirements-dev.txt
 python scripts/download_data.py      # tải dữ liệu; thêm --force để tải lại
 docker compose up -d                 # qdrant, postgres, redis
+python scripts/check_env.py          # kiểm tra .env, key OpenAI/Langfuse, model, service (không in key)
 uvicorn app.main:app --app-dir backend --reload --port 8000
 python -m pytest                     # test backend
 ruff check .                         # lint backend

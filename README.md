@@ -54,7 +54,10 @@ npm install
 npm run dev                          # http://localhost:5173
 ```
 
-Kiểm tra hạ tầng: mở http://localhost:8000/api/health/ready. Kết quả phải là `ok` cho postgres, qdrant và redis.
+Kiểm tra môi trường bằng `python scripts/check_env.py`. Script kiểm tra:
+- Key OpenAI và Langfuse (không in key ra màn hình).
+- Quyền truy cập các model trong `config/rag.toml`.
+- Kết nối tới postgres, qdrant, redis.
 
 ## Dữ liệu
 

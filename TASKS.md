@@ -33,11 +33,14 @@
 - [x] Khung frontend React + Vite + TS, proxy `/api` sang backend
 - [x] CI GitHub Actions: ruff + pytest (backend), lint + build (frontend)
 - [x] File `.env` local, `JWT_SECRET` đã sinh sẵn
-- [ ] **[L]** Tạo OpenAI API key, đặt hạn mức chi tiêu tháng trong dashboard OpenAI, điền `OPENAI_API_KEY` vào `.env`
-- [ ] **[L]** Tạo project trên Langfuse Cloud, điền `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` vào `.env`
-- [ ] **[L]** Bật Docker Desktop, giới hạn RAM cho WSL khoảng 3GB (file `%UserProfile%\.wslconfig`), chạy `docker compose up -d`
+- [x] `scripts/check_env.py` kiểm tra key OpenAI và Langfuse, các model trong config, các service
+- [x] `%UserProfile%\.wslconfig` giới hạn WSL ở 3GB RAM
+- [ ] **[L]** Bật Virtual Machine Platform (cần Administrator và khởi động lại máy). Docker Desktop hiện không chạy được vì WSL2 đang tắt.
+- [ ] **[L]** Tạo OpenAI API key (project riêng, có giới hạn chi tiêu), dán vào `OPENAI_API_KEY` trong `.env`
+- [ ] **[L]** Tạo tài khoản Langfuse Cloud (vùng EU) và project, dán `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` vào `.env`
+- [ ] Chạy `docker compose up -d`
 
-**Hoàn thành khi:** CI xanh; `/api/health/ready` trả `ok` cho cả postgres, qdrant và redis.
+**Hoàn thành khi:** CI xanh; `python scripts/check_env.py` báo tất cả đều ổn.
 
 ## P1. Golden set v1 (tuần 1–2)
 - [ ] Đối chiếu tình trạng hiệu lực và văn bản sửa đổi của từng luật trên vbpl.vn, cập nhật `data/manifest.json`
