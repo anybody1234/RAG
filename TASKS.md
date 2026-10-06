@@ -199,7 +199,7 @@ Thứ tự xếp theo chỗ đang hụt (Long chốt 06/10). Số trước/sau v
   - nhóm khác ngôn ngữ (giữ nguyên, dịch câu hỏi, hay dịch lúc index);
   - hybrid hay chỉ dense;
   - latency của lượt hỏi tiếp so với TTFT.
-- [ ] Chạy lại `v0.2` trên commit sạch (sau khi Long đồng ý commit P4)
+- [x] Chạy lại `v0.2` trên commit sạch `b4c1364` (`dirty = false`): Hit@5 hybrid vẫn 0.864, retrieval p95 300 ms
 
 **Hoàn thành khi:** Hit@5 ≥ 0.85, hoặc ghi rõ khoảng cách còn thiếu và nguyên nhân.
 

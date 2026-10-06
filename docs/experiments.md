@@ -353,15 +353,15 @@ Cả bốn cấu hình đều giữ 106/106 đoạn trích gold nằm trọn tro
 
 Không bật dịch câu hỏi và rerank, vì cả hai vượt SLO (thí nghiệm 1 và 2).
 
-**Kết quả:** `eval/results/2026-10-06_v0.2_retrieval.json`, chạy trên code chưa commit.
+**Kết quả:** `eval/results/2026-10-06_v0.2_retrieval.json` (commit `b4c1364`, `dirty = false`). Lần chạy trước đó trên code chưa commit cho cùng Hit@5; MRR và nDCG lệch dưới 0.003.
 
 | | v0.1 hybrid | **v0.2 hybrid** | v0.2 chỉ dense |
 |---|---|---|---|
 | Hit@5 | 0.670 | **0.864** | 0.875 |
 | Hit@50 | 0.852 | 0.977 | 0.989 |
 | Recall@50 | 0.830 | 0.960 | 0.972 |
-| MRR@5 | 0.586 | 0.735 | 0.763 |
-| nDCG@5 | 0.574 | 0.742 | 0.764 |
+| MRR@5 | 0.586 | 0.735 | 0.761 |
+| nDCG@5 | 0.574 | 0.740 | 0.762 |
 | Cùng ngôn ngữ, Hit@5 (69) | 0.855 | **0.986** | 0.957 |
 | Khác ngôn ngữ, Hit@5 (19) | 0.000 | 0.421 | 0.579 |
 | `single_article` (33) | 0.636 | 0.818 | 0.849 |
@@ -370,7 +370,7 @@ Không bật dịch câu hỏi và rerank, vì cả hai vượt SLO (thí nghi�
 | `paraphrase` (15) | 0.400 | 0.733 | 0.733 |
 | `multi_turn` (9) | 0.556 | **1.000** | 0.889 |
 | Retrieval p95 | 244 ms | **300 ms** | 294 ms |
-| Lượt hỏi tiếp (viết lại + retrieval) | | 1.6–3.3 s | |
+| Lượt hỏi tiếp (viết lại + retrieval) | | 1.6–2.9 s (lần chạy trước tới 3.3 s) | |
 | Chi phí mỗi câu | $0.000001 | $0.000008 | |
 
 **Đạt tiêu chí P4:** Hit@5 0.864 ≥ 0.85, retrieval p95 300 ms ≤ 800 ms.
