@@ -142,20 +142,48 @@
   - Câu `multi_turn` dùng câu hỏi cuối chưa viết lại. Câu `unanswerable` không tính metric, chỉ tính latency.
   - Đo latency từng bước: embed, sparse, search.
 - [x] Test: 34 test mới (tokenizer, batch/cache embedding, metric, index + truy vấn trên Qdrant in-memory, cách ly giữa 2 user, IDF tính theo kho của từng user, index lại idempotent, cờ `amended`). Tổng 98/98 pass, `ruff` sạch.
-- [ ] Chạy baseline 3 chế độ trên commit sạch, lưu vào `eval/results/`, ghi retrieval p95
+- [x] Chạy baseline 3 chế độ trên commit sạch `4ff0cb1`, lưu vào `eval/results/2026-10-06_v0.1-baseline_retrieval.json` (ghi `git.dirty = false`)
 
 **Hoàn thành khi:** có số baseline cho cấu hình `v0.1-baseline`.
 
+**Kết quả (06/10):** đã hoàn thành. Chẩn đoán chi tiết nằm ở `docs/experiments.md`.
+- Index: 1282 chunk, 455k token, $0.0091. Chạy lại thì 100% lấy từ cache, $0. 106/106 nguồn gold nằm trọn trong một chunk của index.
+- 88 câu có nguồn. Latency đo tuần tự trên 100 câu, chưa có tải đồng thời:
+
+  | Chế độ | Hit@5 | Hit@50 | Recall@50 | MRR@5 | nDCG@5 | Retrieval p95 |
+  |---|---|---|---|---|---|---|
+  | dense | 0.659 | 0.875 | 0.858 | 0.541 | 0.530 | 241 ms |
+  | sparse | 0.648 | 0.773 | 0.744 | 0.540 | 0.534 | 8 ms |
+  | hybrid | **0.670** | 0.852 | 0.830 | **0.586** | **0.574** | 244 ms |
+
+- Hit@5 của hybrid theo nhóm:
+
+  | Nhóm | n | Hit@5 |
+  |---|---|---|
+  | Cùng ngôn ngữ | 69 | 0.855 |
+  | Khác ngôn ngữ | 19 | 0.000 (dense 0.053) |
+  | `multi_hop` (Recall@5) | 14 | 0.714 |
+  | `numeric` | 17 | 0.765 |
+  | `single_article` | 33 | 0.636 |
+  | `multi_turn` (số "trước" cho bước viết lại câu hỏi) | 9 | 0.556 |
+  | `paraphrase` | 15 | 0.400 |
+
+- Retrieval p95 đạt SLO (≤ 800 ms), còn dư khoảng 556 ms. Gần như toàn bộ thời gian là lời gọi embed câu hỏi (p50 187 ms); Qdrant chỉ mất 7–16 ms.
+- Chạy 2 lần trên cùng code: MRR@5 của hybrid lệch 0.006 (0.592 và 0.586), vì embedding của OpenAI không hoàn toàn tất định. Đây là mức nhiễu nền khi so sánh thí nghiệm.
+
+
 ## P4. Thí nghiệm retrieval (tuần 5)
+Thứ tự xếp theo chỗ đang hụt (Long chốt 06/10). Mỗi thí nghiệm ghi số trước/sau vào `docs/experiments.md`.
 - [x] So sánh dense / sparse / hybrid: số baseline có ở P3
-- [ ] Sửa nhóm khác ngôn ngữ (Hit@5 hiện là 0/19). Thứ tự thử:
-  1. Thêm tiêu đề văn bản và `heading_path` vào text đem embed và vào sparse vector. Cách này không tốn thêm latency lúc hỏi.
-  2. Dịch câu hỏi sang ngôn ngữ còn lại bằng `gpt-6-luna`, truy vấn cả hai câu rồi gộp bằng RRF. Phải đo latency vì retrieval p95 vẫn phải ≤ 800 ms.
-- [ ] Chỉnh RRF: `rrf_k` (2 / 20 / 60), trọng số từng nhánh, `prefetch_limit`
-- [ ] So sánh `text-embedding-3-small` với `text-embedding-3-large`
-- [ ] Thử 2–3 cấu hình chunk
-- [ ] Rerank bằng `gpt-6-luna`: chỉ giữ nếu cải thiện và vẫn đạt retrieval p95 ≤ 800 ms
+- [ ] Dịch câu hỏi sang ngôn ngữ còn lại bằng `gpt-6-luna`, truy xuất bằng cả hai câu rồi gộp RRF. Nhắm vào 19 câu khác ngôn ngữ.
+  - Thử gộp chung với bước viết lại câu hỏi multi-turn thành một lần gọi Luna.
+  - Cái giá là phải gọi Luna ở mọi lượt, nên phải đo latency: còn dư khoảng 556 ms so với SLO 800 ms.
+- [ ] Rerank bằng `gpt-6-luna` trên top-50, nhắm vào các câu `paraphrase` đang ở hạng 7–14. Chỉ giữ nếu eval cải thiện và vẫn đạt retrieval p95 ≤ 800 ms.
+- [ ] So sánh `text-embedding-3-large` với `text-embedding-3-small`
+- [ ] Thử lại `rrf_k` và trọng số từng nhánh
+- [ ] Cấu hình chunk, xếp cuối. Recall@50 của câu cùng ngôn ngữ đã đạt 0.93, nên chunking không phải chỗ nghẽn.
 - [ ] Chốt config, ghi bảng so sánh và nhận xét vào `docs/experiments.md`
+- **Không làm:** lọc theo tên văn bản (thấy "GDPR" thì lọc theo `doc_id`). Cách đó chỉ khớp với golden set, không dùng được cho tài liệu user upload.
 
 **Hoàn thành khi:** Hit@5 ≥ 0.85, hoặc ghi rõ khoảng cách còn thiếu và nguyên nhân.
 

@@ -160,6 +160,7 @@ RAG/
   eval/validate_golden.py, eval/review_golden.py
   eval/run_retrieval_eval.py   # eval retrieval 3 chế độ, chia theo loại câu/ngôn ngữ/khác ngôn ngữ, latency p50/p95
   eval/results/             # kết quả eval (commit vào repo)
+  docs/experiments.md       # nhật ký thí nghiệm: chẩn đoán, số trước/sau, giữ hay bỏ
   frontend/                 # React 19 + Vite 8 + TS, lint bằng oxlint; dev proxy /api -> :8000
   .github/workflows/ci.yml  # ruff + pytest, oxlint + build
   pyproject.toml            # cấu hình pytest, pyrefly (gốc import = backend) và ruff
@@ -174,7 +175,6 @@ Dự kiến thêm:
 ```
   backend/app/{api, generation, auth, storage}
   eval/{judges, run_e2e_eval.py}
-  docs/experiments.md
 ```
 
 ## Lệnh thường dùng
