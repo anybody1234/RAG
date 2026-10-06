@@ -48,6 +48,8 @@ class DocumentMeta(BaseModel):
     so_hieu: str | None = None
     effective_date: date | None = None
     status: str = "unknown"
+    # Số hiệu các văn bản đã sửa đổi văn bản này (từ manifest). Nội dung chunk là bản gốc, chưa phản ánh sửa đổi.
+    amended_by: list[str] = []
 
 
 class Chunk(DocumentMeta):
@@ -64,3 +66,6 @@ class Chunk(DocumentMeta):
     token_count: int
     # sha256 của text, dùng cho upsert idempotent vào Qdrant.
     content_hash: str
+    # Điều chứa chunk đã bị sửa đổi (có trong `amended_articles` của manifest, tính theo cả Điều): text là
+    # bản gốc, có thể đã lỗi thời. Văn bản bị sửa bởi những luật nào nằm ở `amended_by`.
+    amended: bool = False

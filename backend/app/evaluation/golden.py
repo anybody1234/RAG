@@ -11,7 +11,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
-from app.ingestion.manifest import Manifest
+from app.ingestion.manifest import Manifest, amended_article_numbers
 
 QuestionType = Literal["single_article", "numeric", "multi_hop", "paraphrase", "unanswerable", "multi_turn"]
 
@@ -101,11 +101,6 @@ def article_at(pages: list[str], page: int, quote: str) -> int | None:
             if m := _ARTICLE_HEADING.match(line):
                 return int(m.group(1))
     return None
-
-
-def amended_article_numbers(amended_articles: list[str]) -> set[int]:
-    """"Điều 139 khoản 1" -> 139. Tính theo cả Điều, kể cả khi chỉ một khoản bị sửa."""
-    return {int(m.group(1)) for text in amended_articles if (m := re.search(r"Điều (\d+)", text))}
 
 
 def load_golden(path: Path) -> list[GoldenItem]:

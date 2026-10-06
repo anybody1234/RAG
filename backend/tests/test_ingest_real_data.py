@@ -8,7 +8,7 @@ import pytest
 from app.core.config import REPO_ROOT
 from app.core.rag_config import get_rag_config
 from app.evaluation.golden import load_golden, normalize_for_match
-from app.ingestion.manifest import RAW_DIR, load_manifest
+from app.ingestion.manifest import RAW_DIR, amended_article_numbers, load_manifest
 from app.ingestion.pipeline import IngestResult, ingest_manifest_document
 
 MANIFEST = load_manifest()
@@ -73,6 +73,15 @@ def test_pages_ids_and_structure(results):
         ids = [chunk.chunk_id for chunk in result.chunks]
         assert len(ids) == len(set(ids))
         assert all(1 <= c.page <= c.page_end <= result.parsed.page_count for c in result.chunks)
+
+
+def test_amended_flag_matches_manifest(results):
+    """Mọi Điều trong `amended_articles` đều có chunk được đánh dấu, và chỉ những Điều đó."""
+    for doc in MANIFEST.documents:
+        flagged = {int(c.article.split()[-1]) for c in results[doc.doc_id].chunks if c.amended}
+        assert flagged == amended_article_numbers(doc.amended_articles), doc.doc_id
+    flagged_ldn = {c.article for c in results["en-law-on-enterprises-2020"].chunks if c.amended}
+    assert len(flagged_ldn) == 33 and "Article 207" in flagged_ldn
 
 
 def test_every_gold_quote_lies_in_one_chunk_on_its_page(results):

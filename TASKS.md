@@ -120,23 +120,38 @@
 - 64/64 test pass, `ruff` sạch.
 
 ## P3. Index + retrieval baseline (tuần 3–4)
-- [ ] Gọi embedding OpenAI theo batch, có retry, đếm token và chi phí
-- [ ] Tokenizer BM25 cho tiếng Việt và tiếng Anh, tạo sparse vector
-- [ ] Collection Qdrant:
-  - Dense + sparse với `modifier: idf`.
-  - Payload index cho `user_id` và `doc_id`.
-  - Upsert idempotent theo hash nội dung chunk.
-- [ ] Hybrid query: prefetch dense + sparse, gộp RRF, filter theo `user_id`
-- [ ] `eval/run_retrieval_eval.py`:
-  - Tính Hit@k, Recall@k, MRR, nDCG ở top-50 và top-5.
-  - Báo cáo theo `type` và theo ngôn ngữ.
-  - So khớp với gold bằng trang + quote.
-- [ ] Lưu baseline đầu tiên vào `eval/results/`, ghi retrieval p95
+- [x] Gọi embedding OpenAI (`backend/app/retrieval/embedding.py`):
+  - Gửi theo batch, tối đa 256 input và 200k token mỗi request (API cho phép 2048 input, 300k token).
+  - Retry bằng `max_retries=5` của SDK `openai`: backoff khi gặp 408/409/429/5xx, timeout hoặc lỗi kết nối, tôn trọng Retry-After.
+  - Token lấy từ `usage` của API. Chi phí tính theo `[prices]` trong `config/rag.toml`.
+  - Cache theo (model, số chiều, sha256 nội dung) trong `data/cache/embeddings.sqlite`. Câu hỏi không cache, để latency đo được là latency thật.
+- [x] Tokenizer BM25 (`sparse.py`):
+  - NFC, chữ thường, âm tiết/từ + bigram âm tiết. Bigram không nối qua dấu câu hoặc xuống dòng. Số có dấu phân cách được giữ nguyên ("20.000.000").
+  - Vector văn bản mang phần TF của BM25 (k1 1.2, b 0.75, `avg_doc_len` 215 đo trên bộ dev); vector câu hỏi có trọng số 1; IDF do Qdrant tính.
+- [x] Collection Qdrant `chunks_text-embedding-3-small_1536` (`index.py`):
+  - Dense (cosine) + sparse với `modifier: idf`.
+  - Payload gồm metadata chunk, `user_id`, `amended_by` (văn bản bị sửa bởi những luật nào) và `amended` (Điều chứa chunk có trong `amended_articles`; 97/1282 chunk). Có payload index cho `user_id` (`is_tenant`) và `doc_id`.
+  - Point ID = uuid5(`user_id:doc_id:content_hash`). Index lại một văn bản thì upsert rồi xoá các point cũ không còn trong lần này. Chạy lại không đổi gì và không tốn tiền.
+  - Bộ dev được index dưới `user_id = "system"` bằng `python scripts/index.py`.
+- [x] Truy vấn 3 chế độ dense / sparse / hybrid (`search.py`), chọn bằng `retrieval.mode`:
+  - Hybrid: prefetch 50 dense + 50 sparse, gộp bằng RRF với k = 60 (mặc định của Qdrant là 2).
+  - Filter `user_id` nằm trong từng prefetch. IDF của nhánh sparse chỉ tính trên kho của user đó (`IdfCorpusParams`), nên tài liệu của user khác không làm lệch trọng số.
+- [x] `eval/run_retrieval_eval.py`:
+  - Chunk trúng khi đúng `doc_id`, khoảng trang chứa trang gold và text chứa đoạn trích.
+  - Tính Hit, Recall, MRR, nDCG ở top-5 và top-50. Báo cáo chia theo `type`, theo ngôn ngữ câu hỏi và theo nhóm khác ngôn ngữ.
+  - Câu `multi_turn` dùng câu hỏi cuối chưa viết lại. Câu `unanswerable` không tính metric, chỉ tính latency.
+  - Đo latency từng bước: embed, sparse, search.
+- [x] Test: 34 test mới (tokenizer, batch/cache embedding, metric, index + truy vấn trên Qdrant in-memory, cách ly giữa 2 user, IDF tính theo kho của từng user, index lại idempotent, cờ `amended`). Tổng 98/98 pass, `ruff` sạch.
+- [ ] Chạy baseline 3 chế độ trên commit sạch, lưu vào `eval/results/`, ghi retrieval p95
 
 **Hoàn thành khi:** có số baseline cho cấu hình `v0.1-baseline`.
 
 ## P4. Thí nghiệm retrieval (tuần 5)
-- [ ] So sánh dense / sparse / hybrid
+- [x] So sánh dense / sparse / hybrid: số baseline có ở P3
+- [ ] Sửa nhóm khác ngôn ngữ (Hit@5 hiện là 0/19). Thứ tự thử:
+  1. Thêm tiêu đề văn bản và `heading_path` vào text đem embed và vào sparse vector. Cách này không tốn thêm latency lúc hỏi.
+  2. Dịch câu hỏi sang ngôn ngữ còn lại bằng `gpt-6-luna`, truy vấn cả hai câu rồi gộp bằng RRF. Phải đo latency vì retrieval p95 vẫn phải ≤ 800 ms.
+- [ ] Chỉnh RRF: `rrf_k` (2 / 20 / 60), trọng số từng nhánh, `prefetch_limit`
 - [ ] So sánh `text-embedding-3-small` với `text-embedding-3-large`
 - [ ] Thử 2–3 cấu hình chunk
 - [ ] Rerank bằng `gpt-6-luna`: chỉ giữ nếu cải thiện và vẫn đạt retrieval p95 ≤ 800 ms

@@ -1,5 +1,6 @@
 """Parse + chunk một văn bản: văn bản trong data/manifest.json hoặc file user upload."""
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
@@ -8,7 +9,7 @@ from app.core.rag_config import RagConfig, get_rag_config
 from app.ingestion.chunking import build_chunks
 from app.ingestion.generic_chunker import chunk_generic
 from app.ingestion.legal_chunker import chunk_legal
-from app.ingestion.manifest import RAW_DIR, ManifestDocument
+from app.ingestion.manifest import RAW_DIR, ManifestDocument, amended_article_numbers
 from app.ingestion.models import Chunk, DocumentMeta, ParsedDocument
 from app.ingestion.ocr import OcrEngine
 from app.ingestion.parsers import parse_file, parse_pdf_files
@@ -43,6 +44,15 @@ def chunk_document(parsed: ParsedDocument, meta: DocumentMeta, config: RagConfig
     return build_chunks(pieces, meta, count)
 
 
+def mark_amended(chunks: list[Chunk], amended_articles: list[str]) -> None:
+    """Đánh dấu chunk thuộc Điều đã bị sửa đổi. `amended_articles` ghi theo số Điều của bản tiếng Việt
+    ("Điều 60 khoản 2"), dùng chung cho bản dịch vì số Điều/Article giống nhau."""
+    amended = amended_article_numbers(amended_articles)
+    for chunk in chunks:
+        number = re.search(r"\d+", chunk.article) if chunk.article else None
+        chunk.amended = number is not None and int(number.group()) in amended
+
+
 def ingest_manifest_document(
     doc: ManifestDocument, raw_dir: Path = RAW_DIR, config: RagConfig | None = None
 ) -> IngestResult:
@@ -54,8 +64,11 @@ def ingest_manifest_document(
         so_hieu=doc.so_hieu,
         effective_date=doc.effective_date,
         status=doc.status,
+        amended_by=doc.amended_by,
     )
-    return IngestResult(parsed, chunk_document(parsed, meta, config))
+    chunks = chunk_document(parsed, meta, config)
+    mark_amended(chunks, doc.amended_articles)
+    return IngestResult(parsed, chunks)
 
 
 def ingest_file(

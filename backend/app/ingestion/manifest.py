@@ -1,6 +1,7 @@
 """Đọc data/manifest.json, danh sách văn bản của bộ dữ liệu phát triển."""
 
 import json
+import re
 from datetime import date
 from pathlib import Path
 from typing import Literal, cast
@@ -54,6 +55,11 @@ class Manifest(BaseModel):
 
     def get(self, doc_id: str) -> ManifestDocument | None:
         return next((doc for doc in self.documents if doc.doc_id == doc_id), None)
+
+
+def amended_article_numbers(amended_articles: list[str]) -> set[int]:
+    """"Điều 139 khoản 1" -> 139. Tính theo cả Điều, kể cả khi chỉ một khoản bị sửa."""
+    return {int(m.group(1)) for text in amended_articles if (m := re.search(r"Điều (\d+)", text))}
 
 
 def load_manifest(path: Path = MANIFEST_PATH) -> Manifest:

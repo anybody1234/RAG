@@ -13,6 +13,7 @@ __pycache__/
 # Dữ liệu tải về / sinh ra (tải lại bằng scripts/download_data.py)
 data/raw/
 data/processed/
+data/cache/
 
 # Frontend
 node_modules/

@@ -1,4 +1,4 @@
-# Siêu tham số RAG. Đổi bất kỳ giá trị nào thì phải tăng config_version
+# Siêu tham số RAG. Đổi bất kỳ giá trị nào (trừ bảng [prices] ở cuối) thì phải tăng config_version
 # và chạy lại eval (xem quy tắc trong CLAUDE.md).
 config_version = "v0.1-baseline"
 
@@ -11,11 +11,23 @@ overlap_ratio = 0.1
 model = "text-embedding-3-small"
 dimensions = 1536
 
+[sparse]
+# BM25: phần TF tính ở client, IDF do Qdrant tính (modifier idf).
+k1 = 1.2
+b = 0.75
+# Số token (âm tiết/từ) trung bình của một chunk, đo trên 1282 chunk của bộ dev với chunking ở trên.
+avg_doc_len = 215
+
 [retrieval]
 mode = "hybrid"        # dense | sparse | hybrid
 prefetch_limit = 50    # số ứng viên mỗi nhánh trước khi gộp RRF
+rrf_k = 60             # hằng số k của RRF: score = Σ 1/(k + rank). Mặc định của Qdrant là 2.
 top_k = 5              # số chunk đưa cho LLM
 reranker = "none"      # none | llm
+
+[index]
+# Tên collection đầy đủ: <collection_prefix>_<model embedding>_<số chiều>.
+collection_prefix = "chunks"
 
 [generation]
 answer_model = "gpt-6.1-sol"
@@ -26,3 +38,23 @@ prompt_version = "answer-v1"
 [eval]
 judge_model = "gpt-6.1-sol"
 judge_reasoning_effort = "high"
+
+# Giá USD cho 1M token: `input` là token đầu vào, `output` là token đầu ra (model embedding không có output).
+# Chỉ dùng để tính chi phí ($) ghi vào trace và kết quả eval, không ảnh hưởng kết quả RAG, nên đổi giá
+# không cần tăng config_version. Mọi model gọi trong pipeline (embedding, viết lại câu hỏi, rerank, trả lời,
+# judge) phải có giá ở đây; thiếu thì RagConfig.price() báo lỗi thay vì tính chi phí bằng 0.
+# Tra lại trang giá OpenAI trước khi đổi model.
+# Đã đối chiếu với developers.openai.com/api/docs/pricing ngày 2026-10-06.
+[prices."text-embedding-3-small"]
+input = 0.02
+
+[prices."text-embedding-3-large"]
+input = 0.13
+
+[prices."gpt-6-luna"]
+input = 0.10
+output = 0.50
+
+[prices."gpt-6.1-sol"]
+input = 2.00
+output = 10.00
