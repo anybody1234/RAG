@@ -58,13 +58,25 @@
 - [x] Claude soạn nháp 100 câu (06/10). Kết quả:
   - Đúng phân bố cả 6 loại, 19% câu khác ngôn ngữ với nguồn (22% tính trên câu có nguồn).
   - 100% đoạn trích được xác minh có thật trong PDF.
-  - Không câu nào hỏi vào Điều đã bị sửa đổi.
+  - ~~Không câu nào hỏi vào Điều đã bị sửa đổi.~~ Sai: g014 hỏi vào Điều 207, đã sửa ngày 06/10. Validator nay tự kiểm tra lỗi này.
 - [x] Công cụ duyệt `eval/review_golden.py`: `export` tạo `golden_v1_review.md`, `apply` áp kết quả duyệt vào JSONL
 - [x] **[L]** Duyệt `eval/datasets/golden_v1_review.md` (khoảng 3–4 giờ): tick câu đúng, ghi chú câu cần sửa, rồi chạy `python eval/review_golden.py apply`
   - 06/10: Claude duyệt theo yêu cầu của Long, đối chiếu từng đáp án với toàn văn Điều trong PDF. Kết quả 97/100 đạt, 3 câu có ghi chú (g014, g054, g078).
   - g014 hỏi vào Điều 207 Luật Doanh nghiệp, Điều này đã bị luật 76/2025 sửa. Vì vậy dòng "Không câu nào hỏi vào Điều đã bị sửa đổi" ở trên là sai.
-- [ ] Sửa các câu có ghi chú, lặp lại cho tới khi 100/100 câu được duyệt
-- [ ] Bổ sung `amended_articles` của Luật Doanh nghiệp trong `data/manifest.json`. Luật 76/2025 còn sửa thêm Điều 8, 11, 13, 20, 22, 33, 52, 112, 140, 207, 215 nhưng manifest chưa ghi. Kiểm tra lại danh sách của Bộ luật Lao động với 18/VBHN-VPQH.
+- [x] Sửa các câu có ghi chú (06/10):
+  - g014 đổi sang `multi_hop`, thêm nguồn luật 76/2025 trang 6, đáp án theo điểm c khoản 1 Điều 207 đã sửa (thêm "cổ đông").
+  - g054 thêm nguồn Điều 106 trang 44.
+  - g078 đổi sang `single_article`.
+  - Phân bố không đổi.
+- [ ] **[L]** Duyệt lại 3 câu g014, g054, g078 trong `golden_v1_review.md`, rồi chạy `python eval/review_golden.py apply`
+- [ ] **[L]** Quyết định về người duyệt. Theo ghi chú ở trên, lượt duyệt 97 câu do Claude thực hiện, trong khi `CLAUDE.md` yêu cầu câu do LLM sinh nháp phải được **người** duyệt. Hai cách xử lý: Long tự duyệt lại (ít nhất lấy mẫu, ví dụ 20 câu), hoặc ghi nhận đây là ngoại lệ có chủ đích.
+- [x] Bổ sung `amended_articles` trong `data/manifest.json` (06/10). Ghi nguồn xác minh vào trường mới `amended_articles_source`.
+  - **Luật Doanh nghiệp:** lập lại từ toàn văn, được 33 Điều.
+    - Luật 76/2025 (khoản 1–28 Điều 1) sửa 27 Điều, gồm đủ 11 Điều còn thiếu: 8, 11, 13, 20, 22, 33, 52, 112, 140, 207, 215.
+    - Luật 03/2022 (Điều 7, tải từ Công báo) sửa Điều 49, 50, 60, 109, 148, 158, 217.
+    - Danh sách cũ còn ghi sai thừa 14 Điều (3, 5, 9, 12, 14, 18, 24, 28, 35, 53, 113, 129, 208, 218) và ghi nhầm 51, 61 thay cho 50, 60. Nguyên nhân: danh sách cũ được dò theo trang chú thích của văn bản hợp nhất, cách này bị lệch.
+  - **Bộ luật Lao động:** đối chiếu lại với chú thích của 18/VBHN-VPQH. Có đúng 4 chú thích sửa đổi: Điều 60 khoản 2, Điều 62, Điều 139 khoản 1, Điều 154 (khoản 8a). Không thể kiểm tra từ `data/raw/` vì các luật sửa đổi không có trong bộ dữ liệu.
+- [x] `validate_golden.py` tự báo lỗi khi đoạn trích nằm trong Điều có ở `amended_articles` mà câu hỏi không có nguồn từ luật sửa đổi. Chạy thử trên bản trước khi sửa: bắt đúng g014 và không báo nhầm câu nào khác.
 
 **Hoàn thành khi:** có `eval/datasets/golden_v1.jsonl` gồm 100 câu đã duyệt, script kiểm tra pass.
 

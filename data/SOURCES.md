@@ -36,7 +36,9 @@ Mọi file đều là PDF có lớp text. Số Điều đếm được khớp v�
     - Luật Dân số 113/2025/QH15: sửa khoản 1 Điều 139 về nghỉ thai sản, hiệu lực 01/07/2026.
 
     Văn bản hợp nhất mới nhất: [18/VBHN-VPQH](https://congbao.chinhphu.vn/van-ban/van-ban-hop-nhat-so-18-vbhn-vpqh-468971.htm) ngày 12/02/2026.
-  - **Luật Doanh nghiệp** đã bị sửa đổi bởi 03/2022/QH15 và 76/2025/QH15. Văn bản hợp nhất: [67/VBHN-VPQH](https://congbao.chinhphu.vn/van-ban/van-ban-hop-nhat-so-67-vbhn-vpqh-45865.htm) ngày 15/08/2025.
+  - **Luật Doanh nghiệp** đã bị sửa đổi ở 33 Điều. Văn bản hợp nhất: [67/VBHN-VPQH](https://congbao.chinhphu.vn/van-ban/van-ban-hop-nhat-so-67-vbhn-vpqh-45865.htm) ngày 15/08/2025.
+    - Luật 76/2025/QH15 sửa 27 Điều. Lập từ toàn văn luật, có trong bộ dữ liệu.
+    - [Luật 03/2022/QH15](https://congbao.chinhphu.vn/van-ban/nghi-quyet-so-03-2022-qh15-36795.htm), Điều 7, sửa Điều 49, 50, 60, 109, 148, 158, 217.
   - **Luật Bảo vệ dữ liệu cá nhân 2025:** chưa có văn bản sửa đổi. Văn bản hướng dẫn là Nghị định 356/2025/NĐ-CP, không có trong bộ dữ liệu.
   - **GDPR:** chưa có sửa đổi có hiệu lực. Gói Digital Omnibus về dữ liệu vẫn đang đàm phán.
 

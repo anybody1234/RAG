@@ -167,17 +167,18 @@ Ghi chú:
 
 Ghi chú:
 
-## g014 · single_article · vi
+## g014 · multi_hop · vi
 - [ ] Đã duyệt
 
-**Hỏi:** Doanh nghiệp bị giải thể trong những trường hợp nào?
+**Hỏi:** Theo quy định hiện hành, doanh nghiệp bị giải thể trong những trường hợp nào?
 
-**Đáp án chuẩn:** Khi: kết thúc thời hạn hoạt động ghi trong Điều lệ mà không gia hạn; theo nghị quyết, quyết định của chủ doanh nghiệp/Hội đồng thành viên/chủ sở hữu/Đại hội đồng cổ đông; công ty không còn đủ số thành viên tối thiểu trong 06 tháng liên tục mà không chuyển đổi loại hình; bị thu hồi Giấy chứng nhận đăng ký doanh nghiệp (trừ trường hợp Luật Quản lý thuế quy định khác). Doanh nghiệp chỉ được giải thể khi thanh toán hết nợ và không đang có tranh chấp tại Tòa án hoặc Trọng tài (Điều 207).
+**Đáp án chuẩn:** Doanh nghiệp bị giải thể khi: kết thúc thời hạn hoạt động ghi trong Điều lệ mà không gia hạn; theo nghị quyết, quyết định của chủ doanh nghiệp/Hội đồng thành viên/chủ sở hữu/Đại hội đồng cổ đông; công ty không còn đủ số lượng thành viên, cổ đông tối thiểu trong 06 tháng liên tục mà không làm thủ tục chuyển đổi loại hình (điểm c khoản 1 Điều 207, đã được sửa bởi khoản 23 Điều 1 Luật 76/2025/QH15 để bổ sung "cổ đông"); bị thu hồi Giấy chứng nhận đăng ký doanh nghiệp, trừ trường hợp Luật Quản lý thuế quy định khác. Doanh nghiệp chỉ được giải thể khi thanh toán hết nợ và không đang có tranh chấp tại Tòa án hoặc Trọng tài (Điều 207).
 
 **Nguồn:**
 - `vi-luat-doanh-nghiep-2020` trang 160: “Kết thúc thời hạn hoạt động đã ghi trong Điều lệ công ty mà không có quyết định gia hạn”
+- `vi-luat-sua-doi-luat-doanh-nghiep-2025` trang 6: “Công ty không còn đủ số lượng thành viên, cổ đông tối thiểu theo quy định của Luật này trong thời hạn 06 tháng liên tục”
 
-Ghi chú: Điểm c khoản 1 Điều 207 đã bị sửa bởi khoản 23 Điều 1 Luật 76/2025/QH15 (`vi-luat-sua-doi-luat-doanh-nghiep-2025` trang 6: “Công ty không còn đủ số lượng thành viên, cổ đông tối thiểu theo quy định của Luật này trong thời hạn 06 tháng liên tục”), tức câu đang hỏi vào Điều đã sửa đổi; `amended_articles` trong manifest thiếu Điều 207. Sửa: đổi type thành multi_hop, thêm nguồn luật 76/2025 trang 6 và cập nhật đáp án theo bản sửa đổi (thêm “cổ đông”); hoặc thay bằng câu khác.
+Ghi chú:
 
 ## g015 · single_article · en
 - [x] Đã duyệt
@@ -652,12 +653,13 @@ Ghi chú:
 
 **Hỏi:** Tôi làm ca từ 11 giờ đêm đến 5 giờ sáng thì có được trả thêm tiền không?
 
-**Đáp án chuẩn:** Có. Đây là giờ làm việc ban đêm, người lao động được trả thêm ít nhất 30% tiền lương của ngày làm việc bình thường (khoản 2 Điều 98).
+**Đáp án chuẩn:** Có. Giờ làm việc ban đêm được tính từ 22 giờ đến 06 giờ sáng hôm sau (Điều 106), nên ca 23h–5h là làm việc ban đêm; người lao động được trả thêm ít nhất 30% tiền lương của ngày làm việc bình thường (khoản 2 Điều 98).
 
 **Nguồn:**
 - `vi-bo-luat-lao-dong-2019` trang 42: “Người lao động làm việc vào ban đêm thì được trả thêm ít nhất bằng 30%”
+- `vi-bo-luat-lao-dong-2019` trang 44: “Giờ làm việc ban đêm được tính từ 22 giờ đến 06 giờ sáng ngày hôm sau”
 
-Ghi chú: Đáp án khẳng định ca 23h–5h “là giờ làm việc ban đêm”, nhưng căn cứ nằm ở Điều 106 (`vi-bo-luat-lao-dong-2019` trang 44: “Giờ làm việc ban đêm được tính từ 22 giờ đến 06 giờ sáng ngày hôm sau”), không có trong gold_sources; chỉ với Điều 98 thì ý này không có căn cứ trong context. Sửa: thêm nguồn Điều 106 trang 44 và dẫn Điều 106 trong đáp án.
+Ghi chú:
 
 ## g055 · paraphrase · vi
 - [x] Đã duyệt
@@ -948,7 +950,7 @@ Ghi chú:
 
 Ghi chú:
 
-## g078 · multi_hop · en
+## g078 · single_article · en
 - [ ] Đã duyệt
 
 **Hỏi:** What is the retirement age for men in normal working conditions in Vietnam, and how much earlier can someone doing hazardous work retire?
@@ -959,7 +961,7 @@ Ghi chú:
 - `en-labour-code-2019` trang 63: “shall be gradually increased to 62 for males by 2028 and 60 for females in 2035”
 - `en-labour-code-2019` trang 64: “may be younger by up to 05 years than the retirement ages specified in Clause 2 of this Article”
 
-Ghi chú: Sai loại câu hỏi: hai nguồn đều thuộc Article 169 (khoản 2 và khoản 3), không phải nhiều Điều hay nhiều văn bản. Sửa: đổi type thành single_article (phân bố vẫn đạt), hoặc thay bằng câu cần 2 Điều khác nhau.
+Ghi chú:
 
 ## g079 · multi_hop · en
 - [x] Đã duyệt

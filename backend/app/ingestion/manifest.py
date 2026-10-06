@@ -3,7 +3,7 @@
 import json
 from datetime import date
 from pathlib import Path
-from typing import Literal
+from typing import Literal, cast
 
 import pymupdf
 from pydantic import BaseModel
@@ -38,6 +38,8 @@ class ManifestDocument(BaseModel):
     status: str
     amended_by: list[str] = []
     amended_articles: list[str] = []
+    # Danh sách amended_articles được lập từ văn bản nào, để kiểm tra lại được.
+    amended_articles_source: str | None = None
     amends: list[str] = []
     consolidated: ConsolidatedText | None = None
     source: str
@@ -67,5 +69,6 @@ def read_pdf_pages(doc: ManifestDocument, raw_dir: Path = RAW_DIR) -> list[str]:
     pages: list[str] = []
     for file in doc.files:
         with pymupdf.open(raw_dir / file.filename) as pdf:
-            pages.extend(page.get_text() for page in pdf)
+            # get_text() mặc định ("text") trả về str; stub của pymupdf khai báo kiểu hợp nên cần cast.
+            pages.extend(cast(str, page.get_text()) for page in pdf)
     return pages

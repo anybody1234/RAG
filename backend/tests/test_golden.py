@@ -3,28 +3,37 @@ import unicodedata
 import pytest
 from pydantic import ValidationError
 
-from app.evaluation.golden import GoldenItem, is_cross_lingual, validate_golden
+from app.evaluation.golden import GoldenItem, article_at, is_cross_lingual, validate_golden
 from app.ingestion.manifest import Manifest
 
 
 def make_manifest() -> Manifest:
-    def doc(doc_id: str, language: str) -> dict:
+    def doc(doc_id: str, language: str, so_hieu: str = "1/2020/QH14", **extra) -> dict:
         return {
-            "doc_id": doc_id, "pair_id": None, "title": doc_id, "so_hieu": "1/2020/QH14",
+            "doc_id": doc_id, "pair_id": None, "title": doc_id, "so_hieu": so_hieu,
             "language": language, "kind": "original", "issued_date": "2020-01-01",
             "effective_date": "2020-01-01", "status": "in_force", "source": "test", "page_url": "x",
-            "files": [{"filename": f"{doc_id}.pdf", "url": "x", "sha256": "x"}],
+            "files": [{"filename": f"{doc_id}.pdf", "url": "x", "sha256": "x"}], **extra,
         }
 
-    return Manifest.model_validate(
-        {"version": 1, "checked_at": "2026-10-06", "documents": [doc("vi-law", "vi"), doc("en-law", "en")]}
-    )
+    documents = [
+        doc("vi-law", "vi", amended_by=["9/2025/QH15"], amended_articles=["Điều 3 khoản 1"]),
+        doc("en-law", "en"),
+        doc("vi-amend", "vi", so_hieu="9/2025/QH15", amends=["1/2020/QH14"]),
+    ]
+    return Manifest.model_validate({"version": 1, "checked_at": "2026-10-06", "documents": documents})
 
 
 PAGES = {
-    "vi-law": ["Điều 1. Phạm vi điều chỉnh", "Điều 2. Người lao động được nghỉ 12 ngày làm việc"],
+    "vi-law": [
+        "Điều 1. Phạm vi điều chỉnh",
+        "Điều 2. Người lao động được nghỉ 12 ngày làm việc\nĐiều 3. Giải thể\n1. Công ty không còn đủ số lượng thành viên",
+        "tối thiểu trong thời hạn 06 tháng liên tục",
+    ],
     "en-law": ["Article 1. Scope", "Article 2. Employees are entitled to 12 working days"],
+    "vi-amend": ["Sửa đổi điểm c khoản 1 Điều 3: không còn đủ số lượng thành viên, cổ đông tối thiểu"],
 }
+ARTICLE_3_QUOTE = {"doc_id": "vi-law", "page": 2, "quote": "Công ty không còn đủ số lượng thành viên"}
 
 
 def item(**overrides) -> GoldenItem:
@@ -70,6 +79,23 @@ def test_cross_lingual_when_no_source_shares_question_language():
     english_question = item(language="en", question="How many days of annual leave?")
     assert is_cross_lingual(english_question, make_manifest())
     assert not is_cross_lingual(item(), make_manifest())
+
+
+def test_article_at_uses_nearest_heading_including_previous_pages():
+    assert article_at(PAGES["vi-law"], 2, "được nghỉ 12 ngày làm việc") == 2
+    assert article_at(PAGES["vi-law"], 2, "Công ty không còn đủ số lượng thành viên") == 3
+    assert article_at(PAGES["vi-law"], 3, "06 tháng liên tục") == 3
+
+
+def test_question_on_amended_article_is_an_error():
+    report = validate([item(gold_sources=[ARTICLE_3_QUOTE])])
+    assert any("Điều 3" in error and "đã bị sửa đổi" in error for error in report.errors)
+
+
+def test_amended_article_is_allowed_when_the_amending_law_is_cited():
+    amendment = {"doc_id": "vi-amend", "page": 1, "quote": "không còn đủ số lượng thành viên, cổ đông tối thiểu"}
+    report = validate([item(type="multi_hop", gold_sources=[ARTICLE_3_QUOTE, amendment])])
+    assert report.errors == []
 
 
 def test_distribution_outside_target_is_an_error():

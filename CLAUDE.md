@@ -41,7 +41,8 @@ Dự án portfolio (xin việc AI Engineer). Người dùng upload PDF/DOCX/TXT/
 - **Chuẩn hoá:** đưa mọi văn bản về Unicode NFC trước khi chunk, và mọi câu hỏi về NFC trước khi search. PDF GDPR có chữ ghép (`ﬁ`, `ﬃ`) và gạch nối cuối dòng (`par-` + `ticular`), nên bước ingestion phải tách chữ ghép (NFKC) và nối lại các từ bị ngắt dòng.
 - **Hiệu lực (đối chiếu 06/10/2026):**
   - Bộ luật Lao động đã bị sửa bởi 71/2025, 113/2025 và 124/2025 ở Điều 60, 62, 139 khoản 1 và Điều 154.
-  - Luật Doanh nghiệp đã bị sửa bởi 03/2022 và 76/2025.
+  - Luật Doanh nghiệp đã bị sửa bởi 03/2022 và 76/2025, tổng cộng 33 Điều. Danh sách nằm ở `amended_articles`, nguồn xác minh ở `amended_articles_source`.
+  - Khi lập danh sách Điều bị sửa, phải đọc phần mô tả từng khoản sửa đổi trong chính luật sửa đổi. Đừng dò theo trang chú thích của văn bản hợp nhất: cách đó đã từng cho kết quả sai.
   - Văn bản hợp nhất mới nhất là 18/VBHN-VPQH (Bộ luật Lao động) và 67/VBHN-VPQH (Luật Doanh nghiệp), có ghi trong manifest. Bộ dữ liệu hiện dùng bản gốc nên **chưa phản ánh** các sửa đổi này, trừ luật 76/2025 có trong bộ dữ liệu.
 - **Đặc thù văn bản luật:**
   - Chunk theo cấu trúc Phần/Chương/Mục/**Điều**/Khoản/Điểm (dùng regex). Đơn vị chính là Điều. Điều quá dài thì tách theo Khoản, và giữ tiêu đề Điều ở đầu mỗi chunk.
@@ -83,7 +84,7 @@ Latency đo riêng cho từng bước: rewrite, embed, search, rerank, TTFT, t�
   - `page` là số trang PDF bắt đầu từ 1, **đánh liên tục qua các file** của cùng một `doc_id`. Ví dụ Luật Doanh nghiệp 2020: phần 1 là trang 1–94, phần 2 là trang 95–168. Đọc trang bằng `read_pdf_pages()` trong `backend/app/ingestion/manifest.py`.
   - `quote` được so khớp sau khi chuẩn hoá NFKC và gộp khoảng trắng (`normalize_for_match`).
 - **Câu khác ngôn ngữ:** một câu được tính là khác ngôn ngữ khi không nguồn nào cùng ngôn ngữ với câu hỏi. Hiện các câu loại này đều là câu hỏi tiếng Việt về GDPR.
-- **Không hỏi vào Điều đã bị sửa đổi** (danh sách ở `amended_articles` trong manifest), vì bản Công báo gốc đã lỗi thời ở các Điều đó. Ngoại lệ: câu `multi_hop` có kèm nguồn là chính luật sửa đổi.
+- **Không hỏi vào Điều đã bị sửa đổi** (danh sách ở `amended_articles` trong manifest), vì bản Công báo gốc đã lỗi thời ở các Điều đó. Ngoại lệ: câu `multi_hop` có kèm nguồn là chính luật sửa đổi. `validate_golden.py` tự kiểm tra quy tắc này bằng cách xác định Điều chứa đoạn trích qua tiêu đề "Điều N." / "Article N." gần nhất.
 - **Công cụ:**
   - `python eval/validate_golden.py [--fix-pages]`: kiểm tra schema, đoạn trích có thật ở đúng trang, và phân bố.
   - `python eval/review_golden.py export|apply`: xuất file duyệt dạng Markdown (`golden_v1_review.md`) và áp kết quả duyệt ngược vào JSONL.

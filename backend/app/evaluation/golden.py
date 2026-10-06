@@ -77,6 +77,37 @@ def normalize_for_match(text: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+_ARTICLE_HEADING = re.compile(r"^\s*(?:Điều|Article) (\d+)\.")
+
+
+def article_at(pages: list[str], page: int, quote: str) -> int | None:
+    """Số Điều/Article chứa đoạn trích: tiêu đề "Điều N." / "Article N." đầu dòng gần nhất phía trước đoạn trích.
+
+    Chỉ đúng với văn bản có tiêu đề dạng đó (luật Việt Nam và bản dịch), không dùng cho GDPR.
+    """
+    lines = pages[page - 1].splitlines()
+    target = normalize_for_match(quote)
+    # Dòng bắt đầu đoạn trích là dòng cuối cùng mà phần text từ dòng đó trở đi vẫn chứa trọn đoạn trích.
+    start = 0
+    for i in range(len(lines)):
+        if target not in normalize_for_match(" ".join(lines[i:])):
+            break
+        start = i
+    for line in reversed(lines[: start + 1]):
+        if m := _ARTICLE_HEADING.match(line):
+            return int(m.group(1))
+    for previous in reversed(pages[: page - 1]):
+        for line in reversed(previous.splitlines()):
+            if m := _ARTICLE_HEADING.match(line):
+                return int(m.group(1))
+    return None
+
+
+def amended_article_numbers(amended_articles: list[str]) -> set[int]:
+    """"Điều 139 khoản 1" -> 139. Tính theo cả Điều, kể cả khi chỉ một khoản bị sửa."""
+    return {int(m.group(1)) for text in amended_articles if (m := re.search(r"Điều (\d+)", text))}
+
+
 def load_golden(path: Path) -> list[GoldenItem]:
     items = []
     for line_no, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
@@ -101,6 +132,13 @@ def is_cross_lingual(item: GoldenItem, manifest: Manifest) -> bool:
     """Đúng khi câu hỏi có nguồn và không nguồn nào cùng ngôn ngữ với câu hỏi."""
     languages = {doc.language for s in item.gold_sources if (doc := manifest.get(s.doc_id))}
     return bool(languages) and item.language not in languages
+
+
+def cites_amending_law(item: GoldenItem, so_hieu: str, manifest: Manifest) -> bool:
+    """Câu hỏi có nguồn từ một văn bản sửa đổi văn bản `so_hieu` không (ví dụ luật 76/2025 sửa 59/2020)."""
+    return any(
+        (doc := manifest.get(s.doc_id)) is not None and so_hieu in doc.amends for s in item.gold_sources
+    )
 
 
 @dataclass
@@ -136,12 +174,21 @@ def validate_golden(
             report.answerable += 1
             report.cross_lingual += is_cross_lingual(item, manifest)
         for index, source in enumerate(item.gold_sources):
-            if manifest.get(source.doc_id) is None:
+            doc = manifest.get(source.doc_id)
+            if doc is None:
                 report.errors.append(f"{item.id}: doc_id không có trong manifest: {source.doc_id}")
                 continue
-            pages = [normalize_for_match(p) for p in get_pages(source.doc_id)]
+            raw_pages = get_pages(source.doc_id)
+            pages = [normalize_for_match(p) for p in raw_pages]
             quote = normalize_for_match(source.quote)
             if source.page <= len(pages) and quote in pages[source.page - 1]:
+                amended = amended_article_numbers(doc.amended_articles)
+                article = article_at(raw_pages, source.page, source.quote) if amended else None
+                if article in amended and not cites_amending_law(item, doc.so_hieu, manifest):
+                    report.errors.append(
+                        f"{item.id}: hỏi vào Điều {article} của {source.doc_id}, Điều này đã bị sửa đổi "
+                        f"({', '.join(doc.amended_by)}); thêm nguồn từ luật sửa đổi hoặc đổi câu khác"
+                    )
                 continue
             found = [n for n, text in enumerate(pages, start=1) if quote in text]
             if len(found) == 1:
