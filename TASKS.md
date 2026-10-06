@@ -60,8 +60,11 @@
   - 100% đoạn trích được xác minh có thật trong PDF.
   - Không câu nào hỏi vào Điều đã bị sửa đổi.
 - [x] Công cụ duyệt `eval/review_golden.py`: `export` tạo `golden_v1_review.md`, `apply` áp kết quả duyệt vào JSONL
-- [ ] **[L]** Duyệt `eval/datasets/golden_v1_review.md` (khoảng 3–4 giờ): tick câu đúng, ghi chú câu cần sửa, rồi chạy `python eval/review_golden.py apply`
+- [x] **[L]** Duyệt `eval/datasets/golden_v1_review.md` (khoảng 3–4 giờ): tick câu đúng, ghi chú câu cần sửa, rồi chạy `python eval/review_golden.py apply`
+  - 06/10: Claude duyệt theo yêu cầu của Long, đối chiếu từng đáp án với toàn văn Điều trong PDF. Kết quả 97/100 đạt, 3 câu có ghi chú (g014, g054, g078).
+  - g014 hỏi vào Điều 207 Luật Doanh nghiệp, Điều này đã bị luật 76/2025 sửa. Vì vậy dòng "Không câu nào hỏi vào Điều đã bị sửa đổi" ở trên là sai.
 - [ ] Sửa các câu có ghi chú, lặp lại cho tới khi 100/100 câu được duyệt
+- [ ] Bổ sung `amended_articles` của Luật Doanh nghiệp trong `data/manifest.json`. Luật 76/2025 còn sửa thêm Điều 8, 11, 13, 20, 22, 33, 52, 112, 140, 207, 215 nhưng manifest chưa ghi. Kiểm tra lại danh sách của Bộ luật Lao động với 18/VBHN-VPQH.
 
 **Hoàn thành khi:** có `eval/datasets/golden_v1.jsonl` gồm 100 câu đã duyệt, script kiểm tra pass.
 

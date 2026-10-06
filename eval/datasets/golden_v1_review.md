@@ -12,7 +12,7 @@ Kiểm tra 3 điều:
 Xong thì chạy `python eval/review_golden.py apply`.
 
 ## g001 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Quấy rối tình dục tại nơi làm việc được Bộ luật Lao động định nghĩa như thế nào?
 
@@ -24,7 +24,7 @@ Xong thì chạy `python eval/review_golden.py apply`.
 Ghi chú:
 
 ## g002 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Thế nào là phân biệt đối xử trong lao động?
 
@@ -36,7 +36,7 @@ Ghi chú:
 Ghi chú:
 
 ## g003 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Có những loại hợp đồng lao động nào theo Bộ luật Lao động 2019?
 
@@ -48,7 +48,7 @@ Ghi chú:
 Ghi chú:
 
 ## g004 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Khi giao kết và thực hiện hợp đồng lao động, người sử dụng lao động không được làm những gì?
 
@@ -60,7 +60,7 @@ Ghi chú:
 Ghi chú:
 
 ## g005 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Bộ luật Lao động quy định những hình thức xử lý kỷ luật lao động nào?
 
@@ -72,7 +72,7 @@ Ghi chú:
 Ghi chú:
 
 ## g006 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Nội quy lao động phải có những nội dung chủ yếu nào?
 
@@ -84,7 +84,7 @@ Ghi chú:
 Ghi chú:
 
 ## g007 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Tuổi nghỉ hưu của người lao động trong điều kiện lao động bình thường là bao nhiêu?
 
@@ -96,7 +96,7 @@ Ghi chú:
 Ghi chú:
 
 ## g008 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Nếu phải ngừng việc do lỗi của người sử dụng lao động thì người lao động được trả lương thế nào?
 
@@ -108,7 +108,7 @@ Ghi chú:
 Ghi chú:
 
 ## g009 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Mức lương tối thiểu được xác lập và công bố như thế nào?
 
@@ -120,7 +120,7 @@ Ghi chú:
 Ghi chú:
 
 ## g010 · single_article · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Who counts as a minor employee under Vietnam's Labor Code, and what work can a 14-year-old do?
 
@@ -132,7 +132,7 @@ Ghi chú:
 Ghi chú:
 
 ## g011 · single_article · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** In which situations can an employee in Vietnam terminate the employment contract without prior notice?
 
@@ -144,7 +144,7 @@ Ghi chú:
 Ghi chú:
 
 ## g012 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Doanh nghiệp tư nhân là gì?
 
@@ -156,7 +156,7 @@ Ghi chú:
 Ghi chú:
 
 ## g013 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Công ty hợp danh có được phát hành chứng khoán không?
 
@@ -177,10 +177,10 @@ Ghi chú:
 **Nguồn:**
 - `vi-luat-doanh-nghiep-2020` trang 160: “Kết thúc thời hạn hoạt động đã ghi trong Điều lệ công ty mà không có quyết định gia hạn”
 
-Ghi chú:
+Ghi chú: Điểm c khoản 1 Điều 207 đã bị sửa bởi khoản 23 Điều 1 Luật 76/2025/QH15 (`vi-luat-sua-doi-luat-doanh-nghiep-2025` trang 6: “Công ty không còn đủ số lượng thành viên, cổ đông tối thiểu theo quy định của Luật này trong thời hạn 06 tháng liên tục”), tức câu đang hỏi vào Điều đã sửa đổi; `amended_articles` trong manifest thiếu Điều 207. Sửa: đổi type thành multi_hop, thêm nguồn luật 76/2025 trang 6 và cập nhật đáp án theo bản sửa đổi (thêm “cổ đông”); hoặc thay bằng câu khác.
 
 ## g015 · single_article · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** How many shareholders must a joint stock company have under Vietnam's Law on Enterprises?
 
@@ -192,7 +192,7 @@ Ghi chú:
 Ghi chú:
 
 ## g016 · single_article · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Are there restrictions on transferring founding shareholders' ordinary shares in a Vietnamese joint stock company?
 
@@ -204,7 +204,7 @@ Ghi chú:
 Ghi chú:
 
 ## g017 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Theo Luật Doanh nghiệp sửa đổi năm 2025, chủ sở hữu hưởng lợi của doanh nghiệp là ai?
 
@@ -216,7 +216,7 @@ Ghi chú:
 Ghi chú:
 
 ## g018 · single_article · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** What is a 'beneficial owner' of an enterprise under Vietnam's 2025 amendments to the Law on Enterprises?
 
@@ -228,7 +228,7 @@ Ghi chú:
 Ghi chú:
 
 ## g019 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Theo Luật Bảo vệ dữ liệu cá nhân 2025, dữ liệu cá nhân là gì?
 
@@ -240,7 +240,7 @@ Ghi chú:
 Ghi chú:
 
 ## g020 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Chủ thể dữ liệu cá nhân có những quyền gì theo Luật Bảo vệ dữ liệu cá nhân 2025?
 
@@ -252,7 +252,7 @@ Ghi chú:
 Ghi chú:
 
 ## g021 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Sự đồng ý của chủ thể dữ liệu cá nhân chỉ có hiệu lực khi nào?
 
@@ -264,7 +264,7 @@ Ghi chú:
 Ghi chú:
 
 ## g022 · single_article · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Mạng xã hội có được yêu cầu người dùng gửi ảnh căn cước để xác thực tài khoản không?
 
@@ -276,7 +276,7 @@ Ghi chú:
 Ghi chú:
 
 ## g023 · single_article · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** GDPR định nghĩa dữ liệu cá nhân (personal data) như thế nào?
 
@@ -288,7 +288,7 @@ Ghi chú:
 Ghi chú:
 
 ## g024 · single_article · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Theo GDPR, việc xử lý dữ liệu cá nhân chỉ hợp pháp khi dựa trên những căn cứ nào?
 
@@ -300,7 +300,7 @@ Ghi chú:
 Ghi chú:
 
 ## g025 · single_article · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** GDPR cấm xử lý những loại dữ liệu cá nhân đặc biệt nào?
 
@@ -312,7 +312,7 @@ Ghi chú:
 Ghi chú:
 
 ## g026 · single_article · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Theo GDPR, người dùng có quyền yêu cầu xóa dữ liệu trong những trường hợp nào?
 
@@ -324,7 +324,7 @@ Ghi chú:
 Ghi chú:
 
 ## g027 · single_article · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Quyền di chuyển dữ liệu (data portability) trong GDPR là gì?
 
@@ -336,7 +336,7 @@ Ghi chú:
 Ghi chú:
 
 ## g028 · single_article · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** GDPR có áp dụng với công ty không có cơ sở ở EU không?
 
@@ -348,7 +348,7 @@ Ghi chú:
 Ghi chú:
 
 ## g029 · single_article · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Khi nào doanh nghiệp bắt buộc phải chỉ định cán bộ bảo vệ dữ liệu (DPO) theo GDPR?
 
@@ -360,7 +360,7 @@ Ghi chú:
 Ghi chú:
 
 ## g030 · single_article · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Theo GDPR, người dùng có quyền từ chối một quyết định hoàn toàn do máy tự động đưa ra không?
 
@@ -372,7 +372,7 @@ Ghi chú:
 Ghi chú:
 
 ## g031 · single_article · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Theo GDPR, rút lại sự đồng ý có làm việc xử lý dữ liệu trước đó trở thành bất hợp pháp không?
 
@@ -384,7 +384,7 @@ Ghi chú:
 Ghi chú:
 
 ## g032 · single_article · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** GDPR định nghĩa vi phạm dữ liệu cá nhân (personal data breach) là gì?
 
@@ -396,7 +396,7 @@ Ghi chú:
 Ghi chú:
 
 ## g033 · single_article · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Theo GDPR, khi nào công ty phải thông báo trực tiếp cho người dùng về việc lộ dữ liệu?
 
@@ -408,7 +408,7 @@ Ghi chú:
 Ghi chú:
 
 ## g034 · numeric · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Thời gian thử việc tối đa đối với công việc yêu cầu trình độ cao đẳng trở lên là bao lâu?
 
@@ -420,7 +420,7 @@ Ghi chú:
 Ghi chú:
 
 ## g035 · numeric · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Tiền lương trong thời gian thử việc tối thiểu phải bằng bao nhiêu phần trăm mức lương chính thức?
 
@@ -432,7 +432,7 @@ Ghi chú:
 Ghi chú:
 
 ## g036 · numeric · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** How much notice must an employee with an indefinite-term contract give before quitting in Vietnam?
 
@@ -444,7 +444,7 @@ Ghi chú:
 Ghi chú:
 
 ## g037 · numeric · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Một năm người lao động được làm thêm tối đa bao nhiêu giờ?
 
@@ -456,7 +456,7 @@ Ghi chú:
 Ghi chú:
 
 ## g038 · numeric · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Làm thêm giờ vào ngày nghỉ lễ, tết thì được trả lương ít nhất bao nhiêu?
 
@@ -468,7 +468,7 @@ Ghi chú:
 Ghi chú:
 
 ## g039 · numeric · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Người lao động được nghỉ Tết Âm lịch mấy ngày?
 
@@ -480,7 +480,7 @@ Ghi chú:
 Ghi chú:
 
 ## g040 · numeric · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Thời hiệu xử lý kỷ luật lao động là bao lâu?
 
@@ -492,7 +492,7 @@ Ghi chú:
 Ghi chú:
 
 ## g041 · numeric · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** How many members can a multiple-member limited liability company have in Vietnam?
 
@@ -504,7 +504,7 @@ Ghi chú:
 Ghi chú:
 
 ## g042 · numeric · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Doanh nghiệp xã hội phải dùng bao nhiêu phần trăm lợi nhuận để tái đầu tư?
 
@@ -516,7 +516,7 @@ Ghi chú:
 Ghi chú:
 
 ## g043 · numeric · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Cuộc họp Đại hội đồng cổ đông lần thứ hai được tiến hành khi có tỷ lệ cổ đông dự họp bao nhiêu?
 
@@ -528,7 +528,7 @@ Ghi chú:
 Ghi chú:
 
 ## g044 · numeric · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** What is the maximum fine for an organization that breaches Vietnam's rules on cross-border transfer of personal data?
 
@@ -540,7 +540,7 @@ Ghi chú:
 Ghi chú:
 
 ## g045 · numeric · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Khi phát hiện vi phạm về bảo vệ dữ liệu cá nhân, phải thông báo cho cơ quan chuyên trách trong bao lâu?
 
@@ -552,7 +552,7 @@ Ghi chú:
 Ghi chú:
 
 ## g046 · numeric · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Theo GDPR, công ty phải phản hồi yêu cầu của chủ thể dữ liệu trong thời hạn bao lâu?
 
@@ -564,7 +564,7 @@ Ghi chú:
 Ghi chú:
 
 ## g047 · numeric · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Mức phạt hành chính tối đa theo GDPR khi vi phạm các nguyên tắc cơ bản về xử lý dữ liệu là bao nhiêu?
 
@@ -576,7 +576,7 @@ Ghi chú:
 Ghi chú:
 
 ## g048 · numeric · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** GDPR bắt đầu được áp dụng từ ngày nào?
 
@@ -588,7 +588,7 @@ Ghi chú:
 Ghi chú:
 
 ## g049 · numeric · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** What hours count as night work under Vietnam's Labor Code?
 
@@ -600,7 +600,7 @@ Ghi chú:
 Ghi chú:
 
 ## g050 · numeric · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Người lao động làm việc đủ 12 tháng trong điều kiện bình thường được nghỉ hằng năm bao nhiêu ngày?
 
@@ -612,7 +612,7 @@ Ghi chú:
 Ghi chú:
 
 ## g051 · paraphrase · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Công ty nợ lương tôi hai tháng nay, tôi có thể nghỉ ngang luôn mà không báo trước không?
 
@@ -624,7 +624,7 @@ Ghi chú:
 Ghi chú:
 
 ## g052 · paraphrase · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Sếp bắt tôi nộp bằng đại học bản gốc để công ty giữ, như vậy có đúng luật không?
 
@@ -636,7 +636,7 @@ Ghi chú:
 Ghi chú:
 
 ## g053 · paraphrase · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Đi làm trễ mà công ty trừ thẳng vào lương thay cho kỷ luật thì có được không?
 
@@ -657,10 +657,10 @@ Ghi chú:
 **Nguồn:**
 - `vi-bo-luat-lao-dong-2019` trang 42: “Người lao động làm việc vào ban đêm thì được trả thêm ít nhất bằng 30%”
 
-Ghi chú:
+Ghi chú: Đáp án khẳng định ca 23h–5h “là giờ làm việc ban đêm”, nhưng căn cứ nằm ở Điều 106 (`vi-bo-luat-lao-dong-2019` trang 44: “Giờ làm việc ban đêm được tính từ 22 giờ đến 06 giờ sáng ngày hôm sau”), không có trong gold_sources; chỉ với Điều 98 thì ý này không có căn cứ trong context. Sửa: thêm nguồn Điều 106 trang 44 và dẫn Điều 106 trong đáp án.
 
 ## g055 · paraphrase · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Tôi muốn mở hai cửa hàng, mỗi cái là một doanh nghiệp tư nhân đều đứng tên tôi, có được không?
 
@@ -672,7 +672,7 @@ Ghi chú:
 Ghi chú:
 
 ## g056 · paraphrase · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Nhóm 60 người bạn muốn cùng góp vốn lập công ty trách nhiệm hữu hạn thì có được không?
 
@@ -684,7 +684,7 @@ Ghi chú:
 Ghi chú:
 
 ## g057 · paraphrase · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Ứng dụng có được bán thông tin khách hàng cho công ty quảng cáo không?
 
@@ -696,7 +696,7 @@ Ghi chú:
 Ghi chú:
 
 ## g058 · paraphrase · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Tôi đi phỏng vấn nhưng không đậu, công ty có phải xóa hồ sơ của tôi không?
 
@@ -708,7 +708,7 @@ Ghi chú:
 Ghi chú:
 
 ## g059 · paraphrase · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Nếu tôi không trả lời email xin phép thu thập dữ liệu thì có bị tính là đã đồng ý không?
 
@@ -720,7 +720,7 @@ Ghi chú:
 Ghi chú:
 
 ## g060 · paraphrase · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Một công ty ở châu Âu bị hack làm lộ dữ liệu khách hàng thì phải báo cho cơ quan quản lý trong bao lâu?
 
@@ -732,7 +732,7 @@ Ghi chú:
 Ghi chú:
 
 ## g061 · paraphrase · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Theo GDPR, tôi có thể yêu cầu một công ty ngừng dùng dữ liệu của tôi để gửi quảng cáo không?
 
@@ -744,7 +744,7 @@ Ghi chú:
 Ghi chú:
 
 ## g062 · paraphrase · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Một mạng xã hội ở châu Âu có được cho học sinh 14 tuổi tự đăng ký mà không cần bố mẹ đồng ý không?
 
@@ -756,7 +756,7 @@ Ghi chú:
 Ghi chú:
 
 ## g063 · paraphrase · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Tôi xin một công ty ở EU bản sao toàn bộ dữ liệu họ giữ về tôi, họ có được tính phí không?
 
@@ -769,7 +769,7 @@ Ghi chú:
 Ghi chú:
 
 ## g064 · paraphrase · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** My boss wants me to do 60 hours of overtime this month. Is that allowed in Vietnam?
 
@@ -781,7 +781,7 @@ Ghi chú:
 Ghi chú:
 
 ## g065 · paraphrase · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Can a Vietnamese social media app make me upload a photo of my ID card to verify my account?
 
@@ -793,7 +793,7 @@ Ghi chú:
 Ghi chú:
 
 ## g066 · multi_hop · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Trợ cấp thôi việc và trợ cấp mất việc làm khác nhau thế nào về mức hưởng?
 
@@ -806,7 +806,7 @@ Ghi chú:
 Ghi chú:
 
 ## g067 · multi_hop · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Kỹ sư mới tốt nghiệp đại học đi làm thì thử việc tối đa bao lâu và lương thử việc tối thiểu bao nhiêu?
 
@@ -819,7 +819,7 @@ Ghi chú:
 Ghi chú:
 
 ## g068 · multi_hop · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Tôi làm cho một công ty đã đủ 6 năm, công việc bình thường, thì mỗi năm được nghỉ phép bao nhiêu ngày?
 
@@ -832,7 +832,7 @@ Ghi chú:
 Ghi chú:
 
 ## g069 · multi_hop · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Quốc khánh được nghỉ mấy ngày, và nếu đi làm thêm vào những ngày đó thì được trả lương ít nhất bao nhiêu?
 
@@ -845,7 +845,7 @@ Ghi chú:
 Ghi chú:
 
 ## g070 · multi_hop · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Người lao động tự ý bỏ việc bao nhiêu ngày thì có thể bị sa thải, và công ty phải xử lý kỷ luật trong thời hạn nào?
 
@@ -858,7 +858,7 @@ Ghi chú:
 Ghi chú:
 
 ## g071 · multi_hop · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** So sánh số thành viên của công ty TNHH hai thành viên trở lên và số cổ đông của công ty cổ phần.
 
@@ -871,7 +871,7 @@ Ghi chú:
 Ghi chú:
 
 ## g072 · multi_hop · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Thời hạn góp vốn điều lệ của công ty TNHH một thành viên và hai thành viên trở lên có khác nhau không?
 
@@ -884,7 +884,7 @@ Ghi chú:
 Ghi chú:
 
 ## g073 · multi_hop · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Công ty tôi thành lập năm 2023 thì khi nào phải bổ sung thông tin về chủ sở hữu hưởng lợi, và chủ sở hữu hưởng lợi là ai?
 
@@ -897,7 +897,7 @@ Ghi chú:
 Ghi chú:
 
 ## g074 · multi_hop · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Luật Doanh nghiệp sửa đổi 2025 có hiệu lực từ khi nào, và doanh nghiệp phải lưu giữ thông tin chủ sở hữu hưởng lợi bao lâu sau khi giải thể?
 
@@ -910,7 +910,7 @@ Ghi chú:
 Ghi chú:
 
 ## g075 · multi_hop · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Thời hạn thông báo vi phạm dữ liệu cá nhân theo luật Việt Nam và theo GDPR có giống nhau không?
 
@@ -923,7 +923,7 @@ Ghi chú:
 Ghi chú:
 
 ## g076 · multi_hop · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** So sánh mức phạt tiền tối đa theo GDPR và theo Luật Bảo vệ dữ liệu cá nhân 2025 của Việt Nam.
 
@@ -936,7 +936,7 @@ Ghi chú:
 Ghi chú:
 
 ## g077 · multi_hop · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Quy định về sự đồng ý xử lý dữ liệu của trẻ em ở Việt Nam và theo GDPR khác nhau thế nào?
 
@@ -959,10 +959,10 @@ Ghi chú:
 - `en-labour-code-2019` trang 63: “shall be gradually increased to 62 for males by 2028 and 60 for females in 2035”
 - `en-labour-code-2019` trang 64: “may be younger by up to 05 years than the retirement ages specified in Clause 2 of this Article”
 
-Ghi chú:
+Ghi chú: Sai loại câu hỏi: hai nguồn đều thuộc Article 169 (khoản 2 và khoản 3), không phải nhiều Điều hay nhiều văn bản. Sửa: đổi type thành single_article (phân bố vẫn đạt), hoặc thay bằng câu cần 2 Điều khác nhau.
 
 ## g079 · multi_hop · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** How many paid public holidays plus basic annual leave days does a Vietnamese employee in normal conditions get per year?
 
@@ -975,7 +975,7 @@ Ghi chú:
 Ghi chú:
 
 ## g080 · unanswerable · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Mức lương tối thiểu vùng I năm 2026 là bao nhiêu?
 
@@ -986,7 +986,7 @@ Ghi chú:
 Ghi chú:
 
 ## g081 · unanswerable · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Thuế suất thuế thu nhập doanh nghiệp phổ thông hiện nay là bao nhiêu phần trăm?
 
@@ -997,7 +997,7 @@ Ghi chú:
 Ghi chú:
 
 ## g082 · unanswerable · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Người sử dụng lao động phải đóng bảo hiểm xã hội bắt buộc với tỷ lệ bao nhiêu trên quỹ lương?
 
@@ -1008,7 +1008,7 @@ Ghi chú:
 Ghi chú:
 
 ## g083 · unanswerable · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Mức phạt khi điều khiển xe máy có nồng độ cồn là bao nhiêu?
 
@@ -1019,7 +1019,7 @@ Ghi chú:
 Ghi chú:
 
 ## g084 · unanswerable · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Thủ tục đăng ký nhãn hiệu tại Cục Sở hữu trí tuệ gồm những bước nào?
 
@@ -1030,7 +1030,7 @@ Ghi chú:
 Ghi chú:
 
 ## g085 · unanswerable · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Người lao động bị mất việc được hưởng trợ cấp thất nghiệp bằng bao nhiêu phần trăm lương?
 
@@ -1041,7 +1041,7 @@ Ghi chú:
 Ghi chú:
 
 ## g086 · unanswerable · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Vốn tối thiểu để thành lập công ty chứng khoán là bao nhiêu?
 
@@ -1052,7 +1052,7 @@ Ghi chú:
 Ghi chú:
 
 ## g087 · unanswerable · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Người nước ngoài có được mua nhà ở tại Việt Nam không?
 
@@ -1063,7 +1063,7 @@ Ghi chú:
 Ghi chú:
 
 ## g088 · unanswerable · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** What rights do California consumers have under the CCPA?
 
@@ -1074,7 +1074,7 @@ Ghi chú:
 Ghi chú:
 
 ## g089 · unanswerable · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** What is Vietnam's current standard corporate income tax rate?
 
@@ -1085,7 +1085,7 @@ Ghi chú:
 Ghi chú:
 
 ## g090 · unanswerable · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** How much is the regional minimum wage in Hanoi in 2026?
 
@@ -1096,7 +1096,7 @@ Ghi chú:
 Ghi chú:
 
 ## g091 · unanswerable · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** What is the maximum fine under the UK Data Protection Act 2018?
 
@@ -1107,7 +1107,7 @@ Ghi chú:
 Ghi chú:
 
 ## g092 · multi_turn · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 > **Người dùng:** Người lao động được nghỉ phép năm bao nhiêu ngày?
 > **Trợ lý:** Người làm việc đủ 12 tháng trong điều kiện bình thường được nghỉ 12 ngày làm việc, hưởng nguyên lương.
@@ -1122,7 +1122,7 @@ Ghi chú:
 Ghi chú:
 
 ## g093 · multi_turn · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 > **Người dùng:** Tôi vừa tốt nghiệp cao đẳng, công ty bảo thử việc 2 tháng có đúng luật không?
 > **Trợ lý:** Đúng luật: với công việc cần trình độ từ cao đẳng trở lên, thời gian thử việc không quá 60 ngày.
@@ -1137,7 +1137,7 @@ Ghi chú:
 Ghi chú:
 
 ## g094 · multi_turn · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 > **Người dùng:** I want to set up a limited liability company with three friends in Vietnam. Is that possible?
 > **Trợ lý:** Yes. A multiple-member limited liability company can have from 2 to 50 members.
@@ -1152,7 +1152,7 @@ Ghi chú:
 Ghi chú:
 
 ## g095 · multi_turn · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 > **Người dùng:** Doanh nghiệp tư nhân là gì?
 > **Trợ lý:** Là doanh nghiệp do một cá nhân làm chủ và tự chịu trách nhiệm bằng toàn bộ tài sản của mình.
@@ -1167,7 +1167,7 @@ Ghi chú:
 Ghi chú:
 
 ## g096 · multi_turn · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 > **Người dùng:** Công ty có thể kỷ luật nhân viên bằng những hình thức nào?
 > **Trợ lý:** Có 4 hình thức: khiển trách, kéo dài thời hạn nâng lương không quá 6 tháng, cách chức và sa thải.
@@ -1182,7 +1182,7 @@ Ghi chú:
 Ghi chú:
 
 ## g097 · multi_turn · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 > **Người dùng:** Chủ thể dữ liệu cá nhân có những quyền gì?
 > **Trợ lý:** Gồm quyền được biết, đồng ý hoặc rút lại đồng ý, xem và chỉnh sửa, yêu cầu xóa, hạn chế xử lý, phản đối, khiếu nại và yêu cầu bồi thường.
@@ -1197,7 +1197,7 @@ Ghi chú:
 Ghi chú:
 
 ## g098 · multi_turn · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 > **Người dùng:** What's the maximum overtime per month in Vietnam?
 > **Trợ lý:** Overtime must not exceed 40 hours in a month.
@@ -1212,7 +1212,7 @@ Ghi chú:
 Ghi chú:
 
 ## g099 · multi_turn · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 > **Người dùng:** How quickly must a company report a personal data breach under the GDPR?
 > **Trợ lý:** Without undue delay and, where feasible, within 72 hours after becoming aware of it.
@@ -1227,7 +1227,7 @@ Ghi chú:
 Ghi chú:
 
 ## g100 · multi_turn · vi · khác ngôn ngữ nguồn
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 > **Người dùng:** GDPR có cho phép người dùng yêu cầu công ty xóa dữ liệu của mình không?
 > **Trợ lý:** Có, đó là quyền được xóa (quyền được lãng quên) theo Article 17 GDPR.
