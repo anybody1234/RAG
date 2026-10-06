@@ -72,12 +72,14 @@ async def test_cache_is_keyed_by_model_and_dimensions(tmp_path):
 
 
 @pytest.mark.asyncio
-async def test_embed_query_never_uses_cache(tmp_path):
+async def test_embed_queries_never_uses_cache_and_sends_one_request(tmp_path):
     cache = EmbeddingCache(tmp_path / "cache.sqlite")
     embedder, fake = make_embedder(cache)
-    await embedder.embed_query("câu hỏi")
-    await embedder.embed_query("câu hỏi")
-    assert len(fake.calls) == 2
-    with pytest.raises(ValueError):
-        await embedder.embed_query("  ")
+    await embedder.embed_queries(["câu hỏi"])
+    vectors, usage = await embedder.embed_queries(["câu hỏi", "the question"])
+    assert fake.calls == [["câu hỏi"], ["câu hỏi", "the question"]]
+    assert len(vectors) == 2 and (usage.requests, usage.cached) == (1, 0)
+    for bad in ([], ["  "], ["ok", ""]):
+        with pytest.raises(ValueError):
+            await embedder.embed_queries(bad)
     cache.close()

@@ -1,9 +1,9 @@
 import tomllib
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from app.core.config import REPO_ROOT
 
@@ -13,61 +13,87 @@ ReasoningEffort = Literal["none", "low", "medium", "high", "xhigh", "max"]
 RetrievalMode = Literal["dense", "sparse", "hybrid"]
 
 
-class ChunkingConfig(BaseModel):
+class _Section(BaseModel):
+    # Sai tên khoá (trong file hoặc trong --set) thì báo lỗi thay vì lặng lẽ bỏ qua.
+    model_config = ConfigDict(extra="forbid")
+
+
+class ChunkingConfig(_Section):
     max_tokens: int
     overlap_ratio: float
 
 
-class EmbeddingConfig(BaseModel):
+class EmbeddingConfig(_Section):
     model: str
     dimensions: int
 
 
-class SparseConfig(BaseModel):
+class SparseConfig(_Section):
     k1: float
     b: float
     avg_doc_len: float
 
 
-class RetrievalConfig(BaseModel):
+class QueryConfig(_Section):
+    model: str
+    reasoning_effort: ReasoningEffort
+    prompt_version: str
+    rewrite: bool
+    translate: bool
+    translation_weight: float
+
+
+class RetrievalConfig(_Section):
     mode: RetrievalMode
     prefetch_limit: int
     rrf_k: int
+    dense_weight: float
+    sparse_weight: float
     top_k: int
     reranker: Literal["none", "llm"]
 
 
-class IndexConfig(BaseModel):
+class RerankConfig(_Section):
+    model: str
+    reasoning_effort: ReasoningEffort
+    prompt_version: str
+    candidates: int
+    max_chunk_tokens: int
+
+
+class IndexConfig(_Section):
     collection_prefix: str
+    embed_title: bool
 
 
-class GenerationConfig(BaseModel):
+class GenerationConfig(_Section):
     answer_model: str
     answer_reasoning_effort: ReasoningEffort
-    rewrite_model: str
     prompt_version: str
 
 
-class EvalConfig(BaseModel):
+class EvalConfig(_Section):
     judge_model: str
     judge_reasoning_effort: ReasoningEffort
 
 
-class ModelPrice(BaseModel):
+class ModelPrice(_Section):
     """USD cho 1M token."""
 
     input: float
     output: float = 0.0
 
 
-class RagConfig(BaseModel):
+class RagConfig(_Section):
     """Toàn bộ siêu tham số RAG. `config_version` được ghi vào mọi trace và mọi kết quả eval."""
 
     config_version: str
     chunking: ChunkingConfig
     embedding: EmbeddingConfig
     sparse: SparseConfig
+    query: QueryConfig
     retrieval: RetrievalConfig
+    rerank: RerankConfig
     index: IndexConfig
     generation: GenerationConfig
     eval: EvalConfig
@@ -78,15 +104,50 @@ class RagConfig(BaseModel):
         """Model và số chiều nằm trong tên collection: đổi model embedding thì index sang collection mới."""
         return f"{self.index.collection_prefix}_{self.embedding.model}_{self.embedding.dimensions}"
 
+    def index_signature(self) -> dict[str, Any]:
+        """Các tham số quyết định nội dung index. Hai config có cùng chữ ký thì dùng chung được một collection."""
+        return {
+            "chunking": self.chunking.model_dump(),
+            "embedding": self.embedding.model_dump(),
+            "sparse": self.sparse.model_dump(),
+            "embed_title": self.index.embed_title,
+        }
+
     def price(self, model: str) -> ModelPrice:
         if model not in self.prices:
             raise KeyError(f"chưa có giá của {model} trong [prices] của config/rag.toml")
         return self.prices[model]
 
 
-def load_rag_config(path: Path = RAG_CONFIG_PATH) -> RagConfig:
+def apply_overrides(data: dict[str, Any], overrides: list[str]) -> None:
+    """Ghi đè giá trị theo dạng "retrieval.rrf_k=20". Giá trị đọc theo cú pháp TOML, không hợp lệ thì là chuỗi."""
+    for override in overrides:
+        key, sep, raw = override.partition("=")
+        if not sep or not key:
+            raise ValueError(f"override phải có dạng khoá=giá_trị: {override!r}")
+        try:
+            value = tomllib.loads(f"v = {raw}")["v"]
+        except tomllib.TOMLDecodeError:
+            value = raw
+        *parents, last = key.strip().split(".")
+        node = data
+        for part in parents:
+            node = node.setdefault(part, {})
+        node[last] = value
+
+
+def load_rag_config(path: Path = RAG_CONFIG_PATH, overrides: list[str] | None = None) -> RagConfig:
+    """Đọc config. Thí nghiệm ghi đè giá trị bằng `overrides` thì phải đặt `config_version` riêng, để kết quả
+    eval không bị lưu nhầm dưới version của config gốc."""
     with path.open("rb") as f:
-        return RagConfig.model_validate(tomllib.load(f))
+        data = tomllib.load(f)
+    if overrides:
+        base_version = data["config_version"]
+        apply_overrides(data, overrides)
+        changed = [o for o in overrides if not o.startswith(("config_version=", "prices."))]
+        if changed and data["config_version"] == base_version:
+            raise ValueError(f"thí nghiệm đổi {changed} nên phải đặt config_version mới (--set config_version=...)")
+    return RagConfig.model_validate(data)
 
 
 @lru_cache

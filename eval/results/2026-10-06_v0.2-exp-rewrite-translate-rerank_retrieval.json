@@ -1,0 +1,5747 @@
+{
+ "kind": "retrieval",
+ "run_at": "2026-10-06T21:31:26+07:00",
+ "config_version": "v0.2-exp-rewrite-translate-rerank",
+ "overrides": [
+  "config_version=v0.2-exp-rewrite-translate-rerank",
+  "query.rewrite=true",
+  "query.translate=true",
+  "retrieval.reranker=llm"
+ ],
+ "git": {
+  "commit": "224cad6",
+  "dirty": true
+ },
+ "golden": {
+  "path": "eval/datasets/golden_v1.jsonl",
+  "questions": 100,
+  "scored": 88,
+  "gold_sources": 106
+ },
+ "index": {
+  "collection": "chunks_text-embedding-3-small_1536",
+  "user_id": "system",
+  "chunks": 1282,
+  "gold_sources_in_index": 106
+ },
+ "config": {
+  "config_version": "v0.2-exp-rewrite-translate-rerank",
+  "chunking": {
+   "max_tokens": 800,
+   "overlap_ratio": 0.1
+  },
+  "embedding": {
+   "model": "text-embedding-3-small",
+   "dimensions": 1536
+  },
+  "sparse": {
+   "k1": 1.2,
+   "b": 0.75,
+   "avg_doc_len": 215.0
+  },
+  "query": {
+   "model": "gpt-6-luna",
+   "reasoning_effort": "none",
+   "prompt_version": "query-v1",
+   "rewrite": true,
+   "translate": true,
+   "translation_weight": 1.0
+  },
+  "retrieval": {
+   "mode": "hybrid",
+   "prefetch_limit": 50,
+   "rrf_k": 60,
+   "dense_weight": 1.0,
+   "sparse_weight": 1.0,
+   "top_k": 5,
+   "reranker": "llm"
+  },
+  "rerank": {
+   "model": "gpt-6-luna",
+   "reasoning_effort": "none",
+   "prompt_version": "rerank-v1",
+   "candidates": 50,
+   "max_chunk_tokens": 200
+  },
+  "index": {
+   "collection_prefix": "chunks"
+  },
+  "generation": {
+   "answer_model": "gpt-6.1-sol",
+   "answer_reasoning_effort": "low",
+   "prompt_version": "answer-v1"
+  },
+  "eval": {
+   "judge_model": "gpt-6.1-sol",
+   "judge_reasoning_effort": "high"
+  }
+ },
+ "usage": {
+  "embedding": {
+   "requests": 100,
+   "tokens": 5783,
+   "cost_usd": 0.00011566000000000004,
+   "cached": 0
+  },
+  "llm": {
+   "calls": 200,
+   "input_tokens": 845608,
+   "output_tokens": 5035,
+   "cost_usd": 0.08707830000000001
+  }
+ },
+ "notes": [
+  "Câu unanswerable không tính metric, vẫn tính latency.",
+  "retrieval = embed + sparse + search + rerank; total = rewrite + retrieval.",
+  "Latency đo tuần tự từng câu, không tải đồng thời; các chế độ dùng chung một lần xử lý câu hỏi và embed."
+ ],
+ "modes": {
+  "hybrid": {
+   "metrics": {
+    "all": {
+     "all": {
+      "n": 88,
+      "hit@5": 0.9659,
+      "recall@5": 0.9489,
+      "mrr@5": 0.9318,
+      "ndcg@5": 0.9261,
+      "hit@50": 0.9773,
+      "recall@50": 0.9602,
+      "mrr@50": 0.9328,
+      "ndcg@50": 0.9291
+     }
+    },
+    "type": {
+     "multi_hop": {
+      "n": 14,
+      "hit@5": 1.0,
+      "recall@5": 0.8929,
+      "mrr@5": 0.9464,
+      "ndcg@5": 0.875,
+      "hit@50": 1.0,
+      "recall@50": 0.8929,
+      "mrr@50": 0.9464,
+      "ndcg@50": 0.875
+     },
+     "multi_turn": {
+      "n": 9,
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     },
+     "numeric": {
+      "n": 17,
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.9706,
+      "ndcg@5": 0.9783,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.9706,
+      "ndcg@50": 0.9783
+     },
+     "paraphrase": {
+      "n": 15,
+      "hit@5": 0.8667,
+      "recall@5": 0.8667,
+      "mrr@5": 0.8333,
+      "ndcg@5": 0.8367,
+      "hit@50": 0.8667,
+      "recall@50": 0.8667,
+      "mrr@50": 0.8333,
+      "ndcg@50": 0.8367
+     },
+     "single_article": {
+      "n": 33,
+      "hit@5": 0.9697,
+      "recall@5": 0.9697,
+      "mrr@5": 0.9318,
+      "ndcg@5": 0.9413,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.9343,
+      "ndcg@50": 0.9494
+     }
+    },
+    "language": {
+     "en": {
+      "n": 16,
+      "hit@5": 0.9375,
+      "recall@5": 0.9375,
+      "mrr@5": 0.9375,
+      "ndcg@5": 0.9375,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.9427,
+      "ndcg@50": 0.9544
+     },
+     "vi": {
+      "n": 72,
+      "hit@5": 0.9722,
+      "recall@5": 0.9514,
+      "mrr@5": 0.9306,
+      "ndcg@5": 0.9235,
+      "hit@50": 0.9722,
+      "recall@50": 0.9514,
+      "mrr@50": 0.9306,
+      "ndcg@50": 0.9235
+     }
+    },
+    "cross_lingual": {
+     "cross_lingual": {
+      "n": 19,
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.9605,
+      "ndcg@5": 0.97,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.9605,
+      "ndcg@50": 0.97
+     },
+     "same_language": {
+      "n": 69,
+      "hit@5": 0.9565,
+      "recall@5": 0.9348,
+      "mrr@5": 0.9239,
+      "ndcg@5": 0.9139,
+      "hit@50": 0.971,
+      "recall@50": 0.9493,
+      "mrr@50": 0.9251,
+      "ndcg@50": 0.9179
+     }
+    }
+   },
+   "latency_ms": {
+    "rewrite": {
+     "p50": 1986.8,
+     "p95": 3997.6,
+     "mean": 2220.8,
+     "max": 6414.3
+    },
+    "embed": {
+     "p50": 250.9,
+     "p95": 537.2,
+     "mean": 294.0,
+     "max": 925.1
+    },
+    "sparse": {
+     "p50": 0.3,
+     "p95": 0.4,
+     "mean": 0.3,
+     "max": 0.5
+    },
+    "search": {
+     "p50": 18.7,
+     "p95": 25.9,
+     "mean": 19.9,
+     "max": 35.7
+    },
+    "rerank": {
+     "p50": 1730.7,
+     "p95": 3425.1,
+     "mean": 2126.3,
+     "max": 9409.9
+    },
+    "retrieval": {
+     "p50": 2042.8,
+     "p95": 3756.9,
+     "mean": 2440.5,
+     "max": 9655.7
+    },
+    "total": {
+     "p50": 4008.8,
+     "p95": 7901.2,
+     "mean": 4661.3,
+     "max": 12765.1
+    }
+   },
+   "cost_usd": {
+    "per_question_mean": 0.0008719,
+    "total": 0.08719
+   },
+   "errors": {
+    "query": 0,
+    "rerank": 0
+   }
+  }
+ },
+ "questions": [
+  {
+   "id": "g001",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "How is sexual harassment in the workplace defined under the Labor Code?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1625.2,
+      "embed": 228.89,
+      "sparse": 0.22,
+      "search": 18.15,
+      "rerank": 1637.03,
+      "retrieval": 1884.28,
+      "total": 3509.48
+     },
+     "cost_usd": 0.0008442,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0004",
+       0.0331
+      ],
+      [
+       "en-labour-code-2019:0003",
+       0.0323
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0011",
+       0.0315
+      ],
+      [
+       "en-labour-code-2019:0008",
+       0.0448
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0043",
+       0.0313
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g002",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What constitutes discrimination in employment?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1965.48,
+      "embed": 226.62,
+      "sparse": 0.15,
+      "search": 19.85,
+      "rerank": 3326.64,
+      "retrieval": 3573.26,
+      "total": 5538.74
+     },
+     "cost_usd": 0.0008231,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0004",
+       0.0427
+      ],
+      [
+       "en-labour-code-2019:0003",
+       0.0331
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0011",
+       0.0328
+      ],
+      [
+       "en-labour-code-2019:0008",
+       0.032
+      ],
+      [
+       "en-labour-code-2019:0005",
+       0.029
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g003",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What types of employment contracts are there under the 2019 Labor Code?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1921.62,
+      "embed": 312.96,
+      "sparse": 0.21,
+      "search": 18.05,
+      "rerank": 1525.84,
+      "retrieval": 1857.07,
+      "total": 3778.69
+     },
+     "cost_usd": 0.0008308,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0024",
+       0.0331
+      ],
+      [
+       "en-labour-code-2019:0020",
+       0.0328
+      ],
+      [
+       "en-labour-code-2019:0039",
+       0.0318
+      ],
+      [
+       "en-labour-code-2019:0049",
+       0.0313
+      ],
+      [
+       "en-labour-code-2019:0037",
+       0.031
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g004",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What is an employer prohibited from doing when entering into and performing an employment contract?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1480.55,
+      "embed": 189.31,
+      "sparse": 0.33,
+      "search": 24.68,
+      "rerank": 1807.7,
+      "retrieval": 2022.01,
+      "total": 3502.56
+     },
+     "cost_usd": 0.0007919,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0020",
+       0.0331
+      ],
+      [
+       "en-labour-code-2019:0017",
+       0.0304
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0051",
+       0.0323
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0037",
+       0.0296
+      ],
+      [
+       "en-labour-code-2019:0013",
+       0.0296
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g005",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What forms of disciplinary action does the Labor Code provide for?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 3125.23,
+      "embed": 271.23,
+      "sparse": 0.35,
+      "search": 25.9,
+      "rerank": 2764.52,
+      "retrieval": 3061.99,
+      "total": 6187.22
+     },
+     "cost_usd": 0.0008127,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0139",
+       0.0325
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0140",
+       0.0303
+      ],
+      [
+       "en-labour-code-2019:0126",
+       0.0275
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0141",
+       0.0243
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0137",
+       0.0333
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g006",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What are the principal contents that must be included in the internal labour regulations?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 3045.05,
+      "embed": 423.53,
+      "sparse": 0.19,
+      "search": 17.76,
+      "rerank": 3227.61,
+      "retrieval": 3669.09,
+      "total": 6714.14
+     },
+     "cost_usd": 0.0008202,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0133",
+       0.0325
+      ],
+      [
+       "en-labour-code-2019:0118",
+       0.0333
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0025",
+       0.0328
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0190",
+       0.032
+      ],
+      [
+       "en-labour-code-2019:0119",
+       0.0315
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g007",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What is the retirement age for employees working under normal working conditions?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1986.13,
+      "embed": 328.37,
+      "sparse": 0.28,
+      "search": 18.79,
+      "rerank": 2684.92,
+      "retrieval": 3032.36,
+      "total": 5018.49
+     },
+     "cost_usd": 0.0008564,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0185",
+       0.0436
+      ],
+      [
+       "en-labour-code-2019:0169",
+       0.0333
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0244",
+       0.0323
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0243",
+       0.032
+      ],
+      [
+       "en-labour-code-2019:0219",
+       0.032
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g008",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "If work must be suspended due to the employer’s fault, how is the employee paid?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1643.7,
+      "embed": 462.09,
+      "sparse": 0.24,
+      "search": 18.56,
+      "rerank": 1553.05,
+      "retrieval": 2033.94,
+      "total": 3677.64
+     },
+     "cost_usd": 0.0008542,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0113",
+       0.0444
+      ],
+      [
+       "en-labour-code-2019:0099",
+       0.0333
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0111",
+       0.0416
+      ],
+      [
+       "en-labour-code-2019:0128",
+       0.0325
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0231",
+       0.0313
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g009",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "How is the minimum wage determined and announced?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1334.4,
+      "embed": 232.02,
+      "sparse": 0.29,
+      "search": 16.85,
+      "rerank": 1675.51,
+      "retrieval": 1924.67,
+      "total": 3259.07
+     },
+     "cost_usd": 0.0007457,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0105",
+       0.049
+      ],
+      [
+       "en-labour-code-2019:0091",
+       0.0413
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0106",
+       0.0252
+      ],
+      [
+       "en-labour-code-2019:0092",
+       0.0394
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0104",
+       0.0422
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g010",
+   "type": "single_article",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Ai được coi là người lao động chưa thành niên theo Bộ luật Lao động Việt Nam, và người 14 tuổi được làm những công việc gì?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1870.7,
+      "embed": 506.79,
+      "sparse": 0.31,
+      "search": 18.97,
+      "rerank": 1857.72,
+      "retrieval": 2383.8,
+      "total": 4254.5
+     },
+     "cost_usd": 0.0008349,
+     "top": [
+      [
+       "en-labour-code-2019:0143",
+       0.0333
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0159",
+       0.0462
+      ],
+      [
+       "en-labour-code-2019:0145",
+       0.0306
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0161",
+       0.0429
+      ],
+      [
+       "en-labour-code-2019:0146",
+       0.0274
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g011",
+   "type": "single_article",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Trong những trường hợp nào người lao động tại Việt Nam có thể đơn phương chấm dứt hợp đồng lao động mà không cần báo trước?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1616.35,
+      "embed": 227.01,
+      "sparse": 0.27,
+      "search": 17.85,
+      "rerank": 1627.27,
+      "retrieval": 1872.4,
+      "total": 3488.76
+     },
+     "cost_usd": 0.0008146,
+     "top": [
+      [
+       "en-labour-code-2019:0035",
+       0.0328
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0043",
+       0.0331
+      ],
+      [
+       "en-labour-code-2019:0027",
+       0.0291
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0042",
+       0.0406
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0048",
+       0.0404
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g012",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What is a sole proprietorship?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1206.65,
+      "embed": 194.62,
+      "sparse": 0.14,
+      "search": 16.47,
+      "rerank": 1860.73,
+      "retrieval": 2071.95,
+      "total": 3278.6
+     },
+     "cost_usd": 0.0007401,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0272",
+       0.0467
+      ],
+      [
+       "en-law-on-enterprises-2020:0193",
+       0.0333
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0274",
+       0.0434
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0275",
+       0.0414
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0276",
+       0.0413
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g013",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "May a partnership issue securities?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1441.43,
+      "embed": 229.73,
+      "sparse": 0.16,
+      "search": 17.88,
+      "rerank": 1152.23,
+      "retrieval": 1400.01,
+      "total": 2841.44
+     },
+     "cost_usd": 0.0008685,
+     "top": [
+      [
+       "en-law-on-enterprises-2020:0182",
+       0.0333
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0256",
+       0.0333
+      ],
+      [
+       "en-law-on-enterprises-2020:0191",
+       0.032
+      ],
+      [
+       "en-law-on-enterprises-2020:0184",
+       0.0313
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0180",
+       0.0308
+      ]
+     ],
+     "source_ranks": [
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.5,
+      "ndcg@5": 0.6309297535714575,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.5,
+      "ndcg@50": 0.6309297535714575
+     }
+    }
+   }
+  },
+  {
+   "id": "g014",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "Under current regulations, in what cases is an enterprise dissolved?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1913.04,
+      "embed": 226.33,
+      "sparse": 0.3,
+      "search": 35.67,
+      "rerank": 1643.38,
+      "retrieval": 1905.68,
+      "total": 3818.72
+     },
+     "cost_usd": 0.0008672,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0297",
+       0.0333
+      ],
+      [
+       "en-law-on-enterprises-2020:0212",
+       0.0333
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0306",
+       0.0259
+      ],
+      [
+       "en-law-on-enterprises-2020:0217",
+       0.031
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0305",
+       0.0318
+      ]
+     ],
+     "source_ranks": [
+      1,
+      null
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 0.5,
+      "mrr@5": 1.0,
+      "ndcg@5": 0.6131471927654584,
+      "hit@50": 1.0,
+      "recall@50": 0.5,
+      "mrr@50": 1.0,
+      "ndcg@50": 0.6131471927654584
+     }
+    }
+   }
+  },
+  {
+   "id": "g015",
+   "type": "single_article",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Theo Luật Doanh nghiệp Việt Nam, công ty cổ phần phải có ít nhất bao nhiêu cổ đông?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1948.61,
+      "embed": 251.27,
+      "sparse": 0.18,
+      "search": 19.36,
+      "rerank": 1210.86,
+      "retrieval": 1481.67,
+      "total": 3430.28
+     },
+     "cost_usd": 0.0009126,
+     "top": [
+      [
+       "en-law-on-enterprises-2020:0113",
+       0.0331
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0156",
+       0.0288
+      ],
+      [
+       "en-law-on-enterprises-2020:0123",
+       0.0325
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0170",
+       0.031
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0004",
+       0.0315
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g016",
+   "type": "single_article",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Có hạn chế nào đối với việc chuyển nhượng cổ phần phổ thông của cổ đông sáng lập trong công ty cổ phần Việt Nam không?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1443.68,
+      "embed": 233.29,
+      "sparse": 0.4,
+      "search": 23.63,
+      "rerank": 1588.63,
+      "retrieval": 1845.95,
+      "total": 3289.63
+     },
+     "cost_usd": 0.0008955,
+     "top": [
+      [
+       "en-law-on-enterprises-2020:0123",
+       0.0333
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0170",
+       0.0333
+      ],
+      [
+       "en-law-on-enterprises-2020:0130",
+       0.029
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0178",
+       0.0318
+      ],
+      [
+       "en-law-on-enterprises-2020:0113",
+       0.029
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g017",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "Under the 2025 amended Law on Enterprises, who is the beneficial owner of an enterprise?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2339.66,
+      "embed": 247.32,
+      "sparse": 0.33,
+      "search": 23.16,
+      "rerank": 1421.83,
+      "retrieval": 1692.63,
+      "total": 4032.3
+     },
+     "cost_usd": 0.0009056,
+     "top": [
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0002",
+       0.0325
+      ],
+      [
+       "en-law-on-enterprises-2020:0222",
+       0.0402
+      ],
+      [
+       "en-law-amending-enterprises-2025:0002",
+       0.0333
+      ],
+      [
+       "en-law-amending-enterprises-2025:0001",
+       0.0328
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0013",
+       0.0325
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g018",
+   "type": "single_article",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "“Chủ sở hữu hưởng lợi” của doanh nghiệp theo các sửa đổi năm 2025 đối với Luật Doanh nghiệp của Việt Nam là gì?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2300.75,
+      "embed": 233.98,
+      "sparse": 0.42,
+      "search": 23.89,
+      "rerank": 1455.71,
+      "retrieval": 1713.99,
+      "total": 4014.74
+     },
+     "cost_usd": 0.000926,
+     "top": [
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0002",
+       0.0447
+      ],
+      [
+       "en-law-amending-enterprises-2025:0005",
+       0.0439
+      ],
+      [
+       "en-law-amending-enterprises-2025:0000",
+       0.0428
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0003",
+       0.0407
+      ],
+      [
+       "en-law-on-enterprises-2020:0222",
+       0.0402
+      ]
+     ],
+     "source_ranks": [
+      12
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.08333333333333333,
+      "ndcg@50": 0.27023815442731974
+     }
+    }
+   }
+  },
+  {
+   "id": "g019",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "Under the 2025 Law on Personal Data Protection, what is personal data?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2404.01,
+      "embed": 242.86,
+      "sparse": 0.22,
+      "search": 17.92,
+      "rerank": 2237.52,
+      "retrieval": 2498.52,
+      "total": 4902.53
+     },
+     "cost_usd": 0.0008611,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0002",
+       0.0277
+      ],
+      [
+       "en-personal-data-protection-law-2025:0002",
+       0.0304
+      ],
+      [
+       "en-personal-data-protection-law-2025:0003",
+       0.0315
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0007",
+       0.0308
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0004",
+       0.0299
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g020",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What rights does a personal data subject have under the 2025 Law on Personal Data Protection?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 3022.0,
+      "embed": 535.72,
+      "sparse": 0.25,
+      "search": 18.21,
+      "rerank": 8471.35,
+      "retrieval": 9025.53,
+      "total": 12047.53
+     },
+     "cost_usd": 0.0008955,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005",
+       0.0301
+      ],
+      [
+       "en-personal-data-protection-law-2025:0004",
+       0.0331
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0016",
+       0.0235
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+       0.0237
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0035",
+       0.0313
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g021",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "When is the consent of the personal data subject valid?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2181.06,
+      "embed": 316.88,
+      "sparse": 0.17,
+      "search": 17.01,
+      "rerank": 1468.99,
+      "retrieval": 1803.06,
+      "total": 3984.12
+     },
+     "cost_usd": 0.0009418,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012",
+       0.0333
+      ],
+      [
+       "en-personal-data-protection-law-2025:0009",
+       0.0333
+      ],
+      [
+       "en-personal-data-protection-law-2025:0019",
+       0.032
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+       0.032
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0023",
+       0.0317
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g022",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "Are social networks allowed to require users to submit an image of their identity card to verify their accounts?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2261.03,
+      "embed": 235.27,
+      "sparse": 0.38,
+      "search": 26.18,
+      "rerank": 1196.27,
+      "retrieval": 1458.11,
+      "total": 3719.14
+     },
+     "cost_usd": 0.0009404,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0038",
+       0.047
+      ],
+      [
+       "en-personal-data-protection-law-2025:0029",
+       0.0495
+      ],
+      [
+       "en-gdpr-2016:0011",
+       0.0295
+      ],
+      [
+       "en-gdpr-2016:0069",
+       0.0285
+      ],
+      [
+       "en-gdpr-2016:0015",
+       0.0284
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g023",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "How does the GDPR define personal data?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1843.47,
+      "embed": 246.2,
+      "sparse": 0.17,
+      "search": 18.66,
+      "rerank": 2177.87,
+      "retrieval": 2442.9,
+      "total": 4286.37
+     },
+     "cost_usd": 0.0009254,
+     "top": [
+      [
+       "en-gdpr-2016:0044",
+       0.0353
+      ],
+      [
+       "en-gdpr-2016:0005",
+       0.0301
+      ],
+      [
+       "en-gdpr-2016:0000",
+       0.0428
+      ],
+      [
+       "en-personal-data-protection-law-2025:0002",
+       0.0385
+      ],
+      [
+       "en-personal-data-protection-law-2025:0003",
+       0.0322
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g024",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "Under the GDPR, on what legal bases may personal data be processed lawfully?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1989.98,
+      "embed": 241.25,
+      "sparse": 0.18,
+      "search": 16.7,
+      "rerank": 1681.0,
+      "retrieval": 1939.12,
+      "total": 3929.11
+     },
+     "cost_usd": 0.0009546,
+     "top": [
+      [
+       "en-gdpr-2016:0048",
+       0.0283
+      ],
+      [
+       "en-gdpr-2016:0009",
+       0.027
+      ],
+      [
+       "en-gdpr-2016:0010",
+       0.0268
+      ],
+      [
+       "en-gdpr-2016:0011",
+       0.0311
+      ],
+      [
+       "en-gdpr-2016:0047",
+       0.0325
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g025",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "Which special categories of personal data does the GDPR prohibit processing?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1939.84,
+      "embed": 230.94,
+      "sparse": 0.21,
+      "search": 18.61,
+      "rerank": 1828.37,
+      "retrieval": 2078.12,
+      "total": 4017.96
+     },
+     "cost_usd": 0.0009194,
+     "top": [
+      [
+       "en-gdpr-2016:0051",
+       0.0402
+      ],
+      [
+       "en-gdpr-2016:0012",
+       0.0446
+      ],
+      [
+       "en-gdpr-2016:0052",
+       0.0425
+      ],
+      [
+       "en-gdpr-2016:0011",
+       0.0408
+      ],
+      [
+       "en-gdpr-2016:0044",
+       0.0364
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g026",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "Under the GDPR, in which circumstances do users have the right to request erasure of their personal data?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1521.31,
+      "embed": 238.56,
+      "sparse": 0.24,
+      "search": 17.92,
+      "rerank": 1335.19,
+      "retrieval": 1591.92,
+      "total": 3113.23
+     },
+     "cost_usd": 0.0009518,
+     "top": [
+      [
+       "en-gdpr-2016:0061",
+       0.0456
+      ],
+      [
+       "en-gdpr-2016:0015",
+       0.0416
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+       0.0328
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0017",
+       0.0328
+      ],
+      [
+       "en-gdpr-2016:0016",
+       0.0325
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g027",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "What is the right to data portability under the GDPR?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1706.59,
+      "embed": 235.24,
+      "sparse": 0.17,
+      "search": 17.7,
+      "rerank": 1505.35,
+      "retrieval": 1758.46,
+      "total": 3465.06
+     },
+     "cost_usd": 0.0009492,
+     "top": [
+      [
+       "en-gdpr-2016:0064",
+       0.0612
+      ],
+      [
+       "en-gdpr-2016:0016",
+       0.044
+      ],
+      [
+       "en-gdpr-2016:0000",
+       0.0447
+      ],
+      [
+       "en-gdpr-2016:0059",
+       0.0417
+      ],
+      [
+       "en-gdpr-2016:0014",
+       0.0365
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g028",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "Does the GDPR apply to a company that has no establishment in the EU?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1902.92,
+      "embed": 240.85,
+      "sparse": 0.28,
+      "search": 20.15,
+      "rerank": 1665.4,
+      "retrieval": 1926.67,
+      "total": 3829.59
+     },
+     "cost_usd": 0.0009309,
+     "top": [
+      [
+       "en-gdpr-2016:0043",
+       0.0264
+      ],
+      [
+       "en-gdpr-2016:0071",
+       0.026
+      ],
+      [
+       "en-gdpr-2016:0005",
+       0.0289
+      ],
+      [
+       "en-gdpr-2016:0000",
+       0.0416
+      ],
+      [
+       "en-gdpr-2016:0004",
+       0.0396
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g029",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "When is an organization required to designate a Data Protection Officer (DPO) under the GDPR?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2155.65,
+      "embed": 283.25,
+      "sparse": 0.23,
+      "search": 17.87,
+      "rerank": 1973.16,
+      "retrieval": 2274.5,
+      "total": 4430.16
+     },
+     "cost_usd": 0.0009218,
+     "top": [
+      [
+       "en-gdpr-2016:0083",
+       0.0431
+      ],
+      [
+       "en-gdpr-2016:0084",
+       0.0421
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0034",
+       0.0331
+      ],
+      [
+       "en-gdpr-2016:0085",
+       0.0318
+      ],
+      [
+       "en-gdpr-2016:0019",
+       0.0318
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g030",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "Under the GDPR, does a data subject have the right to object to a decision made solely by automated means?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2031.9,
+      "embed": 195.62,
+      "sparse": 0.28,
+      "search": 17.69,
+      "rerank": 1427.4,
+      "retrieval": 1640.99,
+      "total": 3672.89
+     },
+     "cost_usd": 0.000988,
+     "top": [
+      [
+       "en-gdpr-2016:0066",
+       0.0461
+      ],
+      [
+       "en-gdpr-2016:0017",
+       0.0304
+      ],
+      [
+       "en-gdpr-2016:0065",
+       0.0422
+      ],
+      [
+       "en-gdpr-2016:0055",
+       0.0226
+      ],
+      [
+       "en-gdpr-2016:0016",
+       0.0323
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g031",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "Under the GDPR, does withdrawing consent make the prior processing of data unlawful?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1512.0,
+      "embed": 256.03,
+      "sparse": 0.25,
+      "search": 19.44,
+      "rerank": 1742.98,
+      "retrieval": 2018.69,
+      "total": 3530.7
+     },
+     "cost_usd": 0.0009182,
+     "top": [
+      [
+       "en-gdpr-2016:0049",
+       0.0328
+      ],
+      [
+       "en-gdpr-2016:0015",
+       0.0239
+      ],
+      [
+       "en-gdpr-2016:0048",
+       0.0263
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+       0.0331
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012",
+       0.0328
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g032",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "How does the GDPR define a personal data breach?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1365.01,
+      "embed": 220.79,
+      "sparse": 0.2,
+      "search": 18.85,
+      "rerank": 1363.91,
+      "retrieval": 1603.74,
+      "total": 2968.75
+     },
+     "cost_usd": 0.0009379,
+     "top": [
+      [
+       "en-gdpr-2016:0078",
+       0.0333
+      ],
+      [
+       "en-gdpr-2016:0079",
+       0.0427
+      ],
+      [
+       "en-gdpr-2016:0021",
+       0.0435
+      ],
+      [
+       "en-gdpr-2016:0044",
+       0.0428
+      ],
+      [
+       "en-gdpr-2016:0000",
+       0.0386
+      ]
+     ],
+     "source_ranks": [
+      4
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.25,
+      "ndcg@5": 0.43067655807339306,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.25,
+      "ndcg@50": 0.43067655807339306
+     }
+    }
+   }
+  },
+  {
+   "id": "g033",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "Under the GDPR, when must a company directly notify users of a personal data breach?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2142.02,
+      "embed": 243.01,
+      "sparse": 0.24,
+      "search": 18.76,
+      "rerank": 2524.54,
+      "retrieval": 2786.55,
+      "total": 4928.57
+     },
+     "cost_usd": 0.0009633,
+     "top": [
+      [
+       "en-gdpr-2016:0079",
+       0.0438
+      ],
+      [
+       "en-gdpr-2016:0078",
+       0.0444
+      ],
+      [
+       "en-gdpr-2016:0021",
+       0.044
+      ],
+      [
+       "en-personal-data-protection-law-2025:0023",
+       0.0426
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0029",
+       0.0424
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g034",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What is the maximum probationary period for a job requiring a college degree or higher?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2576.08,
+      "embed": 925.14,
+      "sparse": 0.23,
+      "search": 18.88,
+      "rerank": 2011.88,
+      "retrieval": 2956.14,
+      "total": 5532.22
+     },
+     "cost_usd": 0.0007899,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0030",
+       0.048
+      ],
+      [
+       "en-labour-code-2019:0025",
+       0.0429
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0032",
+       0.0434
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0029",
+       0.0429
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0031",
+       0.0408
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g035",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What is the minimum percentage of the official wage that must be paid during the probationary period?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2342.18,
+      "embed": 300.52,
+      "sparse": 0.38,
+      "search": 26.26,
+      "rerank": 1208.27,
+      "retrieval": 1535.42,
+      "total": 3877.6
+     },
+     "cost_usd": 0.0008228,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0031",
+       0.0485
+      ],
+      [
+       "en-labour-code-2019:0026",
+       0.0308
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0105",
+       0.0429
+      ],
+      [
+       "en-labour-code-2019:0025",
+       0.0328
+      ],
+      [
+       "en-labour-code-2019:0027",
+       0.0325
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g036",
+   "type": "numeric",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Người lao động làm việc theo hợp đồng lao động không xác định thời hạn phải báo trước bao lâu khi đơn phương chấm dứt hợp đồng lao động tại Việt Nam?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2499.68,
+      "embed": 296.26,
+      "sparse": 0.48,
+      "search": 23.05,
+      "rerank": 1442.47,
+      "retrieval": 1762.25,
+      "total": 4261.93
+     },
+     "cost_usd": 0.0008176,
+     "top": [
+      [
+       "en-labour-code-2019:0035",
+       0.0325
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0042",
+       0.0448
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0046",
+       0.043
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0167",
+       0.0374
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0032",
+       0.0356
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g037",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What is the maximum number of overtime hours an employee may work in one year?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1895.04,
+      "embed": 297.62,
+      "sparse": 0.23,
+      "search": 16.66,
+      "rerank": 1723.81,
+      "retrieval": 2038.31,
+      "total": 3933.35
+     },
+     "cost_usd": 0.0008118,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0121",
+       0.0433
+      ],
+      [
+       "en-labour-code-2019:0107",
+       0.0333
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0122",
+       0.0376
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0123",
+       0.0308
+      ],
+      [
+       "en-labour-code-2019:0108",
+       0.0318
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g038",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What is the minimum pay for overtime work on public holidays and Tet holidays?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1833.69,
+      "embed": 258.79,
+      "sparse": 0.27,
+      "search": 18.02,
+      "rerank": 1534.25,
+      "retrieval": 1811.33,
+      "total": 3645.02
+     },
+     "cost_usd": 0.0007365,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0112",
+       0.0487
+      ],
+      [
+       "en-labour-code-2019:0098",
+       0.0425
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0127",
+       0.0482
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0126",
+       0.0468
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0128",
+       0.0462
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g039",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "How many days are employees entitled to take off for the Lunar New Year holiday?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1602.48,
+      "embed": 247.89,
+      "sparse": 0.2,
+      "search": 19.28,
+      "rerank": 2024.21,
+      "retrieval": 2291.58,
+      "total": 3894.06
+     },
+     "cost_usd": 0.0008317,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0127",
+       0.0495
+      ],
+      [
+       "en-labour-code-2019:0112",
+       0.0462
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0126",
+       0.0479
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0128",
+       0.0479
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0130",
+       0.0441
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g040",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What is the statute of limitations for handling labor disciplinary action?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1491.22,
+      "embed": 257.58,
+      "sparse": 0.18,
+      "search": 18.28,
+      "rerank": 1274.28,
+      "retrieval": 1550.32,
+      "total": 3041.54
+     },
+     "cost_usd": 0.0008298,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0138",
+       0.0331
+      ],
+      [
+       "en-labour-code-2019:0123",
+       0.0325
+      ],
+      [
+       "en-labour-code-2019:0131",
+       0.0328
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0137",
+       0.032
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0141",
+       0.032
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g041",
+   "type": "numeric",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Công ty trách nhiệm hữu hạn hai thành viên trở lên ở Việt Nam có thể có bao nhiêu thành viên?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1512.13,
+      "embed": 248.57,
+      "sparse": 0.24,
+      "search": 18.26,
+      "rerank": 1502.83,
+      "retrieval": 1769.9,
+      "total": 3282.03
+     },
+     "cost_usd": 0.0008719,
+     "top": [
+      [
+       "en-law-on-enterprises-2020:0047",
+       0.0333
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0068",
+       0.0485
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0080",
+       0.0453
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0069",
+       0.0406
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0283",
+       0.0399
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g042",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What percentage of profits must a social enterprise reinvest?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1988.57,
+      "embed": 333.72,
+      "sparse": 0.29,
+      "search": 23.53,
+      "rerank": 1925.14,
+      "retrieval": 2282.69,
+      "total": 4271.25
+     },
+     "cost_usd": 0.0008519,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0014",
+       0.0328
+      ],
+      [
+       "en-law-on-enterprises-2020:0011",
+       0.0333
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0015",
+       0.0333
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0103",
+       0.0397
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0008",
+       0.0323
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g043",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "At what shareholder attendance rate may the second general meeting of shareholders be held?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1554.89,
+      "embed": 269.56,
+      "sparse": 0.23,
+      "search": 18.3,
+      "rerank": 1889.03,
+      "retrieval": 2177.12,
+      "total": 3732.01
+     },
+     "cost_usd": 0.0009165,
+     "top": [
+      [
+       "en-law-on-enterprises-2020:0148",
+       0.0325
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0200",
+       0.0333
+      ],
+      [
+       "en-law-on-enterprises-2020:0059",
+       0.0333
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0203",
+       0.0318
+      ],
+      [
+       "en-law-on-enterprises-2020:0117",
+       0.0313
+      ]
+     ],
+     "source_ranks": [
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.5,
+      "ndcg@5": 0.6309297535714575,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.5,
+      "ndcg@50": 0.6309297535714575
+     }
+    }
+   }
+  },
+  {
+   "id": "g044",
+   "type": "numeric",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Mức phạt tiền tối đa đối với tổ chức vi phạm quy định của Việt Nam về chuyển dữ liệu cá nhân xuyên biên giới là bao nhiêu?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 3004.62,
+      "embed": 355.21,
+      "sparse": 0.47,
+      "search": 24.95,
+      "rerank": 1666.71,
+      "retrieval": 2047.34,
+      "total": 5051.96
+     },
+     "cost_usd": 0.0008321,
+     "top": [
+      [
+       "en-personal-data-protection-law-2025:0008",
+       0.0483
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0010",
+       0.0487
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0011",
+       0.0492
+      ],
+      [
+       "en-personal-data-protection-law-2025:0020",
+       0.042
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0025",
+       0.0448
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g045",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "Upon discovering a violation of personal data protection, within what period must the specialized authority be notified?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1593.78,
+      "embed": 265.68,
+      "sparse": 0.41,
+      "search": 24.79,
+      "rerank": 1381.28,
+      "retrieval": 1672.16,
+      "total": 3265.95
+     },
+     "cost_usd": 0.0008869,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0029",
+       0.0474
+      ],
+      [
+       "en-personal-data-protection-law-2025:0023",
+       0.0436
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0030",
+       0.0328
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0025",
+       0.0315
+      ],
+      [
+       "en-personal-data-protection-law-2025:0021",
+       0.0315
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g046",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "Under the GDPR, within what timeframe must a company respond to a data subject’s request?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1464.1,
+      "embed": 405.65,
+      "sparse": 0.23,
+      "search": 19.24,
+      "rerank": 1899.75,
+      "retrieval": 2324.88,
+      "total": 3788.97
+     },
+     "cost_usd": 0.0009842,
+     "top": [
+      [
+       "en-gdpr-2016:0055",
+       0.0284
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+       0.0333
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0006",
+       0.0328
+      ],
+      [
+       "en-gdpr-2016:0013",
+       0.0325
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0017",
+       0.0323
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g047",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "What is the maximum administrative fine under the GDPR for violating the basic principles of data processing?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1680.4,
+      "embed": 255.74,
+      "sparse": 0.39,
+      "search": 24.56,
+      "rerank": 1905.38,
+      "retrieval": 2186.07,
+      "total": 3866.47
+     },
+     "cost_usd": 0.0009662,
+     "top": [
+      [
+       "en-gdpr-2016:0140",
+       0.0473
+      ],
+      [
+       "en-gdpr-2016:0139",
+       0.0484
+      ],
+      [
+       "en-personal-data-protection-law-2025:0008",
+       0.0487
+      ],
+      [
+       "en-gdpr-2016:0034",
+       0.0421
+      ],
+      [
+       "en-gdpr-2016:0018",
+       0.0378
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g048",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "From what date did the GDPR begin to apply?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2544.85,
+      "embed": 304.95,
+      "sparse": 0.15,
+      "search": 18.01,
+      "rerank": 1599.61,
+      "retrieval": 1922.73,
+      "total": 4467.58
+     },
+     "cost_usd": 0.000919,
+     "top": [
+      [
+       "en-gdpr-2016:0156",
+       0.0313
+      ],
+      [
+       "en-gdpr-2016:0000",
+       0.0437
+      ],
+      [
+       "en-personal-data-protection-law-2025:0038",
+       0.0416
+      ],
+      [
+       "en-gdpr-2016:0039",
+       0.0414
+      ],
+      [
+       "en-gdpr-2016:0047",
+       0.0388
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g049",
+   "type": "numeric",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Theo Bộ luật Lao động Việt Nam, thời gian nào được tính là làm việc ban đêm?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 3683.16,
+      "embed": 580.27,
+      "sparse": 0.23,
+      "search": 17.06,
+      "rerank": 1804.62,
+      "retrieval": 2402.18,
+      "total": 6085.34
+     },
+     "cost_usd": 0.0007702,
+     "top": [
+      [
+       "en-labour-code-2019:0106",
+       0.0418
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0120",
+       0.0492
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0124",
+       0.0464
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0162",
+       0.0446
+      ],
+      [
+       "en-labour-code-2019:0146",
+       0.0426
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g050",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "How many days of annual leave is an employee entitled to after working for 12 months under normal working conditions?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1646.27,
+      "embed": 260.67,
+      "sparse": 0.28,
+      "search": 18.46,
+      "rerank": 1720.78,
+      "retrieval": 2000.19,
+      "total": 3646.46
+     },
+     "cost_usd": 0.0008171,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0128",
+       0.0483
+      ],
+      [
+       "en-labour-code-2019:0113",
+       0.0448
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0129",
+       0.0426
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0126",
+       0.0424
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0127",
+       0.0414
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g051",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "My company has owed me two months’ wages. Can I quit without notice?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1471.47,
+      "embed": 253.06,
+      "sparse": 0.25,
+      "search": 17.81,
+      "rerank": 1944.15,
+      "retrieval": 2215.27,
+      "total": 3686.74
+     },
+     "cost_usd": 0.0008596,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0043",
+       0.0211
+      ],
+      [
+       "en-labour-code-2019:0035",
+       0.0315
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0042",
+       0.0227
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0111",
+       0.0438
+      ],
+      [
+       "en-labour-code-2019:0097",
+       0.0143
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g052",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "My boss requires me to submit my original university degree for the company to keep. Is this lawful?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1468.81,
+      "embed": 235.08,
+      "sparse": 0.25,
+      "search": 18.28,
+      "rerank": 3333.65,
+      "retrieval": 3587.27,
+      "total": 5056.08
+     },
+     "cost_usd": 0.0008853,
+     "top": [
+      [
+       "en-labour-code-2019:0017",
+       0.0333
+      ],
+      [
+       "en-labour-code-2019:0016",
+       0.0164
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0016",
+       0.0308
+      ],
+      [
+       "en-law-on-enterprises-2020:0170",
+       0.0267
+      ],
+      [
+       "en-law-on-enterprises-2020:0159",
+       0.0264
+      ]
+     ],
+     "source_ranks": [
+      null
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 0.0,
+      "recall@50": 0.0,
+      "mrr@50": 0.0,
+      "ndcg@50": 0.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g053",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "Is it lawful for a company to deduct an employee’s wages directly for arriving late instead of imposing disciplinary action?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1863.03,
+      "embed": 278.68,
+      "sparse": 0.28,
+      "search": 19.15,
+      "rerank": 2235.49,
+      "retrieval": 2533.6,
+      "total": 4396.63
+     },
+     "cost_usd": 0.0008464,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0142",
+       0.0167
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0116",
+       0.0161
+      ],
+      [
+       "en-labour-code-2019:0127",
+       0.0325
+      ],
+      [
+       "en-labour-code-2019:0102",
+       0.0313
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0108",
+       0.0263
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g054",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "If I work a shift from 11 p.m. to 5 a.m., am I entitled to additional pay?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1910.35,
+      "embed": 189.02,
+      "sparse": 0.34,
+      "search": 18.33,
+      "rerank": 2065.06,
+      "retrieval": 2272.76,
+      "total": 4183.11
+     },
+     "cost_usd": 0.0007921,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0112",
+       0.0492
+      ],
+      [
+       "en-labour-code-2019:0098",
+       0.0406
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0120",
+       0.0479
+      ],
+      [
+       "en-labour-code-2019:0106",
+       0.0294
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0121",
+       0.04
+      ]
+     ],
+     "source_ranks": [
+      1,
+      3
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 0.9197207891481876,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 0.9197207891481876
+     }
+    }
+   }
+  },
+  {
+   "id": "g055",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "I want to open two stores, each as a private enterprise in my name. Is that allowed?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2448.49,
+      "embed": 244.66,
+      "sparse": 0.26,
+      "search": 18.17,
+      "rerank": 5163.2,
+      "retrieval": 5426.28,
+      "total": 7874.78
+     },
+     "cost_usd": 0.0008294,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0272",
+       0.0328
+      ],
+      [
+       "en-law-on-enterprises-2020:0193",
+       0.0167
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0026",
+       0.0243
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0276",
+       0.0415
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0057",
+       0.0328
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g056",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "Can a group of 60 friends jointly contribute capital to establish a limited liability company?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2091.51,
+      "embed": 565.08,
+      "sparse": 0.36,
+      "search": 24.62,
+      "rerank": 8873.69,
+      "retrieval": 9463.75,
+      "total": 11555.26
+     },
+     "cost_usd": 0.0009455,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0068",
+       0.0309
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0069",
+       0.0318
+      ],
+      [
+       "en-law-on-enterprises-2020:0047",
+       0.0299
+      ],
+      [
+       "en-law-on-enterprises-2020:0048",
+       0.0304
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0070",
+       0.0227
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g057",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "May an application sell customer information to an advertising company?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1520.23,
+      "embed": 437.78,
+      "sparse": 0.3,
+      "search": 24.51,
+      "rerank": 1409.42,
+      "retrieval": 1872.01,
+      "total": 3392.24
+     },
+     "cost_usd": 0.000908,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0036",
+       0.0474
+      ],
+      [
+       "en-personal-data-protection-law-2025:0028",
+       0.0333
+      ],
+      [
+       "en-personal-data-protection-law-2025:0016",
+       0.0152
+      ],
+      [
+       "en-personal-data-protection-law-2025:0017",
+       0.0164
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0037",
+       0.0465
+      ]
+     ],
+     "source_ranks": [
+      null
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 0.0,
+      "recall@50": 0.0,
+      "mrr@50": 0.0,
+      "ndcg@50": 0.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g058",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "I attended a job interview but was unsuccessful. Is the company required to delete my records?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1849.96,
+      "embed": 297.47,
+      "sparse": 0.26,
+      "search": 18.83,
+      "rerank": 2217.27,
+      "retrieval": 2533.82,
+      "total": 4383.79
+     },
+     "cost_usd": 0.0008625,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0032",
+       0.022
+      ],
+      [
+       "en-personal-data-protection-law-2025:0025",
+       0.031
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0017",
+       0.0292
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0018",
+       0.0274
+      ],
+      [
+       "en-personal-data-protection-law-2025:0014",
+       0.0313
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g059",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "If I do not respond to an email requesting permission to collect data, will I be considered to have consented?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2510.39,
+      "embed": 267.98,
+      "sparse": 0.28,
+      "search": 18.07,
+      "rerank": 1702.16,
+      "retrieval": 1988.49,
+      "total": 4498.88
+     },
+     "cost_usd": 0.0009095,
+     "top": [
+      [
+       "en-gdpr-2016:0006",
+       0.0164
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012",
+       0.0311
+      ],
+      [
+       "en-personal-data-protection-law-2025:0009",
+       0.0314
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0014",
+       0.0292
+      ],
+      [
+       "en-gdpr-2016:0049",
+       0.0302
+      ]
+     ],
+     "source_ranks": [
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.5,
+      "ndcg@5": 0.6309297535714575,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.5,
+      "ndcg@50": 0.6309297535714575
+     }
+    }
+   }
+  },
+  {
+   "id": "g060",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "If a company in Europe is hacked and customer data is exposed, how long does it have to notify the supervisory authority?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2833.4,
+      "embed": 257.12,
+      "sparse": 0.31,
+      "search": 18.43,
+      "rerank": 2001.07,
+      "retrieval": 2276.93,
+      "total": 5110.32
+     },
+     "cost_usd": 0.0009931,
+     "top": [
+      [
+       "en-gdpr-2016:0078",
+       0.046
+      ],
+      [
+       "en-personal-data-protection-law-2025:0023",
+       0.0263
+      ],
+      [
+       "en-gdpr-2016:0079",
+       0.036
+      ],
+      [
+       "en-gdpr-2016:0021",
+       0.0425
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0029",
+       0.0328
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g061",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "Under the GDPR, can I ask a company to stop using my data to send me advertising?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2237.14,
+      "embed": 260.63,
+      "sparse": 0.36,
+      "search": 25.97,
+      "rerank": 1623.24,
+      "retrieval": 1910.2,
+      "total": 4147.34
+     },
+     "cost_usd": 0.0009579,
+     "top": [
+      [
+       "en-gdpr-2016:0065",
+       0.0164
+      ],
+      [
+       "en-gdpr-2016:0061",
+       0.0156
+      ],
+      [
+       "en-gdpr-2016:0055",
+       0.0201
+      ],
+      [
+       "en-gdpr-2016:0010",
+       0.0222
+      ],
+      [
+       "en-personal-data-protection-law-2025:0028",
+       0.0428
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g062",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "Can a social network in Europe allow a 14-year-old student to register independently without parental consent?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2151.6,
+      "embed": 268.72,
+      "sparse": 0.29,
+      "search": 18.52,
+      "rerank": 8380.77,
+      "retrieval": 8668.3,
+      "total": 10819.9
+     },
+     "cost_usd": 0.0009358,
+     "top": [
+      [
+       "en-gdpr-2016:0050",
+       0.048
+      ],
+      [
+       "en-personal-data-protection-law-2025:0029",
+       0.0489
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0038",
+       0.0331
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0161",
+       0.0318
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0073",
+       0.0315
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g063",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": true,
+   "translation": "If I ask a company in the EU for a copy of all the data it holds about me, may it charge a fee?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1854.7,
+      "embed": 588.11,
+      "sparse": 0.33,
+      "search": 19.86,
+      "rerank": 1585.07,
+      "retrieval": 2193.38,
+      "total": 4048.08
+     },
+     "cost_usd": 0.0009598,
+     "top": [
+      [
+       "en-gdpr-2016:0059",
+       0.0333
+      ],
+      [
+       "en-gdpr-2016:0055",
+       0.0294
+      ],
+      [
+       "en-gdpr-2016:0109",
+       0.0303
+      ],
+      [
+       "en-gdpr-2016:0056",
+       0.0308
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0011",
+       0.0302
+      ]
+     ],
+     "source_ranks": [
+      1,
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g064",
+   "type": "paraphrase",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Sếp yêu cầu tôi làm thêm giờ 60 giờ trong tháng này. Việc này có được phép tại Việt Nam không?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2068.43,
+      "embed": 192.97,
+      "sparse": 0.25,
+      "search": 18.25,
+      "rerank": 1520.67,
+      "retrieval": 1732.14,
+      "total": 3800.57
+     },
+     "cost_usd": 0.0007636,
+     "top": [
+      [
+       "en-labour-code-2019:0107",
+       0.0333
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0121",
+       0.0465
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0122",
+       0.0397
+      ],
+      [
+       "en-labour-code-2019:0108",
+       0.0298
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0123",
+       0.0429
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g065",
+   "type": "paraphrase",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Ứng dụng mạng xã hội của Việt Nam có thể yêu cầu tôi tải ảnh thẻ căn cước để xác minh tài khoản không?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2314.4,
+      "embed": 219.51,
+      "sparse": 0.27,
+      "search": 19.2,
+      "rerank": 1314.1,
+      "retrieval": 1553.08,
+      "total": 3867.48
+     },
+     "cost_usd": 0.0008747,
+     "top": [
+      [
+       "en-personal-data-protection-law-2025:0029",
+       0.0497
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0038",
+       0.0485
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0039",
+       0.0426
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0000",
+       0.0388
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0008",
+       0.0381
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g066",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "How do severance allowance and job-loss allowance differ in terms of benefit amounts?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2124.34,
+      "embed": 204.16,
+      "sparse": 0.23,
+      "search": 18.67,
+      "rerank": 1514.48,
+      "retrieval": 1737.54,
+      "total": 3861.88
+     },
+     "cost_usd": 0.0008594,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0058",
+       0.0328
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0059",
+       0.0451
+      ],
+      [
+       "en-labour-code-2019:0047",
+       0.0323
+      ],
+      [
+       "en-labour-code-2019:0046",
+       0.0333
+      ],
+      [
+       "en-labour-code-2019:0041",
+       0.0323
+      ]
+     ],
+     "source_ranks": [
+      1,
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g067",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "For a newly graduated university engineer starting work, what is the maximum probationary period and the minimum probationary salary?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1482.03,
+      "embed": 231.16,
+      "sparse": 0.3,
+      "search": 17.73,
+      "rerank": 1568.3,
+      "retrieval": 1817.49,
+      "total": 3299.52
+     },
+     "cost_usd": 0.0008002,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0030",
+       0.0406
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0031",
+       0.0443
+      ],
+      [
+       "en-labour-code-2019:0025",
+       0.0331
+      ],
+      [
+       "en-labour-code-2019:0026",
+       0.0328
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0105",
+       0.0328
+      ]
+     ],
+     "source_ranks": [
+      1,
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g068",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "I have worked for a company for 6 years, and my work is of normal conditions. How many days of annual leave am I entitled to each year?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1924.66,
+      "embed": 252.31,
+      "sparse": 0.33,
+      "search": 18.87,
+      "rerank": 1460.44,
+      "retrieval": 1731.94,
+      "total": 3656.6
+     },
+     "cost_usd": 0.0008328,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0128",
+       0.0483
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0129",
+       0.0429
+      ],
+      [
+       "en-labour-code-2019:0113",
+       0.0333
+      ],
+      [
+       "en-labour-code-2019:0114",
+       0.0318
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0119",
+       0.0411
+      ]
+     ],
+     "source_ranks": [
+      1,
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g069",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "How many days off are employees entitled to for National Day, and what is the minimum pay if they work on those days?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1847.28,
+      "embed": 227.69,
+      "sparse": 0.32,
+      "search": 18.34,
+      "rerank": 1707.01,
+      "retrieval": 1953.36,
+      "total": 3800.64
+     },
+     "cost_usd": 0.0008156,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0127",
+       0.0452
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0112",
+       0.0318
+      ],
+      [
+       "en-labour-code-2019:0112",
+       0.0463
+      ],
+      [
+       "en-labour-code-2019:0098",
+       0.042
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0128",
+       0.0468
+      ]
+     ],
+     "source_ranks": [
+      1,
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g070",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "How many days of unauthorized absence from work can result in an employee being dismissed, and within what time limit must the company impose disciplinary action?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1703.71,
+      "embed": 245.91,
+      "sparse": 0.34,
+      "search": 18.56,
+      "rerank": 1698.73,
+      "retrieval": 1963.54,
+      "total": 3667.25
+     },
+     "cost_usd": 0.0008427,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0140",
+       0.0333
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0138",
+       0.0253
+      ],
+      [
+       "en-labour-code-2019:0123",
+       0.0331
+      ],
+      [
+       "en-labour-code-2019:0125",
+       0.0318
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0045",
+       0.0149
+      ]
+     ],
+     "source_ranks": [
+      1,
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g071",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "Compare the number of members in a multiple-member limited liability company with the number of shareholders in a joint-stock company.",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1736.54,
+      "embed": 197.98,
+      "sparse": 0.19,
+      "search": 18.97,
+      "rerank": 1453.66,
+      "retrieval": 1670.8,
+      "total": 3407.34
+     },
+     "cost_usd": 0.0009254,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0068",
+       0.0328
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0156",
+       0.0213
+      ],
+      [
+       "en-law-on-enterprises-2020:0047",
+       0.0323
+      ],
+      [
+       "en-law-on-enterprises-2020:0113",
+       0.0295
+      ],
+      [
+       "en-law-on-enterprises-2020:0209",
+       0.0331
+      ]
+     ],
+     "source_ranks": [
+      1,
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g072",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "Are the time limits for contributing charter capital different for a single-member limited liability company and a limited liability company with two or more members?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1479.02,
+      "embed": 238.31,
+      "sparse": 0.32,
+      "search": 18.2,
+      "rerank": 1875.42,
+      "retrieval": 2132.25,
+      "total": 3611.26
+     },
+     "cost_usd": 0.0009213,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0109",
+       0.0294
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0069",
+       0.0331
+      ],
+      [
+       "en-law-on-enterprises-2020:0076",
+       0.0323
+      ],
+      [
+       "en-law-on-enterprises-2020:0048",
+       0.0313
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0068",
+       0.0421
+      ]
+     ],
+     "source_ranks": [
+      2,
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g073",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "My company was established in 2023. When must it provide additional information about its beneficial owner, and who is considered a beneficial owner?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2835.88,
+      "embed": 196.75,
+      "sparse": 0.35,
+      "search": 18.73,
+      "rerank": 2002.22,
+      "retrieval": 2218.04,
+      "total": 5053.93
+     },
+     "cost_usd": 0.0009545,
+     "top": [
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0013",
+       0.0328
+      ],
+      [
+       "en-law-amending-enterprises-2025:0007",
+       0.0424
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0002",
+       0.0299
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0008",
+       0.0203
+      ],
+      [
+       "en-law-on-enterprises-2020:0111",
+       0.0323
+      ]
+     ],
+     "source_ranks": [
+      1,
+      3
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 0.9197207891481876,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 0.9197207891481876
+     }
+    }
+   }
+  },
+  {
+   "id": "g074",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "When does the 2025 amended Law on Enterprises take effect, and for how long must an enterprise retain beneficial ownership information after dissolution?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 3012.47,
+      "embed": 442.84,
+      "sparse": 0.23,
+      "search": 19.16,
+      "rerank": 1824.49,
+      "retrieval": 2286.72,
+      "total": 5299.19
+     },
+     "cost_usd": 0.0009046,
+     "top": [
+      [
+       "en-law-amending-enterprises-2025:0007",
+       0.032
+      ],
+      [
+       "en-law-amending-enterprises-2025:0000",
+       0.0259
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0013",
+       0.0328
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0011",
+       0.0331
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0003",
+       0.0301
+      ]
+     ],
+     "source_ranks": [
+      null,
+      4
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 0.5,
+      "mrr@5": 0.25,
+      "ndcg@5": 0.2640681225725909,
+      "hit@50": 1.0,
+      "recall@50": 0.5,
+      "mrr@50": 0.25,
+      "ndcg@50": 0.2640681225725909
+     }
+    }
+   }
+  },
+  {
+   "id": "g075",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "Are the deadlines for notifying personal data breaches under Vietnamese law and the GDPR the same?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2210.94,
+      "embed": 240.91,
+      "sparse": 0.26,
+      "search": 18.83,
+      "rerank": 1531.83,
+      "retrieval": 1791.84,
+      "total": 4002.78
+     },
+     "cost_usd": 0.0009001,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0029",
+       0.0459
+      ],
+      [
+       "en-personal-data-protection-law-2025:0023",
+       0.0255
+      ],
+      [
+       "en-gdpr-2016:0078",
+       0.0328
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0030",
+       0.046
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0007",
+       0.0427
+      ]
+     ],
+     "source_ranks": [
+      1,
+      3
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 0.9197207891481876,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 0.9197207891481876
+     }
+    }
+   }
+  },
+  {
+   "id": "g076",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "Compare the maximum fines under the GDPR and Vietnam’s Personal Data Protection Law 2025.",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2198.57,
+      "embed": 242.02,
+      "sparse": 0.24,
+      "search": 18.92,
+      "rerank": 1601.52,
+      "retrieval": 1862.7,
+      "total": 4061.27
+     },
+     "cost_usd": 0.0008681,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0010",
+       0.0469
+      ],
+      [
+       "en-personal-data-protection-law-2025:0008",
+       0.045
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0011",
+       0.0471
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0007",
+       0.0444
+      ],
+      [
+       "en-personal-data-protection-law-2025:0005",
+       0.0441
+      ]
+     ],
+     "source_ranks": [
+      null,
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 0.5,
+      "mrr@5": 1.0,
+      "ndcg@5": 0.6131471927654584,
+      "hit@50": 1.0,
+      "recall@50": 0.5,
+      "mrr@50": 1.0,
+      "ndcg@50": 0.6131471927654584
+     }
+    }
+   }
+  },
+  {
+   "id": "g077",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "How do the provisions on consent to the processing of children’s data in Vietnam differ from those under the GDPR?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1427.87,
+      "embed": 466.21,
+      "sparse": 0.48,
+      "search": 19.19,
+      "rerank": 1737.57,
+      "retrieval": 2223.45,
+      "total": 3651.32
+     },
+     "cost_usd": 0.0009446,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0031",
+       0.0468
+      ],
+      [
+       "en-personal-data-protection-law-2025:0024",
+       0.0425
+      ],
+      [
+       "en-gdpr-2016:0050",
+       0.0259
+      ],
+      [
+       "en-personal-data-protection-law-2025:0005",
+       0.0457
+      ],
+      [
+       "en-personal-data-protection-law-2025:0030",
+       0.0414
+      ]
+     ],
+     "source_ranks": [
+      1,
+      3
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 0.9197207891481876,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 0.9197207891481876
+     }
+    }
+   }
+  },
+  {
+   "id": "g078",
+   "type": "single_article",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Tuổi nghỉ hưu của lao động nam trong điều kiện lao động bình thường ở Việt Nam là bao nhiêu, và người làm công việc nặng nhọc, độc hại, nguy hiểm có thể nghỉ hưu sớm hơn bao nhiêu tuổi?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2105.78,
+      "embed": 250.6,
+      "sparse": 0.43,
+      "search": 18.94,
+      "rerank": 2619.5,
+      "retrieval": 2889.47,
+      "total": 4995.24
+     },
+     "cost_usd": 0.0008259,
+     "top": [
+      [
+       "en-labour-code-2019:0169",
+       0.0333
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0185",
+       0.049
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0244",
+       0.0472
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0119",
+       0.0424
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0165",
+       0.0423
+      ]
+     ],
+     "source_ranks": [
+      1,
+      1,
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g079",
+   "type": "multi_hop",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Người lao động Việt Nam làm việc trong điều kiện bình thường được nghỉ bao nhiêu ngày nghỉ lễ, Tết hưởng nguyên lương và ngày nghỉ hằng năm cơ bản mỗi năm?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 4263.17,
+      "embed": 753.17,
+      "sparse": 0.38,
+      "search": 18.11,
+      "rerank": 1450.72,
+      "retrieval": 2222.38,
+      "total": 6485.55
+     },
+     "cost_usd": 0.0008371,
+     "top": [
+      [
+       "en-labour-code-2019:0112",
+       0.0453
+      ],
+      [
+       "en-labour-code-2019:0113",
+       0.0331
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0127",
+       0.049
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0128",
+       0.0487
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0126",
+       0.0472
+      ]
+     ],
+     "source_ranks": [
+      1,
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g080",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What is the regional minimum wage for Region I in 2026?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1607.7,
+      "embed": 245.97,
+      "sparse": 0.27,
+      "search": 21.45,
+      "rerank": 1507.45,
+      "retrieval": 1775.14,
+      "total": 3382.84
+     },
+     "cost_usd": 0.000814,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0105",
+       0.0468
+      ],
+      [
+       "en-labour-code-2019:0091",
+       0.0418
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0031",
+       0.0398
+      ],
+      [
+       "en-labour-code-2019:0092",
+       0.0392
+      ],
+      [
+       "en-labour-code-2019:0219",
+       0.0378
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g081",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What is the current standard corporate income tax rate?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1788.59,
+      "embed": 251.84,
+      "sparse": 0.18,
+      "search": 18.83,
+      "rerank": 1799.54,
+      "retrieval": 2070.4,
+      "total": 3858.98
+     },
+     "cost_usd": 0.0007986,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0121",
+       0.0442
+      ],
+      [
+       "en-law-on-enterprises-2020:0085",
+       0.0331
+      ],
+      [
+       "en-law-on-enterprises-2020:0067",
+       0.0331
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0098",
+       0.0328
+      ],
+      [
+       "en-law-on-enterprises-2020:0177",
+       0.032
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g082",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What rate of the salary fund is the employer required to contribute to compulsory social insurance?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1559.0,
+      "embed": 236.41,
+      "sparse": 0.27,
+      "search": 17.72,
+      "rerank": 2026.32,
+      "retrieval": 2280.72,
+      "total": 3839.72
+     },
+     "cost_usd": 0.0008576,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0184",
+       0.0333
+      ],
+      [
+       "en-labour-code-2019:0168",
+       0.0333
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0179",
+       0.0251
+      ],
+      [
+       "en-labour-code-2019:0163",
+       0.0262
+      ],
+      [
+       "en-labour-code-2019:0102",
+       0.0318
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g083",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What is the fine for riding a motorcycle with alcohol in one's system?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1987.57,
+      "embed": 245.7,
+      "sparse": 0.21,
+      "search": 18.54,
+      "rerank": 2474.27,
+      "retrieval": 2738.73,
+      "total": 4726.3
+     },
+     "cost_usd": 0.0008475,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0011",
+       0.0447
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0010",
+       0.0444
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0145",
+       0.0335
+      ],
+      [
+       "en-personal-data-protection-law-2025:0008",
+       0.0325
+      ],
+      [
+       "en-gdpr-2016:0035",
+       0.032
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g084",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What are the steps in the trademark registration procedure at the Intellectual Property Office?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2317.75,
+      "embed": 242.34,
+      "sparse": 0.23,
+      "search": 17.44,
+      "rerank": 2002.1,
+      "retrieval": 2262.11,
+      "total": 4579.86
+     },
+     "cost_usd": 0.0008262,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0041",
+       0.0402
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0046",
+       0.0295
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0300",
+       0.0292
+      ],
+      [
+       "en-law-on-enterprises-2020:0027",
+       0.0292
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0040",
+       0.0287
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g085",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What percentage of their salary is an unemployed worker entitled to receive as unemployment benefits?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1841.67,
+      "embed": 216.87,
+      "sparse": 0.24,
+      "search": 18.24,
+      "rerank": 1397.99,
+      "retrieval": 1633.35,
+      "total": 3475.02
+     },
+     "cost_usd": 0.0007946,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0059",
+       0.0433
+      ],
+      [
+       "en-labour-code-2019:0047",
+       0.0287
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0104",
+       0.0356
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0058",
+       0.0328
+      ],
+      [
+       "en-labour-code-2019:0046",
+       0.0325
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g086",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "What is the minimum capital required to establish a securities company?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2069.15,
+      "embed": 236.18,
+      "sparse": 0.19,
+      "search": 18.38,
+      "rerank": 1111.51,
+      "retrieval": 1366.26,
+      "total": 3435.42
+     },
+     "cost_usd": 0.0008865,
+     "top": [
+      [
+       "en-law-on-enterprises-2020:0076",
+       0.0328
+      ],
+      [
+       "en-law-on-enterprises-2020:0113",
+       0.0328
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0008",
+       0.0315
+      ],
+      [
+       "en-law-on-enterprises-2020:0048",
+       0.0313
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0071",
+       0.0311
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g087",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "translation": "Are foreign nationals permitted to purchase housing in Vietnam?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 3010.49,
+      "embed": 247.23,
+      "sparse": 0.23,
+      "search": 20.17,
+      "rerank": 2674.85,
+      "retrieval": 2942.48,
+      "total": 5952.98
+     },
+     "cost_usd": 0.0007492,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0170",
+       0.0487
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0167",
+       0.0474
+      ],
+      [
+       "en-labour-code-2019:0150",
+       0.0466
+      ],
+      [
+       "en-labour-code-2019:0154",
+       0.0465
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0166",
+       0.0463
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g088",
+   "type": "unanswerable",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Người tiêu dùng California có những quyền gì theo Đạo luật về quyền riêng tư của người tiêu dùng California (CCPA)?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 6414.27,
+      "embed": 337.76,
+      "sparse": 0.21,
+      "search": 18.26,
+      "rerank": 1632.92,
+      "retrieval": 1989.15,
+      "total": 8403.42
+     },
+     "cost_usd": 0.0008908,
+     "top": [
+      [
+       "en-personal-data-protection-law-2025:0004",
+       0.0296
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005",
+       0.0154
+      ],
+      [
+       "en-gdpr-2016:0059",
+       0.0167
+      ],
+      [
+       "en-gdpr-2016:0065",
+       0.0154
+      ],
+      [
+       "en-gdpr-2016:0062",
+       0.0145
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g089",
+   "type": "unanswerable",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Thuế suất thuế thu nhập doanh nghiệp tiêu chuẩn hiện hành của Việt Nam là bao nhiêu?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 4829.41,
+      "embed": 380.99,
+      "sparse": 0.21,
+      "search": 17.86,
+      "rerank": 1825.53,
+      "retrieval": 2224.58,
+      "total": 7053.99
+     },
+     "cost_usd": 0.0008042,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0121",
+       0.0445
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0098",
+       0.0442
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0005",
+       0.0391
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0251",
+       0.039
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0238",
+       0.0367
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g090",
+   "type": "unanswerable",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Mức lương tối thiểu vùng tại Hà Nội năm 2026 là bao nhiêu?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 4436.69,
+      "embed": 342.38,
+      "sparse": 0.28,
+      "search": 24.03,
+      "rerank": 1986.74,
+      "retrieval": 2353.42,
+      "total": 6790.12
+     },
+     "cost_usd": 0.0007648,
+     "top": [
+      [
+       "en-labour-code-2019:0091",
+       0.0313
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0105",
+       0.0455
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0106",
+       0.026
+      ],
+      [
+       "en-labour-code-2019:0092",
+       0.0409
+      ],
+      [
+       "en-labour-code-2019:0129",
+       0.0167
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g091",
+   "type": "unanswerable",
+   "language": "en",
+   "cross_lingual": false,
+   "translation": "Mức tiền phạt tối đa theo Đạo luật Bảo vệ Dữ liệu năm 2018 của Vương quốc Anh là bao nhiêu?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 5118.36,
+      "embed": 337.52,
+      "sparse": 0.24,
+      "search": 18.59,
+      "rerank": 2300.31,
+      "retrieval": 2656.66,
+      "total": 7775.01
+     },
+     "cost_usd": 0.000872,
+     "top": [
+      [
+       "en-personal-data-protection-law-2025:0008",
+       0.0473
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0011",
+       0.0468
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0010",
+       0.0454
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0029",
+       0.0313
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0007",
+       0.0313
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g092",
+   "type": "multi_turn",
+   "language": "vi",
+   "cross_lingual": false,
+   "standalone": "Người lao động làm công việc nặng nhọc, độc hại được nghỉ phép năm bao nhiêu ngày?",
+   "translation": "How many days of annual leave are employees performing arduous or hazardous work entitled to?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 3409.63,
+      "embed": 331.18,
+      "sparse": 0.28,
+      "search": 19.0,
+      "rerank": 2304.51,
+      "retrieval": 2654.98,
+      "total": 6064.61
+     },
+     "cost_usd": 0.0008007,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0128",
+       0.0429
+      ],
+      [
+       "en-labour-code-2019:0113",
+       0.0333
+      ],
+      [
+       "en-labour-code-2019:0114",
+       0.0325
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0185",
+       0.0315
+      ],
+      [
+       "en-labour-code-2019:0037",
+       0.0313
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g093",
+   "type": "multi_turn",
+   "language": "vi",
+   "cross_lingual": false,
+   "standalone": "Trong thời gian thử việc 2 tháng, tôi được trả lương thế nào?",
+   "translation": "How must I be paid during the 2-month probationary period?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2572.93,
+      "embed": 255.81,
+      "sparse": 0.28,
+      "search": 24.91,
+      "rerank": 2796.68,
+      "retrieval": 3077.68,
+      "total": 5650.61
+     },
+     "cost_usd": 0.0008239,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0031",
+       0.0457
+      ],
+      [
+       "en-labour-code-2019:0026",
+       0.0277
+      ],
+      [
+       "en-labour-code-2019:0025",
+       0.0328
+      ],
+      [
+       "en-labour-code-2019:0027",
+       0.0325
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0030",
+       0.0323
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g094",
+   "type": "multi_turn",
+   "language": "en",
+   "cross_lingual": false,
+   "standalone": "How long do the members of a multiple-member limited liability company in Vietnam have to contribute their capital?",
+   "translation": "Thành viên của công ty trách nhiệm hữu hạn hai thành viên trở lên tại Việt Nam phải góp vốn trong thời hạn bao lâu?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 1913.59,
+      "embed": 238.47,
+      "sparse": 0.4,
+      "search": 25.86,
+      "rerank": 2216.44,
+      "retrieval": 2481.17,
+      "total": 4394.76
+     },
+     "cost_usd": 0.0009372,
+     "top": [
+      [
+       "en-law-on-enterprises-2020:0048",
+       0.032
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0069",
+       0.0451
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0068",
+       0.0451
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0109",
+       0.0417
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0070",
+       0.0337
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g095",
+   "type": "multi_turn",
+   "language": "vi",
+   "cross_lingual": false,
+   "standalone": "Doanh nghiệp tư nhân có được phát hành cổ phiếu để huy động vốn không?",
+   "translation": "May a private enterprise issue shares to raise capital?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2836.76,
+      "embed": 401.38,
+      "sparse": 0.28,
+      "search": 21.14,
+      "rerank": 2130.91,
+      "retrieval": 2553.7,
+      "total": 5390.46
+     },
+     "cost_usd": 0.0009449,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0272",
+       0.0333
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0171",
+       0.0245
+      ],
+      [
+       "en-law-on-enterprises-2020:0113",
+       0.0323
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0295",
+       0.0277
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0068",
+       0.0325
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g096",
+   "type": "multi_turn",
+   "language": "vi",
+   "cross_lingual": false,
+   "standalone": "Những trường hợp nào thì bị áp dụng hình thức sa thải?",
+   "translation": "In which cases may the disciplinary measure of dismissal be applied?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2622.41,
+      "embed": 273.81,
+      "sparse": 0.26,
+      "search": 23.3,
+      "rerank": 1951.37,
+      "retrieval": 2248.75,
+      "total": 4871.16
+     },
+     "cost_usd": 0.0008695,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0140",
+       0.0331
+      ],
+      [
+       "en-labour-code-2019:0125",
+       0.0312
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0139",
+       0.032
+      ],
+      [
+       "en-labour-code-2019:0124",
+       0.0274
+      ],
+      [
+       "en-labour-code-2019:0122",
+       0.0325
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g097",
+   "type": "multi_turn",
+   "language": "vi",
+   "cross_lingual": false,
+   "standalone": "Nếu là dữ liệu của con tôi 10 tuổi thì ai thực hiện các quyền của chủ thể dữ liệu cá nhân đó?",
+   "translation": "If the personal data concerns my 10-year-old child, who exercises the data subject’s rights?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 3983.64,
+      "embed": 273.9,
+      "sparse": 0.28,
+      "search": 18.7,
+      "rerank": 1740.25,
+      "retrieval": 2033.12,
+      "total": 6016.76
+     },
+     "cost_usd": 0.0010151,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0031",
+       0.0312
+      ],
+      [
+       "en-personal-data-protection-law-2025:0024",
+       0.0375
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0006",
+       0.0325
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012",
+       0.0325
+      ],
+      [
+       "en-gdpr-2016:0013",
+       0.0325
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g098",
+   "type": "multi_turn",
+   "language": "en",
+   "cross_lingual": false,
+   "standalone": "What's the maximum overtime per year in Vietnam?",
+   "translation": "Thời gian làm thêm giờ tối đa trong một năm tại Việt Nam là bao nhiêu?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2161.32,
+      "embed": 240.37,
+      "sparse": 0.26,
+      "search": 20.86,
+      "rerank": 1403.42,
+      "retrieval": 1664.92,
+      "total": 3826.24
+     },
+     "cost_usd": 0.0007858,
+     "top": [
+      [
+       "en-labour-code-2019:0107",
+       0.0331
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0121",
+       0.0442
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0122",
+       0.0292
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0167",
+       0.0437
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0128",
+       0.0436
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g099",
+   "type": "multi_turn",
+   "language": "en",
+   "cross_lingual": false,
+   "standalone": "What must a company do if it cannot notify a personal data breach within 72 hours after becoming aware of it under the GDPR?",
+   "translation": "Doanh nghiệp phải làm gì nếu không thể thông báo vi phạm dữ liệu cá nhân trong vòng 72 giờ kể từ khi nhận biết được vi phạm theo GDPR?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 2447.02,
+      "embed": 240.87,
+      "sparse": 0.36,
+      "search": 18.84,
+      "rerank": 1391.7,
+      "retrieval": 1651.77,
+      "total": 4098.79
+     },
+     "cost_usd": 0.0009507,
+     "top": [
+      [
+       "en-gdpr-2016:0078",
+       0.0439
+      ],
+      [
+       "en-gdpr-2016:0021",
+       0.0458
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0029",
+       0.0451
+      ],
+      [
+       "en-personal-data-protection-law-2025:0023",
+       0.0434
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0030",
+       0.0328
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g100",
+   "type": "multi_turn",
+   "language": "vi",
+   "cross_lingual": true,
+   "standalone": "Theo GDPR, có trường hợp nào công ty được từ chối xóa dữ liệu của người dùng không?",
+   "translation": "Under the GDPR, are there any circumstances in which a company may refuse to erase a user’s personal data?",
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 3109.38,
+      "embed": 222.17,
+      "sparse": 0.25,
+      "search": 23.41,
+      "rerank": 9409.85,
+      "retrieval": 9655.69,
+      "total": 12765.06
+     },
+     "cost_usd": 0.001005,
+     "top": [
+      [
+       "en-gdpr-2016:0061",
+       0.0429
+      ],
+      [
+       "en-gdpr-2016:0018",
+       0.0249
+      ],
+      [
+       "en-gdpr-2016:0015",
+       0.0318
+      ],
+      [
+       "en-gdpr-2016:0054",
+       0.0208
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0017",
+       0.0323
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  }
+ ]
+}

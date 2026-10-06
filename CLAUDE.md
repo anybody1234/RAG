@@ -14,13 +14,13 @@ Dự án portfolio (xin việc AI Engineer). Người dùng upload PDF/DOCX/TXT/
 | Hàng đợi ingestion | arq + Redis | Không bao giờ parse/embed trong request HTTP. Trạng thái job: `queued → parsing → indexing → ready / failed` |
 | Frontend | React + Vite + TypeScript | Chat streaming qua SSE; bấm trích dẫn thì mở PDF đúng trang (react-pdf) |
 | DB metadata | PostgreSQL | Lưu user, document, chunk metadata, conversation, feedback 👍/👎, job |
-| Vector DB | Qdrant | Dense + sparse trong cùng collection; hybrid search bằng Query API (prefetch dense + sparse, gộp bằng RRF, `rrf_k` trong config; mặc định của Qdrant là 2). Point ID = uuid5(`user_id:doc_id:content_hash`) |
+| Vector DB | Qdrant | Dense + sparse trong cùng collection; hybrid search bằng Query API (prefetch dense + sparse, gộp bằng RRF có trọng số; v0.2 dùng `rrf_k` = 2, dense × 2). Point ID = uuid5(`user_id:doc_id:content_hash`) |
 | LLM trả lời | OpenAI `gpt-6.1-sol` ($2 vào / $10 ra cho 1M token), reasoning effort thấp, streaming | So sánh với `gpt-6-luna` cho bước trả lời trên golden set |
-| LLM phụ | `gpt-6-luna` ($0.10 / $0.50) | Viết lại câu hỏi khi hội thoại nhiều lượt (lượt đầu bỏ qua); thử nghiệm rerank listwise |
+| LLM phụ | `gpt-6-luna` ($0.10 / $0.50) | Viết lại câu hỏi khi hội thoại nhiều lượt (lượt đầu bỏ qua). Đã đo dịch câu hỏi và rerank listwise (P4): tăng chất lượng nhưng mỗi lần gọi mất p50 1.5–2.2 s, nên đang tắt |
 | LLM-judge | `gpt-6.1-sol`, reasoning cao, chấm dựa trên đáp án chuẩn + context | Phải hiệu chỉnh với ≥ 50 mẫu chấm tay, mức đồng thuận ≥ 80% mới tin |
-| Embedding | OpenAI `text-embedding-3-small` | So với `text-embedding-3-large` bằng eval. Tên model + số chiều nằm trong tên collection; đổi model thì phải embed lại toàn bộ |
+| Embedding | OpenAI `text-embedding-3-large` (3072 chiều), chunk mang dòng tên văn bản + `heading_path` | Chốt ở P4: dense Hit@5 0.795 so với 0.659 của small. Tên model + số chiều nằm trong tên collection; đổi model thì phải embed lại toàn bộ |
 | Sparse/BM25 | Tokenizer tự viết (NFC, lowercase, tách âm tiết + bigram âm tiết) tạo sparse vector; phần TF của BM25 tính ở client, Qdrant tính IDF bằng `modifier: idf` | Không cần model chạy trên máy. IDF chỉ tính trên kho của user đang hỏi (`IdfCorpusParams`) |
-| Reranker | v1 chưa có. Thử nghiệm rerank bằng `gpt-6-luna` | Chỉ giữ nếu eval cải thiện **và** vẫn đạt SLO |
+| Reranker | Chưa dùng. Rerank bằng `gpt-6-luna` đã đo ở P4: Hit@5 tăng 0.17 nhưng p50 1.5 s, vượt SLO | Chỉ giữ nếu eval cải thiện **và** vẫn đạt SLO |
 | Parse | PDF: PyMuPDF. Văn bản luật (tự nhận qua tiêu đề Điều/Article) dùng text thô theo dòng; tài liệu khác dùng `pymupdf4llm` (markdown có heading, bảng). DOCX: python-docx. HTML: BeautifulSoup. MD/TXT: đọc thẳng | `.doc` cũ: từ chối kèm thông báo đổi sang `.docx` (máy chưa có LibreOffice). Đo 06/10 trên 9 văn bản luật: text thô nhận đúng 1059/1059 Điều, `pymupdf4llm` 1054/1059 (dính tiêu đề Điều vào đoạn trước, tách sai điểm) và chậm hơn ~50 lần |
 | OCR | Chưa làm | Trang có quá ít text thì đánh dấu `needs_ocr` và báo cho user. Giữ interface `OcrEngine` để gắn OCR sau |
 | Auth | JWT; nhiều user, mỗi user một kho riêng | Lọc `user_id` ngay trong filter của Qdrant (có payload index), không lọc sau khi đã lấy kết quả |
@@ -111,6 +111,8 @@ Latency đo riêng cho từng bước: rewrite, embed, search, rerank, TTFT, t�
 ## Quy tắc khi code
 - Mọi thay đổi về chunking, embedding, retrieval, prompt hoặc model phải kèm số eval trước và sau.
 - Mọi cấu hình RAG (chunk size, overlap, top-k, model, prompt version) nằm trong một file config có `config_version`. Giá trị này được ghi vào mọi trace và mọi kết quả eval.
+  - Thí nghiệm ghi đè config bằng `--set khoá=giá_trị` (trong `scripts/index.py` và `eval/run_retrieval_eval.py`). Khi đó phải đặt `config_version` riêng; loader sẽ báo lỗi nếu không đặt.
+  - Collection Qdrant lưu chữ ký index (chunking, embedding, sparse) trong metadata. Config có chữ ký khác thì phải index sang collection khác (đổi `index.collection_prefix`), nên một thí nghiệm không ghi đè được index của thí nghiệm khác.
 - Mỗi câu hỏi phải được trace: câu gốc, câu đã viết lại, chunk id kèm score, prompt version, model, câu trả lời, token vào/ra, chi phí ($) và latency từng bước.
 - Nội dung tài liệu là dữ liệu, không phải lệnh. Bọc trong tag `<document>` và nói rõ điều này trong system prompt, để chống prompt injection gián tiếp.
 - Prompt trả lời phải yêu cầu:
@@ -135,7 +137,8 @@ RAG/
   scripts/ingest.py         # parse + chunk văn bản trong manifest hoặc file bất kỳ, in bảng tổng kết
   scripts/index.py          # parse + chunk + embed văn bản trong manifest, upsert vào Qdrant dưới user_id "system"
   backend/app/main.py       # FastAPI; /api/health/live, /api/health/ready
-  backend/app/core/{config.py, rag_config.py}   # Settings (.env) và loader cho config/rag.toml
+  backend/app/core/{config.py, rag_config.py}   # Settings (.env) và loader cho config/rag.toml (có --set)
+  backend/app/core/language.py                  # nhận vi/en theo tỉ lệ chữ có dấu
   backend/app/ingestion/
     text_cleaning.py        # NFC, bỏ ký tự control, tách chữ ghép, nối gạch nối cuối dòng, sửa `�`
     manifest.py             # đọc data/manifest.json, read_pdf_pages()
@@ -152,7 +155,10 @@ RAG/
     embedding.py            # gọi OpenAI theo batch, retry của SDK, đếm token + $, cache theo hash nội dung
     sparse.py               # tokenizer âm tiết + bigram, sparse vector BM25
     index.py                # tạo collection, point ID, index_document() (upsert + xoá point cũ)
-    search.py               # Retriever: dense / sparse / hybrid, lọc user_id trong Qdrant, đo latency từng bước
+    search.py               # Retriever: dense / sparse / hybrid, nhiều câu truy xuất gộp RRF có trọng số, lọc user_id
+    llm.py                  # gọi LLM qua Responses API, đầu ra JSON schema strict, đếm token và $
+    query.py                # viết lại câu hỏi theo lịch sử + dịch vi<->en trong một lần gọi (prompt query-v1)
+    rerank.py               # rerank listwise bằng LLM trên top-N (prompt rerank-v1)
   backend/app/evaluation/golden.py               # schema + kiểm tra golden set
   backend/app/evaluation/retrieval_metrics.py    # so khớp chunk với nguồn gold, Hit/Recall/MRR/nDCG@k
   backend/tests/
@@ -186,8 +192,8 @@ python scripts/download_data.py      # tải dữ liệu; thêm --force để t�
 docker compose up -d                 # qdrant, postgres, redis
 python scripts/check_env.py          # kiểm tra .env, key OpenAI/Langfuse, model, service (không in key)
 python scripts/ingest.py             # parse + chunk ra data/processed/ (--doc ID, --file PATH)
-python scripts/index.py              # embed + upsert vào Qdrant (--doc ID, --recreate); embedding có cache
-python eval/run_retrieval_eval.py    # eval retrieval dense/sparse/hybrid (--modes ...), lưu vào eval/results/
+python scripts/index.py              # embed + upsert vào Qdrant (--doc ID, --recreate, --set); embedding có cache
+python eval/run_retrieval_eval.py    # eval retrieval (--modes, --set, --only ID...), lưu vào eval/results/
 uvicorn app.main:app --app-dir backend --reload --port 8000
 python eval/validate_golden.py       # kiểm tra golden set (thêm --fix-pages để sửa số trang)
 python eval/review_golden.py export  # tạo file duyệt; sau khi duyệt chạy: ... apply

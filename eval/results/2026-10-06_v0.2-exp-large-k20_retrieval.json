@@ -1,0 +1,5639 @@
+{
+ "kind": "retrieval",
+ "run_at": "2026-10-06T21:36:53+07:00",
+ "config_version": "v0.2-exp-large-k20",
+ "overrides": [
+  "config_version=v0.2-exp-large-k20",
+  "embedding.model=text-embedding-3-large",
+  "embedding.dimensions=3072",
+  "retrieval.rrf_k=20"
+ ],
+ "git": {
+  "commit": "224cad6",
+  "dirty": true
+ },
+ "golden": {
+  "path": "eval/datasets/golden_v1.jsonl",
+  "questions": 100,
+  "scored": 88,
+  "gold_sources": 106
+ },
+ "index": {
+  "collection": "chunks_text-embedding-3-large_3072",
+  "user_id": "system",
+  "chunks": 1282,
+  "gold_sources_in_index": 106
+ },
+ "config": {
+  "config_version": "v0.2-exp-large-k20",
+  "chunking": {
+   "max_tokens": 800,
+   "overlap_ratio": 0.1
+  },
+  "embedding": {
+   "model": "text-embedding-3-large",
+   "dimensions": 3072
+  },
+  "sparse": {
+   "k1": 1.2,
+   "b": 0.75,
+   "avg_doc_len": 215.0
+  },
+  "query": {
+   "model": "gpt-6-luna",
+   "reasoning_effort": "none",
+   "prompt_version": "query-v1",
+   "rewrite": false,
+   "translate": false,
+   "translation_weight": 1.0
+  },
+  "retrieval": {
+   "mode": "hybrid",
+   "prefetch_limit": 50,
+   "rrf_k": 20,
+   "dense_weight": 1.0,
+   "sparse_weight": 1.0,
+   "top_k": 5,
+   "reranker": "none"
+  },
+  "rerank": {
+   "model": "gpt-6-luna",
+   "reasoning_effort": "none",
+   "prompt_version": "rerank-v1",
+   "candidates": 50,
+   "max_chunk_tokens": 200
+  },
+  "index": {
+   "collection_prefix": "chunks",
+   "embed_title": false
+  },
+  "generation": {
+   "answer_model": "gpt-6.1-sol",
+   "answer_reasoning_effort": "low",
+   "prompt_version": "answer-v1"
+  },
+  "eval": {
+   "judge_model": "gpt-6.1-sol",
+   "judge_reasoning_effort": "high"
+  }
+ },
+ "usage": {
+  "embedding": {
+   "requests": 100,
+   "tokens": 3322,
+   "cost_usd": 0.00043186,
+   "cached": 0
+  },
+  "llm": {
+   "calls": 0,
+   "input_tokens": 0,
+   "output_tokens": 0,
+   "cost_usd": 0.0
+  }
+ },
+ "notes": [
+  "Câu unanswerable không tính metric, vẫn tính latency.",
+  "retrieval = embed + sparse + search + rerank; total = rewrite + retrieval.",
+  "Latency đo tuần tự từng câu, không tải đồng thời; các chế độ dùng chung một lần xử lý câu hỏi và embed."
+ ],
+ "modes": {
+  "hybrid": {
+   "metrics": {
+    "all": {
+     "all": {
+      "n": 88,
+      "hit@5": 0.75,
+      "recall@5": 0.7159,
+      "mrr@5": 0.6381,
+      "ndcg@5": 0.6377,
+      "hit@50": 0.9545,
+      "recall@50": 0.9318,
+      "mrr@50": 0.6508,
+      "ndcg@50": 0.6908
+     }
+    },
+    "type": {
+     "multi_hop": {
+      "n": 14,
+      "hit@5": 1.0,
+      "recall@5": 0.7857,
+      "mrr@5": 0.9286,
+      "ndcg@5": 0.769,
+      "hit@50": 1.0,
+      "recall@50": 0.8571,
+      "mrr@50": 0.9286,
+      "ndcg@50": 0.792
+     },
+     "multi_turn": {
+      "n": 9,
+      "hit@5": 0.6667,
+      "recall@5": 0.6667,
+      "mrr@5": 0.4389,
+      "ndcg@5": 0.4943,
+      "hit@50": 0.8889,
+      "recall@50": 0.8889,
+      "mrr@50": 0.456,
+      "ndcg@50": 0.5526
+     },
+     "numeric": {
+      "n": 17,
+      "hit@5": 0.7647,
+      "recall@5": 0.7647,
+      "mrr@5": 0.7353,
+      "ndcg@5": 0.743,
+      "hit@50": 0.9412,
+      "recall@50": 0.9412,
+      "mrr@50": 0.7499,
+      "ndcg@50": 0.7892
+     },
+     "paraphrase": {
+      "n": 15,
+      "hit@5": 0.5333,
+      "recall@5": 0.5333,
+      "mrr@5": 0.4222,
+      "ndcg@5": 0.4508,
+      "hit@50": 0.9333,
+      "recall@50": 0.9333,
+      "mrr@50": 0.4527,
+      "ndcg@50": 0.5567
+     },
+     "single_article": {
+      "n": 33,
+      "hit@5": 0.7576,
+      "recall@5": 0.7576,
+      "mrr@5": 0.6172,
+      "ndcg@5": 0.6518,
+      "hit@50": 0.9697,
+      "recall@50": 0.9697,
+      "mrr@50": 0.6251,
+      "ndcg@50": 0.6958
+     }
+    },
+    "language": {
+     "en": {
+      "n": 16,
+      "hit@5": 0.875,
+      "recall@5": 0.875,
+      "mrr@5": 0.7969,
+      "ndcg@5": 0.8164,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.8121,
+      "ndcg@50": 0.855
+     },
+     "vi": {
+      "n": 72,
+      "hit@5": 0.7222,
+      "recall@5": 0.6806,
+      "mrr@5": 0.6028,
+      "ndcg@5": 0.598,
+      "hit@50": 0.9444,
+      "recall@50": 0.9167,
+      "mrr@50": 0.615,
+      "ndcg@50": 0.6543
+     }
+    },
+    "cross_lingual": {
+     "cross_lingual": {
+      "n": 19,
+      "hit@5": 0.1579,
+      "recall@5": 0.1579,
+      "mrr@5": 0.0412,
+      "ndcg@5": 0.0693,
+      "hit@50": 0.7895,
+      "recall@50": 0.7895,
+      "mrr@50": 0.0681,
+      "ndcg@50": 0.2069
+     },
+     "same_language": {
+      "n": 69,
+      "hit@5": 0.913,
+      "recall@5": 0.8696,
+      "mrr@5": 0.8024,
+      "ndcg@5": 0.7942,
+      "hit@50": 1.0,
+      "recall@50": 0.971,
+      "mrr@50": 0.8113,
+      "ndcg@50": 0.824
+     }
+    }
+   },
+   "latency_ms": {
+    "rewrite": {
+     "p50": 0.0,
+     "p95": 0.0,
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "embed": {
+     "p50": 245.6,
+     "p95": 287.7,
+     "mean": 242.2,
+     "max": 375.1
+    },
+    "sparse": {
+     "p50": 0.1,
+     "p95": 0.1,
+     "mean": 0.1,
+     "max": 0.2
+    },
+    "search": {
+     "p50": 13.5,
+     "p95": 14.4,
+     "mean": 13.4,
+     "max": 19.3
+    },
+    "rerank": {
+     "p50": 0.0,
+     "p95": 0.0,
+     "mean": 0.0,
+     "max": 0.0
+    },
+    "retrieval": {
+     "p50": 259.5,
+     "p95": 301.2,
+     "mean": 255.7,
+     "max": 387.6
+    },
+    "total": {
+     "p50": 259.5,
+     "p95": 301.2,
+     "mean": 255.7,
+     "max": 387.6
+    }
+   },
+   "cost_usd": {
+    "per_question_mean": 4.3e-06,
+    "total": 0.00043
+   },
+   "errors": {
+    "query": 0,
+    "rerank": 0
+   }
+  }
+ },
+ "questions": [
+  {
+   "id": "g001",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 256.85,
+      "sparse": 0.11,
+      "search": 13.35,
+      "rerank": 0.0,
+      "retrieval": 270.32,
+      "total": 270.32
+     },
+     "cost_usd": 5.7e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0004",
+       0.0976
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0133",
+       0.0885
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0011",
+       0.0861
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0181",
+       0.0799
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0180",
+       0.0704
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g002",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 250.78,
+      "sparse": 0.08,
+      "search": 12.85,
+      "rerank": 0.0,
+      "retrieval": 263.71,
+      "total": 263.71
+     },
+     "cost_usd": 2.9e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0004",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0011",
+       0.0952
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0193",
+       0.0889
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0006",
+       0.08
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0104",
+       0.0729
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g003",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 232.79,
+      "sparse": 0.08,
+      "search": 12.19,
+      "rerank": 0.0,
+      "retrieval": 245.05,
+      "total": 245.05
+     },
+     "cost_usd": 4.7e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0024",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0251",
+       0.0847
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0025",
+       0.0835
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0017",
+       0.0758
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0000",
+       0.0712
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g004",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 194.63,
+      "sparse": 0.15,
+      "search": 19.31,
+      "rerank": 0.0,
+      "retrieval": 214.09,
+      "total": 214.09
+     },
+     "cost_usd": 5.9e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0020",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0051",
+       0.0847
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0016",
+       0.0789
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0019",
+       0.0703
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0037",
+       0.0679
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g005",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 218.19,
+      "sparse": 0.14,
+      "search": 13.96,
+      "rerank": 0.0,
+      "retrieval": 232.29,
+      "total": 232.29
+     },
+     "cost_usd": 5.1e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0137",
+       0.0976
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0139",
+       0.0889
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0140",
+       0.0876
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0142",
+       0.0855
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0138",
+       0.0833
+      ]
+     ],
+     "source_ranks": [
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.5,
+      "ndcg@5": 0.6309297535714575,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.5,
+      "ndcg@50": 0.6309297535714575
+     }
+    }
+   }
+  },
+  {
+   "id": "g006",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 239.24,
+      "sparse": 0.09,
+      "search": 13.41,
+      "rerank": 0.0,
+      "retrieval": 252.74,
+      "total": 252.74
+     },
+     "cost_usd": 3.6e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0133",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0025",
+       0.0909
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0190",
+       0.0851
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0135",
+       0.081
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0134",
+       0.0757
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g007",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 247.94,
+      "sparse": 0.1,
+      "search": 13.92,
+      "rerank": 0.0,
+      "retrieval": 261.96,
+      "total": 261.96
+     },
+     "cost_usd": 5.1e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0185",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0243",
+       0.0821
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0247",
+       0.0801
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0165",
+       0.0747
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0245",
+       0.068
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g008",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 246.2,
+      "sparse": 0.11,
+      "search": 13.49,
+      "rerank": 0.0,
+      "retrieval": 259.81,
+      "total": 259.81
+     },
+     "cost_usd": 6.1e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0113",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0231",
+       0.0792
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0111",
+       0.0787
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0108",
+       0.0755
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0114",
+       0.0723
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g009",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 264.74,
+      "sparse": 0.09,
+      "search": 12.87,
+      "rerank": 0.0,
+      "retrieval": 277.7,
+      "total": 277.7
+     },
+     "cost_usd": 3.4e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0105",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0104",
+       0.0909
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0106",
+       0.087
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0107",
+       0.0861
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0113",
+       0.0799
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g010",
+   "type": "single_article",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 238.93,
+      "sparse": 0.14,
+      "search": 13.43,
+      "rerank": 0.0,
+      "retrieval": 252.5,
+      "total": 252.5
+     },
+     "cost_usd": 3e-06,
+     "top": [
+      [
+       "en-labour-code-2019:0143",
+       0.1
+      ],
+      [
+       "en-labour-code-2019:0144",
+       0.0889
+      ],
+      [
+       "en-labour-code-2019:0151",
+       0.0833
+      ],
+      [
+       "en-labour-code-2019:0145",
+       0.0812
+      ],
+      [
+       "en-labour-code-2019:0003",
+       0.0694
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g011",
+   "type": "single_article",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 237.69,
+      "sparse": 0.09,
+      "search": 12.89,
+      "rerank": 0.0,
+      "retrieval": 250.68,
+      "total": 250.68
+     },
+     "cost_usd": 2.1e-06,
+     "top": [
+      [
+       "en-labour-code-2019:0035",
+       0.1
+      ],
+      [
+       "en-labour-code-2019:0034",
+       0.0889
+      ],
+      [
+       "en-labour-code-2019:0036",
+       0.0847
+      ],
+      [
+       "en-labour-code-2019:0041",
+       0.074
+      ],
+      [
+       "en-labour-code-2019:0156",
+       0.0703
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g012",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 192.56,
+      "sparse": 0.09,
+      "search": 13.71,
+      "rerank": 0.0,
+      "retrieval": 206.35,
+      "total": 206.35
+     },
+     "cost_usd": 1.8e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0272",
+       0.1
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0274",
+       0.0911
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0276",
+       0.0911
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0275",
+       0.0909
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0031",
+       0.0787
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g013",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 257.73,
+      "sparse": 0.08,
+      "search": 13.26,
+      "rerank": 0.0,
+      "retrieval": 271.07,
+      "total": 271.07
+     },
+     "cost_usd": 2.6e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0256",
+       0.1
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0156",
+       0.0774
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0161",
+       0.0755
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0258",
+       0.0739
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0175",
+       0.0733
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g014",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 185.53,
+      "sparse": 0.09,
+      "search": 13.08,
+      "rerank": 0.0,
+      "retrieval": 198.71,
+      "total": 198.71
+     },
+     "cost_usd": 4.8e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0297",
+       0.1
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0303",
+       0.0851
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0298",
+       0.0812
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0305",
+       0.0812
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0302",
+       0.0785
+      ]
+     ],
+     "source_ranks": [
+      1,
+      37
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 0.5,
+      "mrr@5": 1.0,
+      "ndcg@5": 0.6131471927654584,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 0.7299832563724276
+     }
+    }
+   }
+  },
+  {
+   "id": "g015",
+   "type": "single_article",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 241.72,
+      "sparse": 0.09,
+      "search": 13.55,
+      "rerank": 0.0,
+      "retrieval": 255.35,
+      "total": 255.35
+     },
+     "cost_usd": 2.1e-06,
+     "top": [
+      [
+       "en-law-on-enterprises-2020:0113",
+       0.0976
+      ],
+      [
+       "en-law-on-enterprises-2020:0123",
+       0.0931
+      ],
+      [
+       "en-law-on-enterprises-2020:0114",
+       0.0885
+      ],
+      [
+       "en-law-on-enterprises-2020:0140",
+       0.0833
+      ],
+      [
+       "en-law-on-enterprises-2020:0023",
+       0.0805
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g016",
+   "type": "single_article",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 191.97,
+      "sparse": 0.09,
+      "search": 14.23,
+      "rerank": 0.0,
+      "retrieval": 206.29,
+      "total": 206.29
+     },
+     "cost_usd": 2.2e-06,
+     "top": [
+      [
+       "en-law-on-enterprises-2020:0123",
+       0.1
+      ],
+      [
+       "en-law-on-enterprises-2020:0119",
+       0.0825
+      ],
+      [
+       "en-law-on-enterprises-2020:0130",
+       0.0754
+      ],
+      [
+       "en-law-on-enterprises-2020:0026",
+       0.0746
+      ],
+      [
+       "en-law-on-enterprises-2020:0023",
+       0.0723
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g017",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 232.91,
+      "sparse": 0.1,
+      "search": 15.37,
+      "rerank": 0.0,
+      "retrieval": 248.38,
+      "total": 248.38
+     },
+     "cost_usd": 5.7e-06,
+     "top": [
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0013",
+       0.0955
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0002",
+       0.0935
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0003",
+       0.0893
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0011",
+       0.0889
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0005",
+       0.0861
+      ]
+     ],
+     "source_ranks": [
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.5,
+      "ndcg@5": 0.6309297535714575,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.5,
+      "ndcg@50": 0.6309297535714575
+     }
+    }
+   }
+  },
+  {
+   "id": "g018",
+   "type": "single_article",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 245.16,
+      "sparse": 0.1,
+      "search": 13.09,
+      "rerank": 0.0,
+      "retrieval": 258.35,
+      "total": 258.35
+     },
+     "cost_usd": 3.1e-06,
+     "top": [
+      [
+       "en-law-amending-enterprises-2025:0007",
+       0.0935
+      ],
+      [
+       "en-law-amending-enterprises-2025:0002",
+       0.0931
+      ],
+      [
+       "en-law-amending-enterprises-2025:0005",
+       0.0893
+      ],
+      [
+       "en-law-amending-enterprises-2025:0001",
+       0.0889
+      ],
+      [
+       "en-law-amending-enterprises-2025:0000",
+       0.0857
+      ]
+     ],
+     "source_ranks": [
+      4
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.25,
+      "ndcg@5": 0.43067655807339306,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.25,
+      "ndcg@50": 0.43067655807339306
+     }
+    }
+   }
+  },
+  {
+   "id": "g019",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 203.01,
+      "sparse": 0.09,
+      "search": 13.7,
+      "rerank": 0.0,
+      "retrieval": 216.8,
+      "total": 216.8
+     },
+     "cost_usd": 3.8e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0000",
+       0.1
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0007",
+       0.0777
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0002",
+       0.0754
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0003",
+       0.0739
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0004",
+       0.0729
+      ]
+     ],
+     "source_ranks": [
+      3
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.3333333333333333,
+      "ndcg@5": 0.5,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.3333333333333333,
+      "ndcg@50": 0.5
+     }
+    }
+   }
+  },
+  {
+   "id": "g020",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 283.56,
+      "sparse": 0.12,
+      "search": 14.39,
+      "rerank": 0.0,
+      "retrieval": 298.07,
+      "total": 298.07
+     },
+     "cost_usd": 4.9e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005",
+       0.0976
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0006",
+       0.0835
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0050",
+       0.074
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0000",
+       0.0728
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0047",
+       0.0705
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g021",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 205.74,
+      "sparse": 0.09,
+      "search": 11.25,
+      "rerank": 0.0,
+      "retrieval": 217.08,
+      "total": 217.08
+     },
+     "cost_usd": 3.8e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012",
+       0.1
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+       0.0952
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005",
+       0.0825
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0014",
+       0.0774
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0020",
+       0.0739
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g022",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 257.8,
+      "sparse": 0.15,
+      "search": 12.69,
+      "rerank": 0.0,
+      "retrieval": 270.65,
+      "total": 270.65
+     },
+     "cost_usd": 5.3e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0038",
+       0.1
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0040",
+       0.0625
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+       0.0608
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0020",
+       0.0583
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0019",
+       0.0524
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g023",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 246.59,
+      "sparse": 0.07,
+      "search": 12.17,
+      "rerank": 0.0,
+      "retrieval": 258.83,
+      "total": 258.83
+     },
+     "cost_usd": 3.6e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0002",
+       0.0976
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005",
+       0.0835
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0047",
+       0.0763
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0003",
+       0.0762
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012",
+       0.0739
+      ]
+     ],
+     "source_ranks": [
+      44
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.022727272727272728,
+      "ndcg@50": 0.18208790046993825
+     }
+    }
+   }
+  },
+  {
+   "id": "g024",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 251.21,
+      "sparse": 0.1,
+      "search": 13.21,
+      "rerank": 0.0,
+      "retrieval": 264.53,
+      "total": 264.53
+     },
+     "cost_usd": 5.3e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012",
+       0.0955
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0003",
+       0.0799
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0023",
+       0.0779
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0004",
+       0.077
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0031",
+       0.0739
+      ]
+     ],
+     "source_ranks": [
+      30
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.03333333333333333,
+      "ndcg@50": 0.20184908658209985
+     }
+    }
+   }
+  },
+  {
+   "id": "g025",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 226.38,
+      "sparse": 0.09,
+      "search": 11.46,
+      "rerank": 0.0,
+      "retrieval": 237.93,
+      "total": 237.93
+     },
+     "cost_usd": 3.9e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0040",
+       0.0847
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0009",
+       0.0839
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+       0.0712
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0022",
+       0.0694
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0039",
+       0.069
+      ]
+     ],
+     "source_ranks": [
+      22
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.045454545454545456,
+      "ndcg@50": 0.22106472945750374
+     }
+    }
+   }
+  },
+  {
+   "id": "g026",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 179.33,
+      "sparse": 0.08,
+      "search": 11.45,
+      "rerank": 0.0,
+      "retrieval": 190.86,
+      "total": 190.86
+     },
+     "cost_usd": 4.5e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0017",
+       0.0976
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+       0.0931
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005",
+       0.0889
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0018",
+       0.0805
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0032",
+       0.0774
+      ]
+     ],
+     "source_ranks": [
+      24
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.041666666666666664,
+      "ndcg@50": 0.21533827903669653
+     }
+    }
+   }
+  },
+  {
+   "id": "g027",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 193.4,
+      "sparse": 0.07,
+      "search": 11.0,
+      "rerank": 0.0,
+      "retrieval": 204.47,
+      "total": 204.47
+     },
+     "cost_usd": 2.7e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0026",
+       0.0893
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0025",
+       0.0857
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0021",
+       0.0855
+      ],
+      [
+       "en-gdpr-2016:0064",
+       0.0704
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0050",
+       0.0693
+      ]
+     ],
+     "source_ranks": [
+      4
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.25,
+      "ndcg@5": 0.43067655807339306,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.25,
+      "ndcg@50": 0.43067655807339306
+     }
+    }
+   }
+  },
+  {
+   "id": "g028",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 233.52,
+      "sparse": 0.09,
+      "search": 12.81,
+      "rerank": 0.0,
+      "retrieval": 246.42,
+      "total": 246.42
+     },
+     "cost_usd": 3e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0062",
+       0.0665
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0001",
+       0.0599
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0007",
+       0.05
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0115",
+       0.05
+      ],
+      [
+       "en-gdpr-2016:0043",
+       0.0476
+      ]
+     ],
+     "source_ranks": [
+      5
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.2,
+      "ndcg@5": 0.38685280723454163,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.2,
+      "ndcg@50": 0.38685280723454163
+     }
+    }
+   }
+  },
+  {
+   "id": "g029",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 248.1,
+      "sparse": 0.1,
+      "search": 13.14,
+      "rerank": 0.0,
+      "retrieval": 261.33,
+      "total": 261.33
+     },
+     "cost_usd": 5.6e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0043",
+       0.0976
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0047",
+       0.0787
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0029",
+       0.077
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0048",
+       0.0702
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0030",
+       0.0694
+      ]
+     ],
+     "source_ranks": [
+      16
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.0625,
+      "ndcg@50": 0.24465054211822604
+     }
+    }
+   }
+  },
+  {
+   "id": "g030",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 267.05,
+      "sparse": 0.11,
+      "search": 13.98,
+      "rerank": 0.0,
+      "retrieval": 281.13,
+      "total": 281.13
+     },
+     "cost_usd": 5.2e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0038",
+       0.0604
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0210",
+       0.05
+      ],
+      [
+       "en-gdpr-2016:0066",
+       0.05
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0197",
+       0.0476
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+       0.0476
+      ]
+     ],
+     "source_ranks": [
+      3
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.3333333333333333,
+      "ndcg@5": 0.5,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.3333333333333333,
+      "ndcg@50": 0.5
+     }
+    }
+   }
+  },
+  {
+   "id": "g031",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 251.71,
+      "sparse": 0.11,
+      "search": 13.35,
+      "rerank": 0.0,
+      "retrieval": 265.18,
+      "total": 265.18
+     },
+     "cost_usd": 6e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+       0.1
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012",
+       0.0931
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005",
+       0.0819
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0003",
+       0.0788
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0014",
+       0.078
+      ]
+     ],
+     "source_ranks": [
+      null
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 0.0,
+      "recall@50": 0.0,
+      "mrr@50": 0.0,
+      "ndcg@50": 0.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g032",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 254.24,
+      "sparse": 0.09,
+      "search": 12.71,
+      "rerank": 0.0,
+      "retrieval": 267.03,
+      "total": 267.03
+     },
+     "cost_usd": 3.8e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0029",
+       0.1
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0030",
+       0.0952
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0010",
+       0.0889
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0002",
+       0.0839
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0009",
+       0.0774
+      ]
+     ],
+     "source_ranks": [
+      44
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.022727272727272728,
+      "ndcg@50": 0.18208790046993825
+     }
+    }
+   }
+  },
+  {
+   "id": "g033",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 248.76,
+      "sparse": 0.11,
+      "search": 13.61,
+      "rerank": 0.0,
+      "retrieval": 262.49,
+      "total": 262.49
+     },
+     "cost_usd": 4.7e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0029",
+       0.0935
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0038",
+       0.0885
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0020",
+       0.0761
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0030",
+       0.0718
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0037",
+       0.0533
+      ]
+     ],
+     "source_ranks": [
+      29
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.034482758620689655,
+      "ndcg@50": 0.2037950470905062
+     }
+    }
+   }
+  },
+  {
+   "id": "g034",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 256.2,
+      "sparse": 0.12,
+      "search": 13.7,
+      "rerank": 0.0,
+      "retrieval": 270.02,
+      "total": 270.02
+     },
+     "cost_usd": 6.2e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0030",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0032",
+       0.0911
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0029",
+       0.0889
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0031",
+       0.0871
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0073",
+       0.0785
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g035",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 185.32,
+      "sparse": 0.09,
+      "search": 12.11,
+      "rerank": 0.0,
+      "retrieval": 197.53,
+      "total": 197.53
+     },
+     "cost_usd": 6e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0031",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0113",
+       0.0871
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0104",
+       0.087
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0105",
+       0.0833
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0030",
+       0.0833
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g036",
+   "type": "numeric",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 238.83,
+      "sparse": 0.1,
+      "search": 12.9,
+      "rerank": 0.0,
+      "retrieval": 251.83,
+      "total": 251.83
+     },
+     "cost_usd": 2.2e-06,
+     "top": [
+      [
+       "en-labour-code-2019:0035",
+       0.0976
+      ],
+      [
+       "en-labour-code-2019:0036",
+       0.0909
+      ],
+      [
+       "en-labour-code-2019:0020",
+       0.0813
+      ],
+      [
+       "en-labour-code-2019:0041",
+       0.0755
+      ],
+      [
+       "en-labour-code-2019:0034",
+       0.067
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g037",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 179.82,
+      "sparse": 0.09,
+      "search": 12.75,
+      "rerank": 0.0,
+      "retrieval": 192.66,
+      "total": 192.66
+     },
+     "cost_usd": 3.8e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0121",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0162",
+       0.0876
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0112",
+       0.0871
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0123",
+       0.0801
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0128",
+       0.0725
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g038",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 305.44,
+      "sparse": 0.1,
+      "search": 13.05,
+      "rerank": 0.0,
+      "retrieval": 318.59,
+      "total": 318.59
+     },
+     "cost_usd": 4.8e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0112",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0126",
+       0.0911
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0127",
+       0.0909
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0111",
+       0.0805
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0123",
+       0.0801
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g039",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 200.02,
+      "sparse": 0.08,
+      "search": 13.18,
+      "rerank": 0.0,
+      "retrieval": 213.28,
+      "total": 213.28
+     },
+     "cost_usd": 3e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0127",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0126",
+       0.0911
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0128",
+       0.0889
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0115",
+       0.0755
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0125",
+       0.0733
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g040",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 236.86,
+      "sparse": 0.08,
+      "search": 13.32,
+      "rerank": 0.0,
+      "retrieval": 250.26,
+      "total": 250.26
+     },
+     "cost_usd": 3.4e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0138",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0141",
+       0.0931
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0137",
+       0.0911
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0139",
+       0.0839
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0140",
+       0.0787
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g041",
+   "type": "numeric",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 247.65,
+      "sparse": 0.08,
+      "search": 13.58,
+      "rerank": 0.0,
+      "retrieval": 261.31,
+      "total": 261.31
+     },
+     "cost_usd": 1.8e-06,
+     "top": [
+      [
+       "en-law-on-enterprises-2020:0047",
+       0.1
+      ],
+      [
+       "en-law-on-enterprises-2020:0055",
+       0.0952
+      ],
+      [
+       "en-law-on-enterprises-2020:0209",
+       0.0909
+      ],
+      [
+       "en-law-on-enterprises-2020:0053",
+       0.0801
+      ],
+      [
+       "en-law-on-enterprises-2020:0075",
+       0.0787
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g042",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 297.01,
+      "sparse": 0.15,
+      "search": 12.08,
+      "rerank": 0.0,
+      "retrieval": 309.24,
+      "total": 309.24
+     },
+     "cost_usd": 5.1e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0015",
+       0.0976
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0014",
+       0.0976
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0012",
+       0.0801
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0273",
+       0.0712
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0008",
+       0.0693
+      ]
+     ],
+     "source_ranks": [
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.5,
+      "ndcg@5": 0.6309297535714575,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.5,
+      "ndcg@50": 0.6309297535714575
+     }
+    }
+   }
+  },
+  {
+   "id": "g043",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 264.33,
+      "sparse": 0.1,
+      "search": 12.49,
+      "rerank": 0.0,
+      "retrieval": 276.92,
+      "total": 276.92
+     },
+     "cost_usd": 6.5e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0200",
+       0.1
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0088",
+       0.0931
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0201",
+       0.0805
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0193",
+       0.078
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0205",
+       0.0754
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g044",
+   "type": "numeric",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 257.52,
+      "sparse": 0.17,
+      "search": 13.38,
+      "rerank": 0.0,
+      "retrieval": 271.07,
+      "total": 271.07
+     },
+     "cost_usd": 2.7e-06,
+     "top": [
+      [
+       "en-personal-data-protection-law-2025:0008",
+       0.1
+      ],
+      [
+       "en-personal-data-protection-law-2025:0020",
+       0.0893
+      ],
+      [
+       "en-personal-data-protection-law-2025:0005",
+       0.0825
+      ],
+      [
+       "en-personal-data-protection-law-2025:0017",
+       0.0678
+      ],
+      [
+       "en-personal-data-protection-law-2025:0006",
+       0.0663
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g045",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 237.39,
+      "sparse": 0.12,
+      "search": 13.8,
+      "rerank": 0.0,
+      "retrieval": 251.3,
+      "total": 251.3
+     },
+     "cost_usd": 6e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0029",
+       0.1
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0030",
+       0.0952
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0004",
+       0.0745
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0010",
+       0.0713
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0038",
+       0.0697
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g046",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 238.39,
+      "sparse": 0.1,
+      "search": 13.54,
+      "rerank": 0.0,
+      "retrieval": 252.03,
+      "total": 252.03
+     },
+     "cost_usd": 4.9e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+       0.1
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0006",
+       0.0952
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005",
+       0.0871
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0017",
+       0.0839
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012",
+       0.0805
+      ]
+     ],
+     "source_ranks": [
+      null
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 0.0,
+      "recall@50": 0.0,
+      "mrr@50": 0.0,
+      "ndcg@50": 0.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g047",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 236.93,
+      "sparse": 0.12,
+      "search": 14.35,
+      "rerank": 0.0,
+      "retrieval": 251.41,
+      "total": 251.41
+     },
+     "cost_usd": 6.5e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0010",
+       0.1
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0011",
+       0.0952
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0029",
+       0.0805
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0030",
+       0.075
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0004",
+       0.0703
+      ]
+     ],
+     "source_ranks": [
+      26
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.038461538461538464,
+      "ndcg@50": 0.2103099178571525
+     }
+    }
+   }
+  },
+  {
+   "id": "g048",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 243.61,
+      "sparse": 0.07,
+      "search": 12.91,
+      "rerank": 0.0,
+      "retrieval": 256.59,
+      "total": 256.59
+     },
+     "cost_usd": 2.6e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0251",
+       0.0726
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0007",
+       0.061
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0011",
+       0.0595
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0001",
+       0.0593
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0033",
+       0.0558
+      ]
+     ],
+     "source_ranks": [
+      23
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.043478260869565216,
+      "ndcg@50": 0.21810429198553155
+     }
+    }
+   }
+  },
+  {
+   "id": "g049",
+   "type": "numeric",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 216.49,
+      "sparse": 0.08,
+      "search": 13.53,
+      "rerank": 0.0,
+      "retrieval": 230.09,
+      "total": 230.09
+     },
+     "cost_usd": 1.6e-06,
+     "top": [
+      [
+       "en-labour-code-2019:0109",
+       0.0917
+      ],
+      [
+       "en-labour-code-2019:0146",
+       0.0889
+      ],
+      [
+       "en-labour-code-2019:0116",
+       0.0819
+      ],
+      [
+       "en-labour-code-2019:0151",
+       0.0754
+      ],
+      [
+       "en-labour-code-2019:0098",
+       0.0728
+      ]
+     ],
+     "source_ranks": [
+      6
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.16666666666666666,
+      "ndcg@50": 0.3562071871080222
+     }
+    }
+   }
+  },
+  {
+   "id": "g050",
+   "type": "numeric",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 263.16,
+      "sparse": 0.12,
+      "search": 13.59,
+      "rerank": 0.0,
+      "retrieval": 276.87,
+      "total": 276.87
+     },
+     "cost_usd": 6.2e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0128",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0127",
+       0.0855
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0129",
+       0.0851
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0126",
+       0.0851
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0185",
+       0.0762
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g051",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 246.63,
+      "sparse": 0.16,
+      "search": 13.0,
+      "rerank": 0.0,
+      "retrieval": 259.79,
+      "total": 259.79
+     },
+     "cost_usd": 5.2e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0050",
+       0.0835
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0111",
+       0.0777
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0130",
+       0.0774
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0128",
+       0.0758
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0042",
+       0.0729
+      ]
+     ],
+     "source_ranks": [
+      10
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.1,
+      "ndcg@50": 0.2890648263178879
+     }
+    }
+   }
+  },
+  {
+   "id": "g052",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 204.64,
+      "sparse": 0.11,
+      "search": 13.48,
+      "rerank": 0.0,
+      "retrieval": 218.22,
+      "total": 218.22
+     },
+     "cost_usd": 5.7e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0016",
+       0.0823
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0214",
+       0.0817
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0036",
+       0.068
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0017",
+       0.052
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0004",
+       0.05
+      ]
+     ],
+     "source_ranks": [
+      8
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.125,
+      "ndcg@50": 0.31546487678572877
+     }
+    }
+   }
+  },
+  {
+   "id": "g053",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 253.19,
+      "sparse": 0.11,
+      "search": 13.14,
+      "rerank": 0.0,
+      "retrieval": 266.44,
+      "total": 266.44
+     },
+     "cost_usd": 4.5e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0141",
+       0.0931
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0142",
+       0.0917
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0143",
+       0.0758
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0111",
+       0.0708
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0140",
+       0.069
+      ]
+     ],
+     "source_ranks": [
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.5,
+      "ndcg@5": 0.6309297535714575,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.5,
+      "ndcg@50": 0.6309297535714575
+     }
+    }
+   }
+  },
+  {
+   "id": "g054",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 238.79,
+      "sparse": 0.09,
+      "search": 11.56,
+      "rerank": 0.0,
+      "retrieval": 250.44,
+      "total": 250.44
+     },
+     "cost_usd": 4.4e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0112",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0120",
+       0.0952
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0111",
+       0.0787
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0109",
+       0.0777
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0162",
+       0.0768
+      ]
+     ],
+     "source_ranks": [
+      1,
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g055",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 201.33,
+      "sparse": 0.12,
+      "search": 14.06,
+      "rerank": 0.0,
+      "retrieval": 215.5,
+      "total": 215.5
+     },
+     "cost_usd": 6e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0272",
+       0.1
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0057",
+       0.0931
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0275",
+       0.0851
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0274",
+       0.0801
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0273",
+       0.0757
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g056",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 233.37,
+      "sparse": 0.12,
+      "search": 13.82,
+      "rerank": 0.0,
+      "retrieval": 247.3,
+      "total": 247.3
+     },
+     "cost_usd": 5.1e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0109",
+       0.0931
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0069",
+       0.0885
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0068",
+       0.0821
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0294",
+       0.0664
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0292",
+       0.0644
+      ]
+     ],
+     "source_ranks": [
+      3
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.3333333333333333,
+      "ndcg@5": 0.5,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.3333333333333333,
+      "ndcg@50": 0.5
+     }
+    }
+   }
+  },
+  {
+   "id": "g057",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 190.65,
+      "sparse": 0.1,
+      "search": 13.46,
+      "rerank": 0.0,
+      "retrieval": 204.2,
+      "total": 204.2
+     },
+     "cost_usd": 3.2e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0037",
+       0.0976
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0036",
+       0.0976
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0034",
+       0.0817
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0035",
+       0.0788
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0176",
+       0.0631
+      ]
+     ],
+     "source_ranks": [
+      15
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.06666666666666667,
+      "ndcg@50": 0.25
+     }
+    }
+   }
+  },
+  {
+   "id": "g058",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 229.45,
+      "sparse": 0.1,
+      "search": 13.52,
+      "rerank": 0.0,
+      "retrieval": 243.08,
+      "total": 243.08
+     },
+     "cost_usd": 4.5e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0032",
+       0.0727
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0304",
+       0.05
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0027",
+       0.0488
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0303",
+       0.0476
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0032",
+       0.0476
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g059",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 246.91,
+      "sparse": 0.12,
+      "search": 14.09,
+      "rerank": 0.0,
+      "retrieval": 261.12,
+      "total": 261.12
+     },
+     "cost_usd": 5.1e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0014",
+       0.0952
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012",
+       0.087
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0037",
+       0.0819
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0038",
+       0.0794
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+       0.0758
+      ]
+     ],
+     "source_ranks": [
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.5,
+      "ndcg@5": 0.6309297535714575,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.5,
+      "ndcg@50": 0.6309297535714575
+     }
+    }
+   }
+  },
+  {
+   "id": "g060",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 260.15,
+      "sparse": 0.12,
+      "search": 13.62,
+      "rerank": 0.0,
+      "retrieval": 273.89,
+      "total": 273.89
+     },
+     "cost_usd": 6e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0029",
+       0.0955
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0035",
+       0.077
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0009",
+       0.0702
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0155",
+       0.0652
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0030",
+       0.063
+      ]
+     ],
+     "source_ranks": [
+      20
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.05,
+      "ndcg@50": 0.227670248696953
+     }
+    }
+   }
+  },
+  {
+   "id": "g061",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 244.54,
+      "sparse": 0.11,
+      "search": 18.67,
+      "rerank": 0.0,
+      "retrieval": 263.32,
+      "total": 263.32
+     },
+     "cost_usd": 5.6e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0036",
+       0.0976
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0037",
+       0.0976
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+       0.0839
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005",
+       0.0835
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0026",
+       0.0755
+      ]
+     ],
+     "source_ranks": [
+      null
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 0.0,
+      "recall@50": 0.0,
+      "mrr@50": 0.0,
+      "ndcg@50": 0.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g062",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 245.07,
+      "sparse": 0.13,
+      "search": 13.98,
+      "rerank": 0.0,
+      "retrieval": 259.18,
+      "total": 259.18
+     },
+     "cost_usd": 6.5e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0038",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0161",
+       0.0774
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0073",
+       0.0661
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0023",
+       0.0641
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0185",
+       0.0639
+      ]
+     ],
+     "source_ranks": [
+      11
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.09090909090909091,
+      "ndcg@50": 0.27894294565112987
+     }
+    }
+   }
+  },
+  {
+   "id": "g063",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 247.34,
+      "sparse": 0.12,
+      "search": 14.01,
+      "rerank": 0.0,
+      "retrieval": 261.48,
+      "total": 261.48
+     },
+     "cost_usd": 5.6e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0010",
+       0.0762
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0021",
+       0.0756
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0011",
+       0.0723
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0240",
+       0.05
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012",
+       0.0499
+      ]
+     ],
+     "source_ranks": [
+      41,
+      41
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.024390243902439025,
+      "ndcg@50": 0.2274150962164584
+     }
+    }
+   }
+  },
+  {
+   "id": "g064",
+   "type": "paraphrase",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 265.92,
+      "sparse": 0.09,
+      "search": 13.92,
+      "rerank": 0.0,
+      "retrieval": 279.93,
+      "total": 279.93
+     },
+     "cost_usd": 2.6e-06,
+     "top": [
+      [
+       "en-labour-code-2019:0107",
+       0.1
+      ],
+      [
+       "en-labour-code-2019:0146",
+       0.0952
+      ],
+      [
+       "en-labour-code-2019:0108",
+       0.0767
+      ],
+      [
+       "en-labour-code-2019:0154",
+       0.0749
+      ],
+      [
+       "en-labour-code-2019:0095",
+       0.0728
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g065",
+   "type": "paraphrase",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 197.33,
+      "sparse": 0.1,
+      "search": 14.57,
+      "rerank": 0.0,
+      "retrieval": 212.0,
+      "total": 212.0
+     },
+     "cost_usd": 2.6e-06,
+     "top": [
+      [
+       "en-personal-data-protection-law-2025:0029",
+       0.1
+      ],
+      [
+       "en-labour-code-2019:0154",
+       0.0679
+      ],
+      [
+       "en-personal-data-protection-law-2025:0001",
+       0.067
+      ],
+      [
+       "en-law-on-enterprises-2020:0004",
+       0.0625
+      ],
+      [
+       "en-labour-code-2019:0152",
+       0.0534
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g066",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 200.3,
+      "sparse": 0.14,
+      "search": 12.05,
+      "rerank": 0.0,
+      "retrieval": 212.49,
+      "total": 212.49
+     },
+     "cost_usd": 5.5e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0059",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0058",
+       0.0952
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0052",
+       0.0835
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0053",
+       0.0833
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0051",
+       0.0825
+      ]
+     ],
+     "source_ranks": [
+      2,
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g067",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 246.01,
+      "sparse": 0.12,
+      "search": 14.04,
+      "rerank": 0.0,
+      "retrieval": 260.17,
+      "total": 260.17
+     },
+     "cost_usd": 7.3e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0031",
+       0.0955
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0105",
+       0.0911
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0030",
+       0.0893
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0104",
+       0.0787
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0113",
+       0.0785
+      ]
+     ],
+     "source_ranks": [
+      3,
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 0.9197207891481876,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 0.9197207891481876
+     }
+    }
+   }
+  },
+  {
+   "id": "g068",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 240.24,
+      "sparse": 0.13,
+      "search": 13.51,
+      "rerank": 0.0,
+      "retrieval": 253.88,
+      "total": 253.88
+     },
+     "cost_usd": 6.4e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0128",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0129",
+       0.0861
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0119",
+       0.0817
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0126",
+       0.0742
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0185",
+       0.0691
+      ]
+     ],
+     "source_ranks": [
+      1,
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g069",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 193.27,
+      "sparse": 0.12,
+      "search": 14.17,
+      "rerank": 0.0,
+      "retrieval": 207.56,
+      "total": 207.56
+     },
+     "cost_usd": 6.4e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0127",
+       0.0976
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0128",
+       0.0889
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0112",
+       0.0803
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0126",
+       0.0787
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0111",
+       0.0761
+      ]
+     ],
+     "source_ranks": [
+      1,
+      3
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 0.9197207891481876,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 0.9197207891481876
+     }
+    }
+   }
+  },
+  {
+   "id": "g070",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 202.61,
+      "sparse": 0.15,
+      "search": 14.48,
+      "rerank": 0.0,
+      "retrieval": 217.24,
+      "total": 217.24
+     },
+     "cost_usd": 7.7e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0140",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0138",
+       0.0931
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0141",
+       0.0911
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0139",
+       0.0839
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0143",
+       0.0785
+      ]
+     ],
+     "source_ranks": [
+      1,
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g071",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 344.22,
+      "sparse": 0.17,
+      "search": 11.97,
+      "rerank": 0.0,
+      "retrieval": 356.37,
+      "total": 356.37
+     },
+     "cost_usd": 4.3e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0068",
+       0.0955
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0294",
+       0.0885
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0080",
+       0.0687
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0191",
+       0.068
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0283",
+       0.0634
+      ]
+     ],
+     "source_ranks": [
+      1,
+      7
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 0.5,
+      "mrr@5": 1.0,
+      "ndcg@5": 0.6131471927654584,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 0.8175295903539445
+     }
+    }
+   }
+  },
+  {
+   "id": "g072",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 260.53,
+      "sparse": 0.12,
+      "search": 13.52,
+      "rerank": 0.0,
+      "retrieval": 274.16,
+      "total": 274.16
+     },
+     "cost_usd": 5.2e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0069",
+       0.0976
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0125",
+       0.09
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0068",
+       0.0851
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0294",
+       0.0799
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0109",
+       0.0799
+      ]
+     ],
+     "source_ranks": [
+      1,
+      5
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 0.8503449055347546,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 0.8503449055347546
+     }
+    }
+   }
+  },
+  {
+   "id": "g073",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 262.8,
+      "sparse": 0.16,
+      "search": 14.31,
+      "rerank": 0.0,
+      "retrieval": 277.26,
+      "total": 277.26
+     },
+     "cost_usd": 8.1e-06,
+     "top": [
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0013",
+       0.0955
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0005",
+       0.0955
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0003",
+       0.0893
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0011",
+       0.0821
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0002",
+       0.0817
+      ]
+     ],
+     "source_ranks": [
+      1,
+      5
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 0.8503449055347546,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 0.8503449055347546
+     }
+    }
+   }
+  },
+  {
+   "id": "g074",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 251.78,
+      "sparse": 0.12,
+      "search": 11.8,
+      "rerank": 0.0,
+      "retrieval": 263.69,
+      "total": 263.69
+     },
+     "cost_usd": 8.8e-06,
+     "top": [
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0003",
+       0.0976
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0011",
+       0.0955
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0013",
+       0.0931
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0005",
+       0.087
+      ],
+      [
+       "vi-luat-sua-doi-luat-doanh-nghiep-2025:0004",
+       0.0785
+      ]
+     ],
+     "source_ranks": [
+      null,
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 0.5,
+      "mrr@5": 0.5,
+      "ndcg@5": 0.38685280723454163,
+      "hit@50": 1.0,
+      "recall@50": 0.5,
+      "mrr@50": 0.5,
+      "ndcg@50": 0.38685280723454163
+     }
+    }
+   }
+  },
+  {
+   "id": "g075",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 243.55,
+      "sparse": 0.1,
+      "search": 12.41,
+      "rerank": 0.0,
+      "retrieval": 256.06,
+      "total": 256.06
+     },
+     "cost_usd": 4.8e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0029",
+       0.0976
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0030",
+       0.0955
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0008",
+       0.0839
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0010",
+       0.0746
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0001",
+       0.0711
+      ]
+     ],
+     "source_ranks": [
+      1,
+      null
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 0.5,
+      "mrr@5": 1.0,
+      "ndcg@5": 0.6131471927654584,
+      "hit@50": 1.0,
+      "recall@50": 0.5,
+      "mrr@50": 1.0,
+      "ndcg@50": 0.6131471927654584
+     }
+    }
+   }
+  },
+  {
+   "id": "g076",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 251.09,
+      "sparse": 0.1,
+      "search": 12.04,
+      "rerank": 0.0,
+      "retrieval": 263.24,
+      "total": 263.24
+     },
+     "cost_usd": 5.6e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0011",
+       0.0976
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0010",
+       0.0955
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0008",
+       0.0801
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0007",
+       0.0787
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0045",
+       0.078
+      ]
+     ],
+     "source_ranks": [
+      null,
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 0.5,
+      "mrr@5": 0.5,
+      "ndcg@5": 0.38685280723454163,
+      "hit@50": 1.0,
+      "recall@50": 0.5,
+      "mrr@50": 0.5,
+      "ndcg@50": 0.38685280723454163
+     }
+    }
+   }
+  },
+  {
+   "id": "g077",
+   "type": "multi_hop",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 250.12,
+      "sparse": 0.15,
+      "search": 13.47,
+      "rerank": 0.0,
+      "retrieval": 263.74,
+      "total": 263.74
+     },
+     "cost_usd": 6e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0031",
+       0.1
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012",
+       0.0871
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0050",
+       0.0757
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005",
+       0.0747
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0007",
+       0.0697
+      ]
+     ],
+     "source_ranks": [
+      1,
+      null
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 0.5,
+      "mrr@5": 1.0,
+      "ndcg@5": 0.6131471927654584,
+      "hit@50": 1.0,
+      "recall@50": 0.5,
+      "mrr@50": 1.0,
+      "ndcg@50": 0.6131471927654584
+     }
+    }
+   }
+  },
+  {
+   "id": "g078",
+   "type": "single_article",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 270.45,
+      "sparse": 0.11,
+      "search": 12.16,
+      "rerank": 0.0,
+      "retrieval": 282.71,
+      "total": 282.71
+     },
+     "cost_usd": 3.2e-06,
+     "top": [
+      [
+       "en-labour-code-2019:0169",
+       0.1
+      ],
+      [
+       "en-labour-code-2019:0219",
+       0.0876
+      ],
+      [
+       "en-labour-code-2019:0220",
+       0.0871
+      ],
+      [
+       "en-labour-code-2019:0151",
+       0.0805
+      ],
+      [
+       "en-labour-code-2019:0035",
+       0.0805
+      ]
+     ],
+     "source_ranks": [
+      1,
+      1,
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g079",
+   "type": "multi_hop",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 284.69,
+      "sparse": 0.1,
+      "search": 13.52,
+      "rerank": 0.0,
+      "retrieval": 298.32,
+      "total": 298.32
+     },
+     "cost_usd": 2.7e-06,
+     "top": [
+      [
+       "en-labour-code-2019:0113",
+       0.0976
+      ],
+      [
+       "en-labour-code-2019:0112",
+       0.0955
+      ],
+      [
+       "en-labour-code-2019:0114",
+       0.0855
+      ],
+      [
+       "en-labour-code-2019:0101",
+       0.078
+      ],
+      [
+       "en-labour-code-2019:0115",
+       0.0733
+      ]
+     ],
+     "source_ranks": [
+      2,
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g080",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 276.66,
+      "sparse": 0.09,
+      "search": 14.02,
+      "rerank": 0.0,
+      "retrieval": 290.77,
+      "total": 290.77
+     },
+     "cost_usd": 3.2e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0105",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0104",
+       0.0931
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0106",
+       0.0792
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0113",
+       0.0788
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0031",
+       0.0762
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g081",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 375.06,
+      "sparse": 0.14,
+      "search": 12.41,
+      "rerank": 0.0,
+      "retrieval": 387.61,
+      "total": 387.61
+     },
+     "cost_usd": 4.3e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0044",
+       0.075
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0188",
+       0.074
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0009",
+       0.0625
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0029",
+       0.0577
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0161",
+       0.0523
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g082",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 253.26,
+      "sparse": 0.11,
+      "search": 14.09,
+      "rerank": 0.0,
+      "retrieval": 267.45,
+      "total": 267.45
+     },
+     "cost_usd": 6.9e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0184",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0051",
+       0.0889
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0116",
+       0.0876
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0179",
+       0.0711
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0247",
+       0.0697
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g083",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 225.8,
+      "sparse": 0.1,
+      "search": 12.97,
+      "rerank": 0.0,
+      "retrieval": 238.87,
+      "total": 238.87
+     },
+     "cost_usd": 4e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0011",
+       0.0952
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0010",
+       0.0935
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0241",
+       0.0909
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0142",
+       0.0689
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0137",
+       0.0673
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g084",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 285.0,
+      "sparse": 0.1,
+      "search": 13.42,
+      "rerank": 0.0,
+      "retrieval": 298.52,
+      "total": 298.52
+     },
+     "cost_usd": 5.2e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0041",
+       0.0839
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0040",
+       0.0794
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0046",
+       0.0785
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0049",
+       0.0627
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0310",
+       0.061
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g085",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 289.59,
+      "sparse": 0.11,
+      "search": 14.11,
+      "rerank": 0.0,
+      "retrieval": 303.8,
+      "total": 303.8
+     },
+     "cost_usd": 6.1e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0059",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0058",
+       0.0952
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0051",
+       0.0812
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0157",
+       0.0787
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0055",
+       0.0757
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g086",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 287.38,
+      "sparse": 0.08,
+      "search": 12.49,
+      "rerank": 0.0,
+      "retrieval": 299.94,
+      "total": 299.94
+     },
+     "cost_usd": 3.5e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0069",
+       0.087
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0156",
+       0.0857
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0109",
+       0.081
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0070",
+       0.0767
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0071",
+       0.0742
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g087",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 196.25,
+      "sparse": 0.09,
+      "search": 13.91,
+      "rerank": 0.0,
+      "retrieval": 210.25,
+      "total": 210.25
+     },
+     "cost_usd": 3.1e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0170",
+       0.1
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0167",
+       0.0889
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0166",
+       0.0889
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0168",
+       0.0785
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0027",
+       0.0704
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g088",
+   "type": "unanswerable",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 229.49,
+      "sparse": 0.1,
+      "search": 14.21,
+      "rerank": 0.0,
+      "retrieval": 243.8,
+      "total": 243.8
+     },
+     "cost_usd": 1.4e-06,
+     "top": [
+      [
+       "en-personal-data-protection-law-2025:0004",
+       0.0845
+      ],
+      [
+       "en-gdpr-2016:0135",
+       0.0549
+      ],
+      [
+       "en-gdpr-2016:0138",
+       0.0512
+      ],
+      [
+       "en-law-on-enterprises-2020:0121",
+       0.05
+      ],
+      [
+       "en-gdpr-2016:0033",
+       0.0484
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g089",
+   "type": "unanswerable",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 240.76,
+      "sparse": 0.07,
+      "search": 13.45,
+      "rerank": 0.0,
+      "retrieval": 254.29,
+      "total": 254.29
+     },
+     "cost_usd": 1.4e-06,
+     "top": [
+      [
+       "en-law-on-enterprises-2020:0043",
+       0.0839
+      ],
+      [
+       "en-labour-code-2019:0154",
+       0.0643
+      ],
+      [
+       "en-law-on-enterprises-2020:0142",
+       0.0608
+      ],
+      [
+       "en-labour-code-2019:0150",
+       0.0589
+      ],
+      [
+       "en-law-amending-enterprises-2025:0007",
+       0.0563
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g090",
+   "type": "unanswerable",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 226.34,
+      "sparse": 0.07,
+      "search": 12.91,
+      "rerank": 0.0,
+      "retrieval": 239.33,
+      "total": 239.33
+     },
+     "cost_usd": 2e-06,
+     "top": [
+      [
+       "en-labour-code-2019:0091",
+       0.087
+      ],
+      [
+       "en-labour-code-2019:0129",
+       0.0857
+      ],
+      [
+       "en-labour-code-2019:0000",
+       0.0646
+      ],
+      [
+       "en-labour-code-2019:0092",
+       0.0579
+      ],
+      [
+       "en-labour-code-2019:0154",
+       0.049
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g091",
+   "type": "unanswerable",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 258.05,
+      "sparse": 0.08,
+      "search": 13.98,
+      "rerank": 0.0,
+      "retrieval": 272.11,
+      "total": 272.11
+     },
+     "cost_usd": 2e-06,
+     "top": [
+      [
+       "en-personal-data-protection-law-2025:0008",
+       0.0976
+      ],
+      [
+       "en-gdpr-2016:0140",
+       0.0803
+      ],
+      [
+       "en-personal-data-protection-law-2025:0033",
+       0.0625
+      ],
+      [
+       "en-gdpr-2016:0151",
+       0.0613
+      ],
+      [
+       "en-gdpr-2016:0139",
+       0.0608
+      ]
+     ]
+    }
+   }
+  },
+  {
+   "id": "g092",
+   "type": "multi_turn",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 248.18,
+      "sparse": 0.08,
+      "search": 13.34,
+      "rerank": 0.0,
+      "retrieval": 261.6,
+      "total": 261.6
+     },
+     "cost_usd": 3.5e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0176",
+       0.0931
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0034",
+       0.0729
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0158",
+       0.07
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0152",
+       0.0696
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0163",
+       0.0629
+      ]
+     ],
+     "source_ranks": [
+      13
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.07692307692307693,
+      "ndcg@50": 0.26264953503719357
+     }
+    }
+   }
+  },
+  {
+   "id": "g093",
+   "type": "multi_turn",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 251.46,
+      "sparse": 0.1,
+      "search": 14.15,
+      "rerank": 0.0,
+      "retrieval": 265.71,
+      "total": 265.71
+     },
+     "cost_usd": 3e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0111",
+       0.0955
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0110",
+       0.0952
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0231",
+       0.087
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0113",
+       0.0792
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0031",
+       0.0755
+      ]
+     ],
+     "source_ranks": [
+      5
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.2,
+      "ndcg@5": 0.38685280723454163,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.2,
+      "ndcg@50": 0.38685280723454163
+     }
+    }
+   }
+  },
+  {
+   "id": "g094",
+   "type": "multi_turn",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 255.13,
+      "sparse": 0.08,
+      "search": 13.27,
+      "rerank": 0.0,
+      "retrieval": 268.48,
+      "total": 268.48
+     },
+     "cost_usd": 1.6e-06,
+     "top": [
+      [
+       "en-law-on-enterprises-2020:0048",
+       0.1
+      ],
+      [
+       "en-law-on-enterprises-2020:0076",
+       0.0839
+      ],
+      [
+       "en-law-on-enterprises-2020:0069",
+       0.081
+      ],
+      [
+       "en-law-on-enterprises-2020:0051",
+       0.077
+      ],
+      [
+       "en-law-on-enterprises-2020:0183",
+       0.0761
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g095",
+   "type": "multi_turn",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 205.3,
+      "sparse": 0.09,
+      "search": 13.92,
+      "rerank": 0.0,
+      "retrieval": 219.31,
+      "total": 219.31
+     },
+     "cost_usd": 3.9e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0156",
+       0.09
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0157",
+       0.0813
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0171",
+       0.0801
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0272",
+       0.0715
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0029",
+       0.0705
+      ]
+     ],
+     "source_ranks": [
+      4
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.25,
+      "ndcg@5": 0.43067655807339306,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.25,
+      "ndcg@50": 0.43067655807339306
+     }
+    }
+   }
+  },
+  {
+   "id": "g096",
+   "type": "multi_turn",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 287.64,
+      "sparse": 0.09,
+      "search": 13.31,
+      "rerank": 0.0,
+      "retrieval": 301.04,
+      "total": 301.04
+     },
+     "cost_usd": 4.2e-06,
+     "top": [
+      [
+       "vi-bo-luat-lao-dong-2019:0140",
+       0.0931
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0137",
+       0.0917
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0010",
+       0.0738
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0079",
+       0.0711
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0241",
+       0.0694
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g097",
+   "type": "multi_turn",
+   "language": "vi",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 252.48,
+      "sparse": 0.09,
+      "search": 12.95,
+      "rerank": 0.0,
+      "retrieval": 265.52,
+      "total": 265.52
+     },
+     "cost_usd": 3.8e-06,
+     "top": [
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0031",
+       0.0955
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+       0.0789
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0003",
+       0.0774
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005",
+       0.0758
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0002",
+       0.0746
+      ]
+     ],
+     "source_ranks": [
+      1
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 1.0,
+      "ndcg@5": 1.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 1.0,
+      "ndcg@50": 1.0
+     }
+    }
+   }
+  },
+  {
+   "id": "g098",
+   "type": "multi_turn",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 238.03,
+      "sparse": 0.11,
+      "search": 13.85,
+      "rerank": 0.0,
+      "retrieval": 251.99,
+      "total": 251.99
+     },
+     "cost_usd": 1e-06,
+     "top": [
+      [
+       "en-labour-code-2019:0123",
+       0.0704
+      ],
+      [
+       "en-personal-data-protection-law-2025:0008",
+       0.0672
+      ],
+      [
+       "en-labour-code-2019:0190",
+       0.0663
+      ],
+      [
+       "en-law-on-enterprises-2020:0056",
+       0.0654
+      ],
+      [
+       "en-gdpr-2016:0140",
+       0.0648
+      ]
+     ],
+     "source_ranks": [
+      13
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.07692307692307693,
+      "ndcg@50": 0.26264953503719357
+     }
+    }
+   }
+  },
+  {
+   "id": "g099",
+   "type": "multi_turn",
+   "language": "en",
+   "cross_lingual": false,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 244.98,
+      "sparse": 0.07,
+      "search": 14.11,
+      "rerank": 0.0,
+      "retrieval": 259.16,
+      "total": 259.16
+     },
+     "cost_usd": 1.3e-06,
+     "top": [
+      [
+       "en-law-on-enterprises-2020:0032",
+       0.078
+      ],
+      [
+       "en-gdpr-2016:0078",
+       0.075
+      ],
+      [
+       "en-gdpr-2016:0039",
+       0.05
+      ],
+      [
+       "en-labour-code-2019:0033",
+       0.0484
+      ],
+      [
+       "en-gdpr-2016:0142",
+       0.0476
+      ]
+     ],
+     "source_ranks": [
+      2
+     ],
+     "metrics": {
+      "hit@5": 1.0,
+      "recall@5": 1.0,
+      "mrr@5": 0.5,
+      "ndcg@5": 0.6309297535714575,
+      "hit@50": 1.0,
+      "recall@50": 1.0,
+      "mrr@50": 0.5,
+      "ndcg@50": 0.6309297535714575
+     }
+    }
+   }
+  },
+  {
+   "id": "g100",
+   "type": "multi_turn",
+   "language": "vi",
+   "cross_lingual": true,
+   "modes": {
+    "hybrid": {
+     "timings_ms": {
+      "rewrite": 0.0,
+      "embed": 254.35,
+      "sparse": 0.09,
+      "search": 13.53,
+      "rerank": 0.0,
+      "retrieval": 267.96,
+      "total": 267.96
+     },
+     "cost_usd": 2.6e-06,
+     "top": [
+      [
+       "vi-luat-doanh-nghiep-2020:0112",
+       0.0635
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0286",
+       0.053
+      ],
+      [
+       "vi-luat-doanh-nghiep-2020:0057",
+       0.0528
+      ],
+      [
+       "vi-bo-luat-lao-dong-2019:0123",
+       0.05
+      ],
+      [
+       "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0017",
+       0.05
+      ]
+     ],
+     "source_ranks": [
+      null
+     ],
+     "metrics": {
+      "hit@5": 0.0,
+      "recall@5": 0.0,
+      "mrr@5": 0.0,
+      "ndcg@5": 0.0,
+      "hit@50": 0.0,
+      "recall@50": 0.0,
+      "mrr@50": 0.0,
+      "ndcg@50": 0.0
+     }
+    }
+   }
+  }
+ ]
+}

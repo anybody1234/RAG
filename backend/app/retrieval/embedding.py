@@ -137,12 +137,14 @@ class Embedder:
             usage += batch_usage
         return [known[key] for key in hashes], usage
 
-    async def embed_query(self, text: str) -> tuple[list[float], EmbeddingUsage]:
-        """Không dùng cache, để latency đo được là latency thật của lần gọi API."""
-        if not text.strip():
+    async def embed_queries(self, texts: Sequence[str]) -> tuple[list[list[float]], EmbeddingUsage]:
+        """Embed các câu truy xuất của một câu hỏi (câu gốc, câu dịch) trong một request.
+
+        Không dùng cache, để latency đo được là latency thật của lần gọi API.
+        """
+        if not texts or not all(text.strip() for text in texts):
             raise ValueError("câu hỏi rỗng")
-        vectors, usage = await self._call([text])
-        return vectors[0], usage
+        return await self._call(list(texts))
 
 
 def build_embedder(config: RagConfig, cache: EmbeddingCache | None = None) -> Embedder:

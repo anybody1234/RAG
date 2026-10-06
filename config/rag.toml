@@ -1,6 +1,8 @@
 # Siêu tham số RAG. Đổi bất kỳ giá trị nào (trừ bảng [prices] ở cuối) thì phải tăng config_version
 # và chạy lại eval (xem quy tắc trong CLAUDE.md).
-config_version = "v0.1-baseline"
+# v0.2 (06/10/2026): chốt sau P4, trong giới hạn SLO (xem docs/experiments.md). So với v0.1-baseline:
+# embedding large, chunk mang tên văn bản, RRF k = 2 với dense × 2, viết lại câu hỏi ở lượt hỏi tiếp.
+config_version = "v0.2"
 
 [chunking]
 # Đơn vị chính là Điều; Điều dài hơn max_tokens thì tách theo Khoản.
@@ -8,31 +10,57 @@ max_tokens = 800
 overlap_ratio = 0.1
 
 [embedding]
-model = "text-embedding-3-small"
-dimensions = 1536
+model = "text-embedding-3-large"
+dimensions = 3072
 
 [sparse]
 # BM25: phần TF tính ở client, IDF do Qdrant tính (modifier idf).
 k1 = 1.2
 b = 0.75
-# Số token (âm tiết/từ) trung bình của một chunk, đo trên 1282 chunk của bộ dev với chunking ở trên.
+# Số token (âm tiết/từ) trung bình của một chunk, đo trên 1282 chunk của bộ dev với chunking ở trên
+# (chưa tính dòng tên văn bản của embed_title).
 avg_doc_len = 215
+
+[query]
+# Xử lý câu hỏi trước khi truy xuất, gộp trong một lần gọi `model`:
+# - rewrite: viết lại câu hỏi thành câu độc lập theo lịch sử hội thoại (chỉ gọi khi có lịch sử);
+# - translate: thêm bản dịch sang ngôn ngữ còn lại (vi <-> en), truy xuất bằng cả hai câu rồi gộp RRF.
+#   Bật translate thì phải gọi model ở mọi lượt.
+model = "gpt-6-luna"
+reasoning_effort = "none"
+prompt_version = "query-v1"
+rewrite = true
+# Tắt: dịch câu hỏi sửa được câu khác ngôn ngữ nhưng phải gọi model ở mọi lượt (p50 ~2.2 s), vượt SLO.
+translate = false
+translation_weight = 1.0   # trọng số RRF của các nhánh truy xuất bằng câu dịch (câu gốc có trọng số 1)
 
 [retrieval]
 mode = "hybrid"        # dense | sparse | hybrid
 prefetch_limit = 50    # số ứng viên mỗi nhánh trước khi gộp RRF
-rrf_k = 60             # hằng số k của RRF: score = Σ 1/(k + rank). Mặc định của Qdrant là 2.
+rrf_k = 2              # hằng số k của RRF: score = Σ 1/(k + hạng/w − 1). Mặc định của Qdrant là 2.
+dense_weight = 2.0     # trọng số w của nhánh dense trong RRF
+sparse_weight = 1.0    # trọng số w của nhánh sparse trong RRF
 top_k = 5              # số chunk đưa cho LLM
-reranker = "none"      # none | llm
+reranker = "none"      # none | llm. Tắt: rerank bằng Luna mất p50 ~1.5 s, vượt SLO.
+
+[rerank]
+# Rerank listwise bằng LLM (khi retrieval.reranker = "llm"): một lần gọi, xếp lại `candidates` chunk đầu.
+model = "gpt-6-luna"
+reasoning_effort = "none"
+prompt_version = "rerank-v1"
+candidates = 50
+max_chunk_tokens = 200     # mỗi chunk chỉ đưa chừng này token đầu vào prompt
 
 [index]
 # Tên collection đầy đủ: <collection_prefix>_<model embedding>_<số chiều>.
 collection_prefix = "chunks"
+# Thêm "<tên văn bản> (<số hiệu>) | <heading_path>" lên đầu text đem embed và mã hoá sparse, để chunk mang
+# ngữ cảnh văn bản. Payload vẫn giữ text gốc.
+embed_title = true
 
 [generation]
 answer_model = "gpt-6.1-sol"
 answer_reasoning_effort = "low"
-rewrite_model = "gpt-6-luna"
 prompt_version = "answer-v1"
 
 [eval]

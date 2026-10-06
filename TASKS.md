@@ -173,19 +173,42 @@
 
 
 ## P4. Thí nghiệm retrieval (tuần 5)
-Thứ tự xếp theo chỗ đang hụt (Long chốt 06/10). Mỗi thí nghiệm ghi số trước/sau vào `docs/experiments.md`.
+Thứ tự xếp theo chỗ đang hụt (Long chốt 06/10). Số trước/sau và nhận xét của từng thí nghiệm nằm trong `docs/experiments.md`.
 - [x] So sánh dense / sparse / hybrid: số baseline có ở P3
-- [ ] Dịch câu hỏi sang ngôn ngữ còn lại bằng `gpt-6-luna`, truy xuất bằng cả hai câu rồi gộp RRF. Nhắm vào 19 câu khác ngôn ngữ.
-  - Thử gộp chung với bước viết lại câu hỏi multi-turn thành một lần gọi Luna.
-  - Cái giá là phải gọi Luna ở mọi lượt, nên phải đo latency: còn dư khoảng 556 ms so với SLO 800 ms.
-- [ ] Rerank bằng `gpt-6-luna` trên top-50, nhắm vào các câu `paraphrase` đang ở hạng 7–14. Chỉ giữ nếu eval cải thiện và vẫn đạt retrieval p95 ≤ 800 ms.
-- [ ] So sánh `text-embedding-3-large` với `text-embedding-3-small`
-- [ ] Thử lại `rrf_k` và trọng số từng nhánh
-- [ ] Cấu hình chunk, xếp cuối. Recall@50 của câu cùng ngôn ngữ đã đạt 0.93, nên chunking không phải chỗ nghẽn.
-- [ ] Chốt config, ghi bảng so sánh và nhận xét vào `docs/experiments.md`
+- [x] Hạ tầng thí nghiệm (06/10):
+  - `--set khoá=giá_trị` trong `scripts/index.py` và `eval/run_retrieval_eval.py`; thí nghiệm bắt buộc có `config_version` riêng.
+  - Chữ ký index lưu trong metadata collection, nên index của thí nghiệm này không ghi đè được index của thí nghiệm khác.
+  - Eval ghi latency từng bước (rewrite, embed, sparse, search, rerank) và chi phí mỗi câu. 119 test pass.
+- [x] Dịch câu hỏi bằng `gpt-6-luna` và gộp với bước viết lại multi-turn (thí nghiệm 1):
+  - Dịch: nhóm khác ngôn ngữ tăng từ 0 lên 0.68–0.74, nhưng nhóm cùng ngôn ngữ giảm 0.06–0.09 vì bản song ngữ chen vào.
+  - Luna mất p50 2.2 s, p95 4–5 s, min 1.4 s; không lần gọi nào dưới 1 s. **Không dùng**, vì vượt SLO.
+  - Gộp viết lại và dịch vào một lần gọi không tốn thêm latency, nhưng `multi_turn` kém hơn chỉ viết lại.
+  - **Dùng viết lại ở lượt hỏi tiếp:** `multi_turn` tăng từ 0.556 lên 0.889. Cũng là việc P5 cần.
+- [x] Rerank bằng `gpt-6-luna` trên top-50 (thí nghiệm 2):
+  - Hit@5 tăng từ 0.670 lên 0.841. Ba câu `paraphrase` mục tiêu lên hạng 1.
+  - Mất p50 1.5 s, p95 2.8 s. **Không dùng**, vì vượt SLO.
+  - Viết lại + dịch + rerank đạt Hit@5 **0.966**, nhưng tổng p95 7.9 s: đây là trần chất lượng.
+- [x] `text-embedding-3-large` so với small (thí nghiệm 3): dense Hit@5 tăng từ 0.659 lên 0.795, latency chỉ thêm ~50 ms. **Dùng large.**
+- [x] `rrf_k` và trọng số từng nhánh (thí nghiệm 4): **chọn k = 2, dense × 2.**
+  - Với large, hybrid ngang chỉ dense.
+  - BM25 hiện tại yếu với câu hỏi nêu thẳng số Điều: đúng 6/12 câu trong top-5, trong khi dense large được 10/12.
+- [x] Cấu hình chunk (thí nghiệm 5): chunk 400 token kém hơn, 1200 token ngang 800. **Dùng 800 token và thêm tên văn bản vào text đem embed** (dense Hit@5 tăng từ 0.795 lên 0.830).
+- [x] Chốt config `v0.2` (thí nghiệm 6), ghi bảng so sánh vào `docs/experiments.md`
 - **Không làm:** lọc theo tên văn bản (thấy "GDPR" thì lọc theo `doc_id`). Cách đó chỉ khớp với golden set, không dùng được cho tài liệu user upload.
+- [ ] **[L]** Quyết định 3 việc ở cuối `docs/experiments.md`:
+  - nhóm khác ngôn ngữ (giữ nguyên, dịch câu hỏi, hay dịch lúc index);
+  - hybrid hay chỉ dense;
+  - latency của lượt hỏi tiếp so với TTFT.
+- [ ] Chạy lại `v0.2` trên commit sạch (sau khi Long đồng ý commit P4)
 
 **Hoàn thành khi:** Hit@5 ≥ 0.85, hoặc ghi rõ khoảng cách còn thiếu và nguyên nhân.
+
+**Kết quả (06/10):** đạt với `config_version = v0.2`:
+- Hit@5 hybrid **0.864**, MRR@5 0.735, Recall@50 0.960.
+- Retrieval p95 **300 ms**.
+- Nhóm cùng ngôn ngữ đạt 0.986, `multi_turn` đạt 9/9. Nhóm khác ngôn ngữ còn 0.421, và 11/12 câu trượt thuộc nhóm này.
+- Số này có phần lạc quan, vì khoảng 20 cấu hình được chọn trên chính 88 câu. Cần golden set v2 để xác nhận.
+- Chi phí API của cả ngày thí nghiệm khoảng $0.46.
 
 ## P5. Sinh câu trả lời + eval end-to-end (tuần 5–6)
 - [ ] Prompt trả lời (version hoá):
@@ -193,7 +216,7 @@ Thứ tự xếp theo chỗ đang hụt (Long chốt 06/10). Mỗi thí nghiệm
   - Trích dẫn `[n]`.
   - Trả "Không tìm thấy trong tài liệu" khi thiếu thông tin.
 - [ ] Gọi `gpt-6.1-sol` qua Responses API (streaming); kiểm tra mọi `[n]` hợp lệ; map `[n]` sang văn bản, Điều và trang
-- [ ] Viết lại câu hỏi multi-turn bằng `gpt-6-luna`
+- [x] Viết lại câu hỏi multi-turn bằng `gpt-6-luna` (làm ở P4: `backend/app/retrieval/query.py`, `query.rewrite`). Còn phải đo TTFT của lượt hỏi tiếp.
 - [ ] Trần chi phí theo ngày (`DAILY_COST_LIMIT_USD`)
 - [ ] LLM-judge chấm faithfulness, correctness, relevancy, citation precision/recall; abstention đếm trực tiếp
 - [ ] **[L]** Chấm tay 50 mẫu để hiệu chỉnh judge (cần đồng thuận ≥ 80%)

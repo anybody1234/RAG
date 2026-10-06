@@ -3,8 +3,8 @@
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal
 
+from app.core.language import detect_language
 from app.core.rag_config import RagConfig, get_rag_config
 from app.ingestion.chunking import build_chunks
 from app.ingestion.generic_chunker import chunk_generic
@@ -15,22 +15,11 @@ from app.ingestion.ocr import OcrEngine
 from app.ingestion.parsers import parse_file, parse_pdf_files
 from app.ingestion.tokens import TokenCounter
 
-_VIETNAMESE_LETTERS = set(
-    "ăâđêôơưàáảãạằắẳẵặầấẩẫậèéẻẽẹềếểễệìíỉĩịòóỏõọồốổỗộờớởỡợùúủũụừứửữựỳýỷỹỵ"
-)
-
 
 @dataclass
 class IngestResult:
     parsed: ParsedDocument
     chunks: list[Chunk]
-
-
-def detect_language(text: str) -> Literal["vi", "en"]:
-    """Tiếng Việt khi chữ có dấu tiếng Việt chiếm trên 5% số chữ cái (văn bản tiếng Việt thường trên 25%)."""
-    letters = [char for char in text[:20_000].lower() if char.isalpha()]
-    vietnamese = sum(char in _VIETNAMESE_LETTERS for char in letters)
-    return "vi" if letters and vietnamese / len(letters) > 0.05 else "en"
 
 
 def chunk_document(parsed: ParsedDocument, meta: DocumentMeta, config: RagConfig | None = None) -> list[Chunk]:

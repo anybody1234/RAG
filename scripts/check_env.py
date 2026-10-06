@@ -52,7 +52,8 @@ def check_openai() -> None:
     config = get_rag_config()
     models = {
         config.generation.answer_model,
-        config.generation.rewrite_model,
+        config.query.model,
+        config.rerank.model,
         config.eval.judge_model,
         config.embedding.model,
     }

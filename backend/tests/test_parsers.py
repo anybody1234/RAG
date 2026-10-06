@@ -4,8 +4,9 @@ import docx
 import pymupdf
 import pytest
 
+from app.core.language import detect_language
 from app.ingestion.parsers import UnsupportedFileError, parse_file, parse_pdf_files
-from app.ingestion.pipeline import detect_language, ingest_file
+from app.ingestion.pipeline import ingest_file
 
 
 def texts(parsed) -> list[str]:

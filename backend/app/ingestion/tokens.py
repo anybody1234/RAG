@@ -25,3 +25,12 @@ class TokenCounter:
         if count is None:
             count = self._cache[text] = len(self._encoding.encode(text, disallowed_special=()))
         return count
+
+
+def truncate_tokens(text: str, max_tokens: int, model: str) -> str:
+    """Giữ `max_tokens` token đầu của text (theo tokenizer của `model`), thêm " …" khi bị cắt."""
+    tokens = _encoding(model).encode(text, disallowed_special=())
+    if len(tokens) <= max_tokens:
+        return text
+    # Cắt giữa một ký tự nhiều byte thì decode ra "�" ở cuối: bỏ đi.
+    return _encoding(model).decode(tokens[:max_tokens]).rstrip("\ufffd") + " …"

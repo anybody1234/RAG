@@ -10,7 +10,16 @@ from qdrant_client import AsyncQdrantClient
 from app.core.rag_config import RetrievalConfig
 from app.ingestion.models import Chunk
 from app.retrieval.embedding import Embedder
-from app.retrieval.index import SPARSE, ensure_collection, index_document, point_id, user_filter
+from app.retrieval.index import (
+    SPARSE,
+    IndexMismatchError,
+    check_collection,
+    embedding_text,
+    ensure_collection,
+    index_document,
+    point_id,
+    user_filter,
+)
 from app.retrieval.search import Retriever
 from app.retrieval.sparse import SparseEncoder
 
@@ -18,6 +27,12 @@ pytestmark = pytest.mark.filterwarnings("ignore:Payload indexes have no effect")
 
 COLLECTION = "test"
 KEYWORDS = ("thử việc", "lương", "nghỉ")
+SIGNATURE = {
+    "chunking": {"max_tokens": 800, "overlap_ratio": 0.1},
+    "embedding": {"model": "fake", "dimensions": len(KEYWORDS) + 1},
+    "sparse": {"k1": 1.2, "b": 0.75, "avg_doc_len": 10.0},
+    "embed_title": False,
+}
 
 
 class KeywordEmbeddings:
@@ -50,20 +65,33 @@ TEXTS = [
 ]
 
 
+def retrieval_config(**overrides) -> RetrievalConfig:
+    values = {"mode": "hybrid", "prefetch_limit": 10, "rrf_k": 60, "dense_weight": 1.0, "sparse_weight": 1.0,
+              "top_k": 2, "reranker": "none"}
+    return RetrievalConfig(**(values | overrides))
+
+
 @pytest_asyncio.fixture
 async def setup():
     client = AsyncQdrantClient(location=":memory:")
     embedder = Embedder(SimpleNamespace(embeddings=KeywordEmbeddings()), "fake", len(KEYWORDS) + 1, 0.02)
     encoder = SparseEncoder(1.2, 0.75, 10)
-    await ensure_collection(client, COLLECTION, len(KEYWORDS) + 1)
-    config = RetrievalConfig(mode="hybrid", prefetch_limit=10, rrf_k=60, top_k=2, reranker="none")
-    retriever = Retriever(client, COLLECTION, embedder, encoder, config)
+    await ensure_collection(client, COLLECTION, SIGNATURE)
+    retriever = Retriever(client, COLLECTION, embedder, encoder, retrieval_config())
     yield client, embedder, encoder, retriever
     await client.close()
 
 
 async def count(client: AsyncQdrantClient) -> int:
     return (await client.count(COLLECTION, exact=True)).count
+
+
+def test_embedding_text_can_carry_document_title():
+    chunk = make_chunks("blld", TEXTS[:1])[0]
+    assert embedding_text(chunk, with_title=False) == chunk.text
+    assert embedding_text(chunk, with_title=True) == f"Bộ luật Lao động | Điều 1\n{chunk.text}"
+    with_so_hieu = chunk.model_copy(update={"so_hieu": "45/2019/QH14"})
+    assert embedding_text(with_so_hieu, with_title=True).startswith("Bộ luật Lao động (45/2019/QH14) | Điều 1\n")
 
 
 def test_point_id_is_deterministic_and_scoped_by_user():
@@ -144,3 +172,41 @@ async def test_index_document_rejects_mixed_documents(setup):
     chunks = make_chunks("a", TEXTS[:1]) + make_chunks("b", TEXTS[1:2])
     with pytest.raises(ValueError):
         await index_document(client, COLLECTION, chunks, "system", embedder, encoder)
+
+
+@pytest.mark.asyncio
+async def test_collection_signature_must_match(setup):
+    client, *_ = setup
+    assert await ensure_collection(client, COLLECTION, SIGNATURE) is False
+    other = SIGNATURE | {"chunking": {"max_tokens": 400, "overlap_ratio": 0.1}}
+    with pytest.raises(IndexMismatchError):
+        await ensure_collection(client, COLLECTION, other)
+    with pytest.raises(IndexMismatchError):
+        await check_collection(client, "chua-co", SIGNATURE)
+    assert await ensure_collection(client, COLLECTION, other, recreate=True) is True
+    await check_collection(client, COLLECTION, other)
+
+
+@pytest.mark.asyncio
+async def test_translated_query_retrieves_documents_in_the_other_language(setup):
+    """Câu tiếng Việt không chung từ nào với văn bản tiếng Anh; câu dịch tìm được nhờ nhánh sparse của nó."""
+    client, embedder, encoder, retriever = setup
+    english = ["Article 1. Probation shall not exceed 60 days", "Article 2. Wages are paid monthly",
+               "Article 3. Annual leave of 12 days"]
+    await index_document(client, COLLECTION, make_chunks("en", english), "system", embedder, encoder)
+    vectors = await retriever.encode(["Thử việc tối đa bao lâu?", "maximum probation period"], [1.0, 0.5])
+    assert len(vectors.dense) == len(vectors.sparse) == 2
+    hits, _ = await retriever.search_vectors(vectors, "system", "hybrid", limit=3)
+    assert hits[0].payload["chunk_id"] == "en:0000"
+    only_vietnamese = await retriever.encode(["Thử việc tối đa bao lâu?"], dense=False)
+    assert (await retriever.search_vectors(only_vietnamese, "system", "sparse", limit=3))[0] == []
+
+
+@pytest.mark.asyncio
+async def test_zero_weight_drops_a_branch(setup):
+    client, embedder, encoder, _ = setup
+    await index_document(client, COLLECTION, make_chunks("blld", TEXTS), "system", embedder, encoder)
+    dense_only = Retriever(client, COLLECTION, embedder, encoder, retrieval_config(sparse_weight=0.0))
+    hybrid = await dense_only.search("Nghỉ hằng năm", "system", mode="hybrid", limit=3)
+    dense = await dense_only.search("Nghỉ hằng năm", "system", mode="dense", limit=3)
+    assert [(h.id, h.score) for h in hybrid.hits] == [(h.id, h.score) for h in dense.hits]

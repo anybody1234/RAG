@@ -1,16 +1,20 @@
-"""Eval retrieval trên golden set: Hit/Recall/MRR/nDCG ở top-5 và top-50, latency từng bước, cho 3 chế độ.
+"""Eval retrieval trên golden set: Hit/Recall/MRR/nDCG ở top-5 và top-50, latency từng bước, chi phí mỗi câu.
 
 Chạy từ thư mục gốc của repo, sau khi đã index (`python scripts/index.py`):
-    python eval/run_retrieval_eval.py                       # dense, sparse, hybrid
+    python eval/run_retrieval_eval.py                       # dense, sparse, hybrid với config/rag.toml
     python eval/run_retrieval_eval.py --modes hybrid
+    # Thí nghiệm: ghi đè config, phải đặt config_version riêng.
+    python eval/run_retrieval_eval.py --modes hybrid --set config_version=v0.2-exp-translate
+                                      --set query.translate=true
 
 Kết quả lưu vào eval/results/<YYYY-MM-DD>_<config_version>_retrieval.json.
 
 - Câu unanswerable không có nguồn nên không tính metric, nhưng vẫn được truy vấn để đo latency.
-- Câu multi_turn dùng nguyên câu hỏi cuối, chưa viết lại theo lịch sử hội thoại (việc của P5).
-- Mỗi câu chỉ embed một lần; dense và hybrid dùng chung vector. Latency của một chế độ là tổng các bước nó
-  cần: embed (dense, hybrid), mã hoá sparse (sparse, hybrid) và truy vấn Qdrant. Các câu chạy tuần tự, không
-  có tải đồng thời. Truy vấn không lấy payload; text chunk để chấm được tải một lần từ Qdrant trước khi chạy.
+- Câu multi_turn: khi `query.rewrite = false` thì dùng nguyên câu hỏi cuối; bật thì viết lại theo `history`.
+- Mỗi câu chỉ xử lý câu hỏi (LLM) và embed một lần; các chế độ dùng chung kết quả đó. Latency của một chế độ:
+  `retrieval` = embed + sparse + search + rerank (định nghĩa trong CLAUDE.md), `total` = rewrite + retrieval.
+  Các câu chạy tuần tự, không có tải đồng thời. Truy vấn không lấy payload; payload chunk (để chấm và để
+  rerank) được tải một lần từ Qdrant trước khi chạy.
 """
 
 import argparse
@@ -21,6 +25,7 @@ import sys
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "backend"))
@@ -28,7 +33,7 @@ sys.path.insert(0, str(ROOT / "backend"))
 from qdrant_client import AsyncQdrantClient
 
 from app.core.config import get_settings
-from app.core.rag_config import RetrievalMode, get_rag_config
+from app.core.rag_config import RagConfig, RetrievalMode, load_rag_config
 from app.evaluation.golden import GoldenItem, is_cross_lingual, load_golden
 from app.evaluation.retrieval_metrics import (
     ChunkRef,
@@ -40,8 +45,11 @@ from app.evaluation.retrieval_metrics import (
 )
 from app.ingestion.manifest import load_manifest
 from app.retrieval.embedding import EmbeddingUsage, build_embedder
-from app.retrieval.index import SYSTEM_USER_ID, user_filter
-from app.retrieval.search import Retriever
+from app.retrieval.index import SYSTEM_USER_ID, IndexMismatchError, check_collection, user_filter
+from app.retrieval.llm import LlmUsage, build_llm_client
+from app.retrieval.query import QueryProcessor
+from app.retrieval.rerank import LlmReranker
+from app.retrieval.search import Hit, Retriever
 from app.retrieval.sparse import SparseEncoder
 
 DEFAULT_GOLDEN = ROOT / "eval" / "datasets" / "golden_v1.jsonl"
@@ -50,19 +58,20 @@ MODES: tuple[RetrievalMode, ...] = ("dense", "sparse", "hybrid")
 KS = (5, 50)
 TOP_SAVED = 5
 SHOWN = ("hit@5", "hit@50", "recall@5", "recall@50", "mrr@5", "ndcg@5", "ndcg@50")
+STEPS = ("rewrite", "embed", "sparse", "search", "rerank", "retrieval", "total")
+PAYLOAD_FIELDS = ["chunk_id", "doc_id", "page", "page_end", "text", "title", "heading_path"]
 
 
-async def load_index(client: AsyncQdrantClient, collection: str, user_id: str) -> dict[str, ChunkRef]:
-    chunks: dict[str, ChunkRef] = {}
+async def load_index(client: AsyncQdrantClient, collection: str, user_id: str) -> dict[str, dict[str, Any]]:
+    payloads: dict[str, dict[str, Any]] = {}
     offset = None
     while True:
         points, offset = await client.scroll(
-            collection, scroll_filter=user_filter(user_id), limit=256, offset=offset,
-            with_payload=["chunk_id", "doc_id", "page", "page_end", "text"],
+            collection, scroll_filter=user_filter(user_id), limit=256, offset=offset, with_payload=PAYLOAD_FIELDS
         )
-        chunks |= {str(point.id): ChunkRef.from_payload(point.payload or {}) for point in points}
+        payloads |= {str(point.id): point.payload or {} for point in points}
         if offset is None:
-            return chunks
+            return payloads
 
 
 def git_state() -> dict[str, str | bool | None]:
@@ -95,68 +104,104 @@ def latency_stats(values: list[float]) -> dict[str, float]:
     }
 
 
-async def run(golden_path: Path, modes: list[RetrievalMode]) -> dict:
-    config = get_rag_config()
-    manifest = load_manifest()
-    items = load_golden(golden_path)
-    client = AsyncQdrantClient(url=get_settings().qdrant_url)
-    retriever = Retriever(
-        client,
-        config.collection_name,
-        build_embedder(config),
-        SparseEncoder(config.sparse.k1, config.sparse.b, config.sparse.avg_doc_len),
-        config.retrieval,
-    )
-    need_dense = any(mode != "sparse" for mode in modes)
-    need_sparse = any(mode != "dense" for mode in modes)
-    limit = max(KS)
-    try:
-        index = await load_index(client, config.collection_name, SYSTEM_USER_ID)
-        sources = [source for item in items for source in item.gold_sources]
-        in_index = sum(any(covers(chunk, source) for chunk in index.values()) for source in sources)
-        print(f"config_version={config.config_version}, collection={config.collection_name}: "
-              f"{len(index)} chunk của user {SYSTEM_USER_ID}")
-        print(f"{in_index}/{len(sources)} nguồn gold nằm trọn trong một chunk của index"
-              f"{'' if in_index == len(sources) else ' (index cũ hoặc chunking đã đổi: chạy lại scripts/index.py)'}")
+class Evaluator:
+    def __init__(self, config: RagConfig, client: AsyncQdrantClient, modes: list[RetrievalMode]):
+        self.config, self.client, self.modes = config, client, modes
+        self.retriever = Retriever(
+            client,
+            config.collection_name,
+            build_embedder(config),
+            SparseEncoder(config.sparse.k1, config.sparse.b, config.sparse.avg_doc_len),
+            config.retrieval,
+        )
+        llm_client = build_llm_client()
+        self.processor = QueryProcessor(llm_client, config.query, config.price(config.query.model))
+        self.reranker = (
+            LlmReranker(llm_client, config.rerank, config.price(config.rerank.model))
+            if config.retrieval.reranker == "llm" else None
+        )
+        self.need_dense = any(mode != "sparse" for mode in modes)
+        self.need_sparse = any(mode != "dense" for mode in modes)
+        self.limit = max(max(KS), config.rerank.candidates if self.reranker else 0)
+        self.payloads: dict[str, dict[str, Any]] = {}
+        self.chunks: dict[str, ChunkRef] = {}
+        self.embedding_usage = EmbeddingUsage()
+        self.llm_usage = LlmUsage()
 
-        # Khởi động kết nối trước khi đo.
-        warmup = await retriever.encode("khởi động", need_dense, need_sparse)
-        for mode in modes:
-            await retriever.search_vectors(warmup, SYSTEM_USER_ID, mode, limit, with_payload=False)
+    async def load(self) -> None:
+        self.payloads = await load_index(self.client, self.config.collection_name, SYSTEM_USER_ID)
+        self.chunks = {point_id: ChunkRef.from_payload(payload) for point_id, payload in self.payloads.items()}
 
-        usage = EmbeddingUsage()
-        questions = []
-        for n, item in enumerate(items, start=1):
-            vectors = await retriever.encode(item.question, need_dense, need_sparse)
-            usage += vectors.usage
-            cross = is_cross_lingual(item, manifest)
-            record: dict = {"id": item.id, "type": item.type, "language": item.language,
-                            "cross_lingual": cross, "modes": {}}
-            for mode in modes:
-                hits, search_ms = await retriever.search_vectors(
-                    vectors, SYSTEM_USER_ID, mode, limit, with_payload=False
+    async def warm_up(self) -> None:
+        """Mở sẵn kết nối tới OpenAI và Qdrant để câu đầu tiên không bị tính thêm thời gian bắt tay TLS."""
+        plan = await self.processor.process("Thời gian thử việc tối đa là bao lâu?")
+        queries = plan.queries(self.config.query.translation_weight)
+        vectors = await self.retriever.encode(
+            [q for q, _ in queries], [w for _, w in queries], self.need_dense, self.need_sparse
+        )
+        for mode in self.modes:
+            hits, _ = await self.retriever.search_vectors(vectors, SYSTEM_USER_ID, mode, self.limit, with_payload=False)
+            if self.reranker and mode == self.modes[0]:
+                await self.reranker.rerank(plan.standalone, [Hit(h.id, h.score, self.payloads[h.id]) for h in hits])
+
+    async def run_item(self, item: GoldenItem, cross_lingual: bool) -> dict[str, Any]:
+        plan = await self.processor.process(item.question, [(turn.role, turn.content) for turn in item.history])
+        queries = plan.queries(self.config.query.translation_weight)
+        vectors = await self.retriever.encode(
+            [q for q, _ in queries], [w for _, w in queries], self.need_dense, self.need_sparse
+        )
+        self.embedding_usage += vectors.usage
+        self.llm_usage += plan.usage
+        record: dict[str, Any] = {
+            "id": item.id, "type": item.type, "language": item.language, "cross_lingual": cross_lingual,
+        }
+        if plan.standalone != plan.question:
+            record["standalone"] = plan.standalone
+        if plan.translation:
+            record["translation"] = plan.translation
+        if plan.error:
+            record["query_error"] = plan.error
+        record["modes"] = {}
+        for mode in self.modes:
+            hits, search_ms = await self.retriever.search_vectors(
+                vectors, SYSTEM_USER_ID, mode, self.limit, with_payload=False
+            )
+            result: dict[str, Any] = {}
+            # Chi phí của chế độ: xử lý câu hỏi + embed (trừ sparse, không cần embed) + rerank.
+            rerank_ms = 0.0
+            cost = plan.usage.cost_usd + (vectors.usage.cost_usd if mode != "sparse" else 0.0)
+            if self.reranker:
+                reranked = await self.reranker.rerank(
+                    plan.standalone, [Hit(hit.id, hit.score, self.payloads[hit.id]) for hit in hits]
                 )
-                timings = {
-                    "embed": vectors.embed_ms if mode != "sparse" else 0.0,
-                    "sparse": vectors.sparse_ms if mode != "dense" else 0.0,
-                    "search": search_ms,
-                }
-                timings["total"] = sum(timings.values())
-                result: dict = {
-                    "timings_ms": {step: round(ms, 2) for step, ms in timings.items()},
-                    "top": [[index[hit.id].chunk_id, round(hit.score, 4)] for hit in hits[:TOP_SAVED]],
-                }
-                if item.gold_sources:
-                    ranks = source_ranks([index[hit.id] for hit in hits], item.gold_sources)
-                    result["source_ranks"] = ranks
-                    result["metrics"] = question_metrics(ranks, KS)
-                record["modes"][mode] = result
-            questions.append(record)
-            print(f"\r{n}/{len(items)} câu", end="", flush=True)
-        print()
-    finally:
-        await client.close()
+                hits, rerank_ms = reranked.hits, reranked.latency_ms
+                self.llm_usage += reranked.usage
+                cost += reranked.usage.cost_usd
+                if reranked.error:
+                    result["rerank_error"] = reranked.error
+            timings = {
+                "rewrite": plan.latency_ms,
+                "embed": vectors.embed_ms if mode != "sparse" else 0.0,
+                "sparse": vectors.sparse_ms if mode != "dense" else 0.0,
+                "search": search_ms,
+                "rerank": rerank_ms,
+            }
+            timings["retrieval"] = timings["embed"] + timings["sparse"] + timings["search"] + timings["rerank"]
+            timings["total"] = timings["rewrite"] + timings["retrieval"]
+            result |= {
+                "timings_ms": {step: round(ms, 2) for step, ms in timings.items()},
+                "cost_usd": round(cost, 7),
+                "top": [[self.chunks[hit.id].chunk_id, round(hit.score, 4)] for hit in hits[:TOP_SAVED]],
+            }
+            if item.gold_sources:
+                ranks = source_ranks([self.chunks[hit.id] for hit in hits[: max(KS)]], item.gold_sources)
+                result["source_ranks"] = ranks
+                result["metrics"] = question_metrics(ranks, KS)
+            record["modes"][mode] = result
+        return record
 
+
+def summarize(modes: list[RetrievalMode], items: list[GoldenItem], questions: list[dict[str, Any]]) -> dict:
     by_id = {item.id: item for item in items}
     summary: dict = {}
     for mode in modes:
@@ -165,7 +210,7 @@ async def run(golden_path: Path, modes: list[RetrievalMode]) -> dict:
             if metrics := record["modes"][mode].get("metrics"):
                 for dimension, value in groups_of(by_id[record["id"]], record["cross_lingual"]):
                     grouped[dimension][value].append(metrics)
-        steps = ("embed", "sparse", "search", "total")
+        costs = [record["modes"][mode]["cost_usd"] for record in questions]
         summary[mode] = {
             "metrics": {
                 dimension: {
@@ -176,14 +221,45 @@ async def run(golden_path: Path, modes: list[RetrievalMode]) -> dict:
             },
             "latency_ms": {
                 step: latency_stats([record["modes"][mode]["timings_ms"][step] for record in questions])
-                for step in steps
+                for step in STEPS
+            },
+            "cost_usd": {"per_question_mean": round(sum(costs) / len(costs), 7), "total": round(sum(costs), 5)},
+            "errors": {
+                "query": sum("query_error" in record for record in questions),
+                "rerank": sum("rerank_error" in record["modes"][mode] for record in questions),
             },
         }
+    return summary
+
+
+async def run(golden_path: Path, modes: list[RetrievalMode], overrides: list[str], only: list[str] | None) -> dict:
+    config = load_rag_config(overrides=overrides)
+    manifest = load_manifest()
+    items = [item for item in load_golden(golden_path) if not only or item.id in only]
+    client = AsyncQdrantClient(url=get_settings().qdrant_url)
+    try:
+        await check_collection(client, config.collection_name, config.index_signature())
+        evaluator = Evaluator(config, client, modes)
+        await evaluator.load()
+        sources = [source for item in items for source in item.gold_sources]
+        in_index = sum(any(covers(chunk, source) for chunk in evaluator.chunks.values()) for source in sources)
+        print(f"config_version={config.config_version}, collection={config.collection_name}: "
+              f"{len(evaluator.chunks)} chunk của user {SYSTEM_USER_ID}")
+        print(f"{in_index}/{len(sources)} nguồn gold nằm trọn trong một chunk của index")
+        await evaluator.warm_up()
+        questions = []
+        for n, item in enumerate(items, start=1):
+            questions.append(await evaluator.run_item(item, is_cross_lingual(item, manifest)))
+            print(f"\r{n}/{len(items)} câu", end="", flush=True)
+        print()
+    finally:
+        await client.close()
 
     return {
         "kind": "retrieval",
         "run_at": datetime.now().astimezone().isoformat(timespec="seconds"),
         "config_version": config.config_version,
+        "overrides": overrides,
         "git": git_state(),
         "golden": {
             "path": golden_path.relative_to(ROOT).as_posix() if golden_path.is_relative_to(ROOT) else str(golden_path),
@@ -194,17 +270,17 @@ async def run(golden_path: Path, modes: list[RetrievalMode]) -> dict:
         "index": {
             "collection": config.collection_name,
             "user_id": SYSTEM_USER_ID,
-            "chunks": len(index),
+            "chunks": len(evaluator.chunks),
             "gold_sources_in_index": in_index,
         },
         "config": config.model_dump(exclude={"prices"}),
-        "query_embedding_usage": vars(usage),
+        "usage": {"embedding": vars(evaluator.embedding_usage), "llm": vars(evaluator.llm_usage)},
         "notes": [
             "Câu unanswerable không tính metric, vẫn tính latency.",
-            "Câu multi_turn dùng câu hỏi cuối chưa viết lại.",
-            "Latency đo tuần tự từng câu, không tải đồng thời; dense và hybrid dùng chung một lần embed.",
+            "retrieval = embed + sparse + search + rerank; total = rewrite + retrieval.",
+            "Latency đo tuần tự từng câu, không tải đồng thời; các chế độ dùng chung một lần xử lý câu hỏi và embed.",
         ],
-        "modes": summary,
+        "modes": summarize(modes, items, questions),
         "questions": questions,
     }
 
@@ -212,9 +288,8 @@ async def run(golden_path: Path, modes: list[RetrievalMode]) -> dict:
 def print_report(results: dict) -> None:
     modes = list(results["modes"])
     first = results["modes"][modes[0]]["metrics"]
-    header = f"{'nhóm':<26} {'n':>3}  {'mode':<7}" + "".join(f"{name:>10}" for name in SHOWN)
     print(f"\nChất lượng ({results['golden']['scored']}/{results['golden']['questions']} câu có nguồn)")
-    print(header)
+    print(f"{'nhóm':<26} {'n':>3}  {'mode':<7}" + "".join(f"{name:>10}" for name in SHOWN))
     for dimension, values in first.items():
         for value in values:
             label = value if dimension == "all" else f"{dimension}={value}"
@@ -222,16 +297,24 @@ def print_report(results: dict) -> None:
                 row = results["modes"][mode]["metrics"][dimension][value]
                 prefix = f"{label:<26} {row['n']:>3}" if i == 0 else " " * 30
                 print(f"{prefix}  {mode:<7}" + "".join(f"{row[name]:>10.3f}" for name in SHOWN))
-    print(f"\nLatency (ms, {results['golden']['questions']} câu, tuần tự)")
-    print(f"{'mode':<7} {'embed p50':>10} {'embed p95':>10} {'search p50':>11} {'search p95':>11} "
-          f"{'total p50':>10} {'total p95':>10} {'total max':>10}")
+    print(f"\nLatency (ms, p50 / p95, {results['golden']['questions']} câu, tuần tự)")
+    print(f"{'mode':<7} {'rewrite':>13} {'embed':>13} {'search':>11} {'rerank':>13} {'retrieval':>13} "
+          f"{'total':>13} {'$/câu':>10} {'lỗi LLM':>8}")
     for mode in modes:
-        lat = results["modes"][mode]["latency_ms"]
-        print(f"{mode:<7} {lat['embed']['p50']:>10} {lat['embed']['p95']:>10} {lat['search']['p50']:>11} "
-              f"{lat['search']['p95']:>11} {lat['total']['p50']:>10} {lat['total']['p95']:>10} "
-              f"{lat['total']['max']:>10}")
-    usage = results["query_embedding_usage"]
-    print(f"\nEmbed câu hỏi: {usage['requests']} request, {usage['tokens']} token, ${usage['cost_usd']:.5f}")
+        summary = results["modes"][mode]
+        lat = summary["latency_ms"]
+
+        def cell(step: str, width: int, lat: dict = lat) -> str:
+            return f"{lat[step]['p50']:.0f} / {lat[step]['p95']:.0f}".rjust(width)
+
+        errors = summary["errors"]["query"] + summary["errors"]["rerank"]
+        print(f"{mode:<7} {cell('rewrite', 13)} {cell('embed', 13)} {cell('search', 11)} {cell('rerank', 13)} "
+              f"{cell('retrieval', 13)} {cell('total', 13)} {summary['cost_usd']['per_question_mean']:>10.6f} "
+              f"{errors:>8}")
+    usage = results["usage"]
+    print(f"\nEmbedding: {usage['embedding']['requests']} request, {usage['embedding']['tokens']} token. "
+          f"LLM: {usage['llm']['calls']} lần gọi, {usage['llm']['input_tokens']} token vào, "
+          f"{usage['llm']['output_tokens']} token ra.")
 
 
 def main() -> int:
@@ -239,10 +322,19 @@ def main() -> int:
     parser.add_argument("--golden", type=Path, default=DEFAULT_GOLDEN)
     parser.add_argument("--modes", nargs="+", choices=MODES, default=list(MODES))
     parser.add_argument("--out", type=Path, default=RESULTS_DIR)
+    parser.add_argument("--set", action="append", default=[], metavar="KHOÁ=GIÁ_TRỊ",
+                        help="ghi đè config/rag.toml cho thí nghiệm, ví dụ retrieval.rrf_k=20")
+    parser.add_argument("--only", nargs="+", metavar="ID", help="chỉ chạy các câu này (để soi lỗi, không lưu)")
     args = parser.parse_args()
 
-    results = asyncio.run(run(args.golden.resolve(), args.modes))
+    try:
+        results = asyncio.run(run(args.golden.resolve(), args.modes, args.set, args.only))
+    except (IndexMismatchError, ValueError) as exc:
+        print(exc)
+        return 1
     print_report(results)
+    if args.only:
+        return 0
     args.out.mkdir(parents=True, exist_ok=True)
     path = args.out / f"{results['run_at'][:10]}_{results['config_version']}_retrieval.json"
     path.write_text(json.dumps(results, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
