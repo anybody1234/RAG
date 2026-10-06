@@ -89,25 +89,35 @@
 - 22% câu có nguồn là câu khác ngôn ngữ với nguồn.
 
 ## P2. Ingestion (tuần 2–3)
-- [ ] Parser PDF bằng `pymupdf4llm`:
-  - Giữ số trang.
-  - Bỏ header `CÔNG BÁO/Số .../Ngày ...`.
-  - Đánh dấu trang `needs_ocr`.
-- [ ] Parser DOCX, HTML, MD/TXT; từ chối `.doc` kèm thông báo đổi sang `.docx`
-- [ ] Làm sạch văn bản: dùng `clean_vietnamese_text` (`backend/app/ingestion/text_cleaning.py`), sửa ký tự lỗi `�` trong bản dịch
-- [ ] Tách chữ ghép bằng NFKC (`ﬁ` thành `fi`) và nối từ bị gạch nối cuối dòng (`par-` + `ticular`) trong PDF GDPR. Nếu thiếu bước này, BM25 sẽ trượt các từ như "specific" và "official".
-- [ ] Chunker cho văn bản luật:
-  - Tiếng Việt theo Phần/Chương/Mục/Điều/Khoản/Điểm; tiếng Anh theo Chapter/Section/Article/Clause.
-  - Điều dài thì tách theo Khoản.
-  - Mỗi chunk có `heading_path`.
-  - Gộp 2 file Luật Doanh nghiệp thành 1 `doc_id`.
-- [ ] Chunker chung (theo heading và độ dài) cho tài liệu người dùng upload không phải văn bản luật
-- [ ] Lệnh `scripts/ingest.py` xuất chunk ra `data/processed/*.jsonl` để soi tay
-- [ ] Test trên dữ liệu thật:
-  - Số Điều nhận được là 220 / 218 / 39 / 3 cho 4 luật tiếng Việt, 99 Article cho GDPR.
+- [x] Parser PDF (`backend/app/ingestion/pdf.py`):
+  - Giữ số trang, đánh liên tục qua các file của một văn bản.
+  - Bỏ header `CÔNG BÁO/Số .../Ngày ...`, số trang, chữ ký số "Ký bởi: ...", dòng "(Xem tiếp/Tiếp theo Công báo số ...)", và header lặp phát hiện tự động (ví dụ "Translated Version by Viet An Law Firm").
+  - Đánh dấu trang `needs_ocr` (dưới 50 ký tự và có ảnh); interface `OcrEngine` để gắn OCR sau.
+  - **Thay đổi so với kế hoạch:** văn bản luật dùng text thô theo dòng của PyMuPDF, chỉ tài liệu khác mới dùng `pymupdf4llm`. Trên 9 văn bản luật, cùng một chunker: text thô nhận đúng 1059/1059 Điều, 106/106 đoạn trích gold nằm trọn trong một chunk đúng trang, mất 3 s. `pymupdf4llm` chỉ được 1054/1059 Điều, 102/106 đoạn trích, mất 160 s. Nguyên nhân: nó dính tiêu đề Điều vào đoạn trước (Điều 146 Bộ luật Lao động), tách một điểm thành nhiều list item, và chèn thẻ `<mark>`. Đã cập nhật bảng quyết định trong `CLAUDE.md`.
+- [x] Parser DOCX, HTML, MD/TXT; từ chối `.doc` kèm thông báo đổi sang `.docx` (`parsers.py`). DOCX/HTML được đưa về markdown đơn giản (heading `#`, bảng `| |`). Văn bản luật được tự nhận ra (≥ 3 tiêu đề Điều/Article) ở mọi định dạng.
+- [x] Làm sạch văn bản: `clean_vietnamese_text`, và `fix_replacement_chars` để sửa `�`. Ghi chú: PyMuPDF trích bản dịch Luật Bảo vệ dữ liệu cá nhân ra không có `�` nào, nên hàm này chưa có tác dụng trên bộ dữ liệu hiện tại (đã sửa `data/SOURCES.md`).
+- [x] Tách chữ ghép (NFKC, chỉ áp cho ký tự chữ ghép) và nối từ bị gạch nối cuối dòng. Việc giữ hay bỏ gạch nối dựa vào chính văn bản: "particular" xuất hiện ở chỗ khác thì nối liền, "fixed-term" xuất hiện ở chỗ khác thì giữ gạch nối. GDPR có 206 chỗ ngắt từ, sau xử lý không còn chỗ nào.
+- [x] Chunker cho văn bản luật (`legal_chunker.py`):
+  - Tiếng Việt theo Phần/Chương/Mục/Điều/Khoản/Điểm; tiếng Anh theo Part/Chapter/Section/Article/Clause/Point.
+  - Một dòng chỉ được nhận là tiêu đề Điều khi nằm trong dãy số Điều tăng dần dài nhất. Nhờ vậy loại được các dẫn chiếu như "Article 290 TFEU should be..." trong Recitals của GDPR và "Article 32." trong phần sửa luật khác ở Bộ luật Lao động bản tiếng Anh. Nội dung sửa đổi trong ngoặc kép (“Điều 12. ...) cũng không bị nhận là tiêu đề.
+  - Điều dài thì gom các Khoản liền nhau. Khoản quá dài thì tách theo Điểm và lặp lại câu dẫn của Khoản. Cuối cùng mới tách theo câu. Mọi chunk đều lặp lại tiêu đề Điều ở dòng đầu.
+  - Mỗi chunk có `heading_path` (ví dụ "Chương III > Mục 3 > Điều 35 > Khoản 2"), `article`, `page`/`page_end`, `token_count`, `content_hash`.
+  - 2 file Luật Doanh nghiệp được gộp thành 1 `doc_id`.
+- [x] Chunker chung (`generic_chunker.py`): chia theo heading markdown, gom đoạn theo độ dài, overlap theo đoạn (≤ `overlap_ratio` × `max_tokens`).
+- [x] Lệnh `python scripts/ingest.py` xuất chunk ra `data/processed/<doc_id>.jsonl` và in bảng tổng kết (`--doc`, `--file`).
+- [x] Test (`backend/tests/`): unit test cho làm sạch, parser và 2 chunker (chạy trên CI), cộng 15 test trên dữ liệu thật (`test_ingest_real_data.py`, tự bỏ qua khi chưa tải `data/raw/`):
+  - Nhận đủ Điều/Article theo đúng thứ tự 1..N: 220 / 218 / 39 / 3 (vi), 220 / 218 / 39 / 3 (en), 99 (GDPR).
   - Không chunk nào vượt `max_tokens`.
+  - Không còn header Công báo, chữ ký số, `�` hay chữ ghép trong chunk.
+  - Mọi đoạn trích của golden set nằm trọn trong một chunk có khoảng trang chứa trang gold. Nếu không đạt điều này, retrieval eval ở P3 không thể tính trúng.
 
 **Hoàn thành khi:** nhận đúng 100% số Điều/Article trên toàn bộ dữ liệu, test pass.
+
+**Kết quả (06/10):** đã hoàn thành với `config_version = v0.1-baseline` (`max_tokens` 800, `overlap_ratio` 0.1, đếm token bằng cl100k_base của `text-embedding-3-small`).
+- 9/9 văn bản OK, 669 trang, 0 trang `needs_ocr`, 0 file lỗi.
+- 1282 chunk, tối đa 796 token. Parse + chunk mất dưới 1 s mỗi văn bản (chưa tính embedding).
+- Nhận đúng 1059/1059 Điều/Article. 106/106 đoạn trích gold nằm trọn trong một chunk đúng trang.
+- 64/64 test pass, `ruff` sạch.
 
 ## P3. Index + retrieval baseline (tuần 3–4)
 - [ ] Gọi embedding OpenAI theo batch, có retry, đếm token và chi phí

@@ -1,0 +1,90 @@
+"""Ingestion trên bộ dữ liệu thật trong data/raw. Bỏ qua khi chưa chạy `python scripts/download_data.py`
+(CI không tải dữ liệu)."""
+
+import re
+
+import pytest
+
+from app.core.config import REPO_ROOT
+from app.core.rag_config import get_rag_config
+from app.evaluation.golden import load_golden, normalize_for_match
+from app.ingestion.manifest import RAW_DIR, load_manifest
+from app.ingestion.pipeline import IngestResult, ingest_manifest_document
+
+MANIFEST = load_manifest()
+GOLDEN_PATH = REPO_ROOT / "eval" / "datasets" / "golden_v1.jsonl"
+# Số Điều/Article đếm theo văn bản gốc (data/SOURCES.md).
+EXPECTED_ARTICLES = {
+    "vi-bo-luat-lao-dong-2019": 220,
+    "en-labour-code-2019": 220,
+    "vi-luat-doanh-nghiep-2020": 218,
+    "en-law-on-enterprises-2020": 218,
+    "vi-luat-sua-doi-luat-doanh-nghiep-2025": 3,
+    "en-law-amending-enterprises-2025": 3,
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025": 39,
+    "en-personal-data-protection-law-2025": 39,
+    "en-gdpr-2016": 99,
+}
+
+pytestmark = pytest.mark.skipif(
+    not all((RAW_DIR / file.filename).exists() for doc in MANIFEST.documents for file in doc.files),
+    reason="chưa tải dữ liệu: python scripts/download_data.py",
+)
+
+
+@pytest.fixture(scope="module")
+def results() -> dict[str, IngestResult]:
+    return {doc.doc_id: ingest_manifest_document(doc) for doc in MANIFEST.documents}
+
+
+def test_expected_counts_cover_the_manifest():
+    assert set(EXPECTED_ARTICLES) == {doc.doc_id for doc in MANIFEST.documents}
+
+
+@pytest.mark.parametrize(("doc_id", "expected"), EXPECTED_ARTICLES.items())
+def test_finds_every_article_in_order(results, doc_id, expected):
+    articles = list(dict.fromkeys(chunk.article for chunk in results[doc_id].chunks if chunk.article))
+    word = "Điều" if MANIFEST.get(doc_id).language == "vi" else "Article"
+    assert articles == [f"{word} {n}" for n in range(1, expected + 1)]
+
+
+def test_no_chunk_exceeds_max_tokens(results):
+    max_tokens = get_rag_config().chunking.max_tokens
+    too_long = [(c.chunk_id, c.token_count) for r in results.values() for c in r.chunks if c.token_count > max_tokens]
+    assert too_long == []
+
+
+def test_no_page_furniture_or_broken_characters(results):
+    junk = re.compile(
+        r"CÔNG BÁO/Số|Ký bởi:|Translated Version by|Tiếp theo Công báo|Xem tiếp Công báo|�|[ﬀ-ﬆ]"
+    )
+    assert [c.chunk_id for r in results.values() for c in r.chunks if junk.search(c.text)] == []
+
+
+def test_gdpr_words_broken_at_line_end_are_rejoined(results):
+    text = "\n".join(chunk.text for chunk in results["en-gdpr-2016"].chunks)
+    assert "par- ticular" not in text and "per- sonal" not in text
+    assert text.count("personal data") > 500
+
+
+def test_pages_ids_and_structure(results):
+    for result in results.values():
+        assert result.parsed.structure == "legal" and result.parsed.needs_ocr_pages == []
+        ids = [chunk.chunk_id for chunk in result.chunks]
+        assert len(ids) == len(set(ids))
+        assert all(1 <= c.page <= c.page_end <= result.parsed.page_count for c in result.chunks)
+
+
+def test_every_gold_quote_lies_in_one_chunk_on_its_page(results):
+    """Nếu đoạn trích bị cắt ngang ranh giới chunk thì retrieval eval không thể tính trúng dù tìm đúng chỗ."""
+    normalized = {
+        doc_id: [(normalize_for_match(c.text), c.page, c.page_end) for c in result.chunks]
+        for doc_id, result in results.items()
+    }
+    misses = []
+    for item in load_golden(GOLDEN_PATH):
+        for source in item.gold_sources:
+            quote = normalize_for_match(source.quote)
+            if not any(quote in text and first <= source.page <= last for text, first, last in normalized[source.doc_id]):
+                misses.append((item.id, source.doc_id, source.page))
+    assert misses == []

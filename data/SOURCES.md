@@ -27,7 +27,7 @@ Mọi file đều là PDF có lớp text. Số Điều đếm được khớp v�
   - Mỗi trang có header lặp lại dạng `CÔNG BÁO/Số 713 + 714/Ngày 24-7-2020 3`, trong đó số cuối là số trang Công báo, không phải số trang PDF. Cần bỏ header này khi parse.
   - Trích dẫn dùng số trang PDF (bắt đầu từ 1).
   - Luật Doanh nghiệp 2020 bị chia làm 2 file. Cuối phần 1 có dòng `(Xem tiếp Công báo số 715 + 716)`, và phần 2 bắt đầu ở Chương V.
-- **Bản tiếng Anh đều là bản dịch không chính thức.** Khi hai bản lệch nhau, bản tiếng Việt là căn cứ. Bản dịch Luật Bảo vệ dữ liệu cá nhân có ký tự lỗi mã hoá (`�` thay cho dấu gạch ngang), là một ca thử tốt cho bước làm sạch văn bản.
+- **Bản tiếng Anh đều là bản dịch không chính thức.** Khi hai bản lệch nhau, bản tiếng Việt là căn cứ. Bản dịch Luật Bảo vệ dữ liệu cá nhân được ghi nhận có ký tự lỗi mã hoá (`�` thay cho dấu gạch ngang), nhưng text do PyMuPDF trích ra không có `�` nào (kiểm tra 06/10, dấu gạch ngang ra đúng `–`). Bước làm sạch vẫn có `fix_replacement_chars` cho file khác.
 - **GDPR:** bản chính thức nằm ở [EUR-Lex](https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng), nhưng trang này chặn tải tự động. Nếu muốn dùng bản chính thức, tải tay bằng trình duyệt, lưu đè `data/raw/en-gdpr-2016.pdf`, rồi cập nhật sha256 trong manifest.
 - **Tình trạng hiệu lực** (đối chiếu ngày 06/10/2026 qua văn bản hợp nhất trên Công báo):
   - **Bộ luật Lao động** đã bị sửa đổi, bổ sung bởi 3 luật:

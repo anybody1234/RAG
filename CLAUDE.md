@@ -21,7 +21,7 @@ Dự án portfolio (xin việc AI Engineer). Người dùng upload PDF/DOCX/TXT/
 | Embedding | OpenAI `text-embedding-3-small` | So với `text-embedding-3-large` bằng eval. Tên model + số chiều nằm trong tên collection; đổi model thì phải embed lại toàn bộ |
 | Sparse/BM25 | Tokenizer tự viết (NFC, lowercase, tách âm tiết + bigram âm tiết) tạo sparse vector; Qdrant tính IDF bằng `modifier: idf` | Không cần model chạy trên máy |
 | Reranker | v1 chưa có. Thử nghiệm rerank bằng `gpt-6-luna` | Chỉ giữ nếu eval cải thiện **và** vẫn đạt SLO |
-| Parse | PDF: PyMuPDF (`pymupdf4llm`). DOCX: python-docx. HTML: BeautifulSoup. MD/TXT: đọc thẳng | `.doc` cũ: từ chối kèm thông báo đổi sang `.docx` (máy chưa có LibreOffice) |
+| Parse | PDF: PyMuPDF. Văn bản luật (tự nhận qua tiêu đề Điều/Article) dùng text thô theo dòng; tài liệu khác dùng `pymupdf4llm` (markdown có heading, bảng). DOCX: python-docx. HTML: BeautifulSoup. MD/TXT: đọc thẳng | `.doc` cũ: từ chối kèm thông báo đổi sang `.docx` (máy chưa có LibreOffice). Đo 06/10 trên 9 văn bản luật: text thô nhận đúng 1059/1059 Điều, `pymupdf4llm` 1054/1059 (dính tiêu đề Điều vào đoạn trước, tách sai điểm) và chậm hơn ~50 lần |
 | OCR | Chưa làm | Trang có quá ít text thì đánh dấu `needs_ocr` và báo cho user. Giữ interface `OcrEngine` để gắn OCR sau |
 | Auth | JWT; nhiều user, mỗi user một kho riêng | Lọc `user_id` ngay trong filter của Qdrant (có payload index), không lọc sau khi đã lấy kết quả |
 | Tracing | Langfuse Cloud (free tier) | Trace từng bước + điểm eval. Chỉ gửi tài liệu công khai |
@@ -129,11 +129,23 @@ RAG/
   TASKS.md                  # kế hoạch 10 tuần + checklist; cập nhật khi xong task
   config/rag.toml           # siêu tham số RAG + config_version
   data/{manifest.json, SOURCES.md, raw/ (gitignore)}
+  data/processed/           # (gitignore) chunk do scripts/ingest.py xuất ra, mỗi văn bản một file .jsonl
   scripts/download_data.py
+  scripts/ingest.py         # parse + chunk văn bản trong manifest hoặc file bất kỳ, in bảng tổng kết
   backend/app/main.py       # FastAPI; /api/health/live, /api/health/ready
   backend/app/core/{config.py, rag_config.py}   # Settings (.env) và loader cho config/rag.toml
-  backend/app/ingestion/text_cleaning.py         # chuẩn hoá NFC, bỏ ký tự control, giữ ranh giới dòng
-  backend/app/ingestion/manifest.py              # đọc data/manifest.json, read_pdf_pages()
+  backend/app/ingestion/
+    text_cleaning.py        # NFC, bỏ ký tự control, tách chữ ghép, nối gạch nối cuối dòng, sửa `�`
+    manifest.py             # đọc data/manifest.json, read_pdf_pages()
+    models.py               # Block (text + trang), ParsedDocument, DocumentMeta, Chunk
+    pdf.py                  # text thô theo dòng (bỏ header Công báo, needs_ocr) + markdown pymupdf4llm
+    parsers.py              # parse_file(): PDF/DOCX/HTML/MD/TXT, từ chối .doc; tự nhận văn bản luật
+    ocr.py                  # interface OcrEngine (chưa có engine)
+    chunking.py             # nối dòng thành đoạn, tách đoạn dài, gom đoạn, build_chunks
+    legal_chunker.py        # chunk theo Phần/Chương/Mục/Điều/Khoản/Điểm (vi) và Chapter/Article/... (en)
+    generic_chunker.py      # chunk theo heading markdown + độ dài, có overlap
+    tokens.py               # đếm token theo tokenizer của model embedding
+    pipeline.py             # ingest_manifest_document(), ingest_file()
   backend/app/evaluation/golden.py               # schema + kiểm tra golden set
   backend/tests/
   eval/datasets/golden_v1.jsonl, golden_v1_review.md
@@ -163,6 +175,7 @@ pip install -r requirements-dev.txt
 python scripts/download_data.py      # tải dữ liệu; thêm --force để tải lại
 docker compose up -d                 # qdrant, postgres, redis
 python scripts/check_env.py          # kiểm tra .env, key OpenAI/Langfuse, model, service (không in key)
+python scripts/ingest.py             # parse + chunk ra data/processed/ (--doc ID, --file PATH)
 uvicorn app.main:app --app-dir backend --reload --port 8000
 python eval/validate_golden.py       # kiểm tra golden set (thêm --fix-pages để sửa số trang)
 python eval/review_golden.py export  # tạo file duyệt; sau khi duyệt chạy: ... apply
