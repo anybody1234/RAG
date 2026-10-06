@@ -1,0 +1,25 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Bí mật
+.env
+.env.*
+!.env.example
+
+# Dữ liệu tải về / sinh ra (tải lại bằng scripts/download_data.py)
+data/raw/
+data/processed/
+
+# Frontend
+node_modules/
+frontend/dist/
+
+# IDE / hệ điều hành
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store

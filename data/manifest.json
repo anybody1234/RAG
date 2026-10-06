@@ -1,0 +1,205 @@
+{
+  "version": 1,
+  "checked_at": "2026-10-06",
+  "documents": [
+    {
+      "doc_id": "vi-bo-luat-lao-dong-2019",
+      "pair_id": "labour-code-2019",
+      "title": "Bộ luật Lao động",
+      "so_hieu": "45/2019/QH14",
+      "language": "vi",
+      "kind": "original",
+      "issued_date": "2019-11-20",
+      "effective_date": "2021-01-01",
+      "status": "in_force",
+      "source": "Công báo Chính phủ, số 993 + 994 ngày 26-12-2019",
+      "page_url": "https://congbao.chinhphu.vn/tai-ve-van-ban-so-45-2019-qh14-30232-29070?format=pdf",
+      "files": [
+        {
+          "filename": "vi-bo-luat-lao-dong-2019.pdf",
+          "url": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2019/11/30232/29070-1-2019993-99445-2019-qh14.pdf",
+          "sha256": "3c865f3d92ba23604e316360b902297ddbc0d1c394d3c08a466029a9d43b5b6c"
+        }
+      ]
+    },
+    {
+      "doc_id": "en-labour-code-2019",
+      "pair_id": "labour-code-2019",
+      "title": "Labour Code",
+      "so_hieu": "45/2019/QH14",
+      "language": "en",
+      "kind": "translation",
+      "issued_date": "2019-11-20",
+      "effective_date": "2021-01-01",
+      "status": "in_force",
+      "source": "Bản dịch không chính thức, đăng trên asean.org",
+      "page_url": "https://asean.org/wp-content/uploads/2016/08/Labor-Code-No.-45-Year-2019.pdf",
+      "files": [
+        {
+          "filename": "en-labour-code-2019.pdf",
+          "url": "https://asean.org/wp-content/uploads/2016/08/Labor-Code-No.-45-Year-2019.pdf",
+          "sha256": "00a7f0274c27220c3d8f43dc7eab6671b63e446c5dc978720e47faf481221c1f"
+        }
+      ]
+    },
+    {
+      "doc_id": "vi-luat-doanh-nghiep-2020",
+      "pair_id": "enterprises-2020",
+      "title": "Luật Doanh nghiệp",
+      "so_hieu": "59/2020/QH14",
+      "language": "vi",
+      "kind": "original",
+      "issued_date": "2020-06-17",
+      "effective_date": "2021-01-01",
+      "status": "in_force",
+      "amended_by": [
+        "03/2022/QH15",
+        "76/2025/QH15"
+      ],
+      "source": "Công báo Chính phủ, số 713 + 714 và 715 + 716 ngày 24-7-2020 (luật nằm trọn trong 2 file)",
+      "page_url": "https://congbao.chinhphu.vn/van-ban/luat-so-59-2020-qh14-31674.htm",
+      "files": [
+        {
+          "filename": "vi-luat-doanh-nghiep-2020-phan-1.pdf",
+          "url": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2020/6/31674/31830-1-2020713-71459-2020-qh14.pdf",
+          "sha256": "9a322254a903d24e55b83c11b38d6f7ea26efa9f467578f1b27eedaad4c88498"
+        },
+        {
+          "filename": "vi-luat-doanh-nghiep-2020-phan-2.pdf",
+          "url": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2020/6/31674/31833-1-2020715-71659-2020-qh14.pdf",
+          "sha256": "ed316e996f5c8cd1664e65df33c38d377339b451e016f364ee7b1d244adb7766"
+        }
+      ]
+    },
+    {
+      "doc_id": "en-law-on-enterprises-2020",
+      "pair_id": "enterprises-2020",
+      "title": "Law on Enterprises",
+      "so_hieu": "59/2020/QH14",
+      "language": "en",
+      "kind": "translation",
+      "issued_date": "2020-06-17",
+      "effective_date": "2021-01-01",
+      "status": "in_force",
+      "amended_by": [
+        "03/2022/QH15",
+        "76/2025/QH15"
+      ],
+      "source": "Bản dịch không chính thức, đăng trên investdanang.gov.vn (Trung tâm Xúc tiến Đầu tư Đà Nẵng)",
+      "page_url": "https://investdanang.gov.vn/documents/37916/163631/Law+on+Enterprises+2020.pdf/4accf215-054b-ddbb-845e-74fd9d4fe34a",
+      "files": [
+        {
+          "filename": "en-law-on-enterprises-2020.pdf",
+          "url": "https://investdanang.gov.vn/documents/37916/163631/Law+on+Enterprises+2020.pdf/4accf215-054b-ddbb-845e-74fd9d4fe34a?t=1658302010574&download=true",
+          "sha256": "079ee72bc15a13a74f56a21e57025589f77a83903b5b29371bf50d385e33b5d0"
+        }
+      ]
+    },
+    {
+      "doc_id": "vi-luat-sua-doi-luat-doanh-nghiep-2025",
+      "pair_id": "enterprises-amendment-2025",
+      "title": "Luật sửa đổi, bổ sung một số điều của Luật Doanh nghiệp",
+      "so_hieu": "76/2025/QH15",
+      "language": "vi",
+      "kind": "original",
+      "issued_date": "2025-06-17",
+      "effective_date": "2025-07-01",
+      "status": "in_force",
+      "amends": [
+        "59/2020/QH14"
+      ],
+      "source": "Công báo Chính phủ, số 951 + 952 ngày 21-7-2025",
+      "page_url": "https://congbao.chinhphu.vn/van-ban/luat-so-76-2025-qh15-45505.htm",
+      "files": [
+        {
+          "filename": "vi-luat-sua-doi-luat-doanh-nghiep-2025.pdf",
+          "url": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2025/6/45505/57568-1-2025951-95276-2025-qh15.pdf",
+          "sha256": "e6a23496a95c480b2b4a11f1e01b0873c4b1164b0be623a233ddf915e554fd98"
+        }
+      ]
+    },
+    {
+      "doc_id": "en-law-amending-enterprises-2025",
+      "pair_id": "enterprises-amendment-2025",
+      "title": "Law on Amendments to the Law on Enterprises",
+      "so_hieu": "76/2025/QH15",
+      "language": "en",
+      "kind": "translation",
+      "issued_date": "2025-06-17",
+      "effective_date": "2025-07-01",
+      "status": "in_force",
+      "amends": [
+        "59/2020/QH14"
+      ],
+      "source": "Bản dịch không chính thức của Viet An Law Firm",
+      "page_url": "https://vietanlaw.com/wp-content/uploads/2025/08/Law-on-Amendments-to-Law-on-Enterprises-No-76_2025_QH15.pdf",
+      "files": [
+        {
+          "filename": "en-law-amending-enterprises-2025.pdf",
+          "url": "https://vietanlaw.com/wp-content/uploads/2025/08/Law-on-Amendments-to-Law-on-Enterprises-No-76_2025_QH15.pdf",
+          "sha256": "e80bbffde36b7b336c992ec7ce8c969d8dc500f57d6949f14955082b90534230"
+        }
+      ]
+    },
+    {
+      "doc_id": "vi-luat-bao-ve-du-lieu-ca-nhan-2025",
+      "pair_id": "personal-data-protection-2025",
+      "title": "Luật Bảo vệ dữ liệu cá nhân",
+      "so_hieu": "91/2025/QH15",
+      "language": "vi",
+      "kind": "original",
+      "issued_date": "2025-06-26",
+      "effective_date": "2026-01-01",
+      "status": "in_force",
+      "source": "Công báo Chính phủ, số 971 + 972 ngày 24-7-2025",
+      "page_url": "https://congbao.chinhphu.vn/van-ban/luat-so-91-2025-qh15-45578.htm",
+      "files": [
+        {
+          "filename": "vi-luat-bao-ve-du-lieu-ca-nhan-2025.pdf",
+          "url": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2025/6/45578/57730-1-2025971-97291-2025-qh15.pdf",
+          "sha256": "226dd6da66a6eea348e04db0f8c496d884021b730298991c6f6683720a0dfa2e"
+        }
+      ]
+    },
+    {
+      "doc_id": "en-personal-data-protection-law-2025",
+      "pair_id": "personal-data-protection-2025",
+      "title": "Law on Personal Data Protection",
+      "so_hieu": "91/2025/QH15",
+      "language": "en",
+      "kind": "translation",
+      "issued_date": "2025-06-26",
+      "effective_date": "2026-01-01",
+      "status": "in_force",
+      "source": "Bản dịch không chính thức, đăng trên dpo-india.com; có ký tự lỗi mã hoá (�)",
+      "page_url": "https://www.dpo-india.com/Resources/Privacy_Regulations_in_Asia_Pacific_Countries/Vietnam-Personal-Data-Protection-Law(PDPL)26.06.25-Law-No.91-2025-QH15.pdf",
+      "files": [
+        {
+          "filename": "en-personal-data-protection-law-2025.pdf",
+          "url": "https://www.dpo-india.com/Resources/Privacy_Regulations_in_Asia_Pacific_Countries/Vietnam-Personal-Data-Protection-Law(PDPL)26.06.25-Law-No.91-2025-QH15.pdf",
+          "sha256": "78ddfaba7cde24d8bae5b3f26685125aaa7bb6e05f6fc39ad4f76d9c0495e59a"
+        }
+      ]
+    },
+    {
+      "doc_id": "en-gdpr-2016",
+      "pair_id": null,
+      "title": "General Data Protection Regulation (GDPR)",
+      "so_hieu": "Regulation (EU) 2016/679",
+      "language": "en",
+      "kind": "original",
+      "issued_date": "2016-04-27",
+      "effective_date": "2018-05-25",
+      "status": "in_force",
+      "source": "Bản sao toàn văn trên gdpr.eu.org. Bản chính thức ở EUR-Lex (CELEX 32016R0679) chặn tải tự động, tải tay qua trình duyệt nếu cần",
+      "page_url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng",
+      "files": [
+        {
+          "filename": "en-gdpr-2016.pdf",
+          "url": "https://gdpr.eu.org/full/full.pdf",
+          "sha256": "8b0cb0aacf8061c3b595cdb7e4fac00943de7ce0846294b3b2a1ec60dd645a89"
+        }
+      ]
+    }
+  ]
+}
