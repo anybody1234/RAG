@@ -29,5 +29,16 @@ Mọi file đều là PDF có lớp text. Số Điều đếm được khớp v�
   - Luật Doanh nghiệp 2020 bị chia làm 2 file. Cuối phần 1 có dòng `(Xem tiếp Công báo số 715 + 716)`, và phần 2 bắt đầu ở Chương V.
 - **Bản tiếng Anh đều là bản dịch không chính thức.** Khi hai bản lệch nhau, bản tiếng Việt là căn cứ. Bản dịch Luật Bảo vệ dữ liệu cá nhân có ký tự lỗi mã hoá (`�` thay cho dấu gạch ngang), là một ca thử tốt cho bước làm sạch văn bản.
 - **GDPR:** bản chính thức nằm ở [EUR-Lex](https://eur-lex.europa.eu/eli/reg/2016/679/oj/eng), nhưng trang này chặn tải tự động. Nếu muốn dùng bản chính thức, tải tay bằng trình duyệt, lưu đè `data/raw/en-gdpr-2016.pdf`, rồi cập nhật sha256 trong manifest.
-- **Tình trạng hiệu lực** ghi trong manifest dựa trên nguồn tải và nội dung văn bản. Trước khi gán nhãn golden set, cần đối chiếu lại trên [vbpl.vn](https://vbpl.vn) để không bỏ sót văn bản sửa đổi mới.
+- **Tình trạng hiệu lực** (đối chiếu ngày 06/10/2026 qua văn bản hợp nhất trên Công báo):
+  - **Bộ luật Lao động** đã bị sửa đổi, bổ sung bởi 3 luật:
+    - Luật Công nghiệp công nghệ số 71/2025/QH15: bổ sung khoản 8a Điều 154, hiệu lực 01/01/2026.
+    - Luật Giáo dục nghề nghiệp 124/2025/QH15: sửa khoản 2 Điều 60 và Điều 62, hiệu lực 01/01/2026.
+    - Luật Dân số 113/2025/QH15: sửa khoản 1 Điều 139 về nghỉ thai sản, hiệu lực 01/07/2026.
+
+    Văn bản hợp nhất mới nhất: [18/VBHN-VPQH](https://congbao.chinhphu.vn/van-ban/van-ban-hop-nhat-so-18-vbhn-vpqh-468971.htm) ngày 12/02/2026.
+  - **Luật Doanh nghiệp** đã bị sửa đổi bởi 03/2022/QH15 và 76/2025/QH15. Văn bản hợp nhất: [67/VBHN-VPQH](https://congbao.chinhphu.vn/van-ban/van-ban-hop-nhat-so-67-vbhn-vpqh-45865.htm) ngày 15/08/2025.
+  - **Luật Bảo vệ dữ liệu cá nhân 2025:** chưa có văn bản sửa đổi. Văn bản hướng dẫn là Nghị định 356/2025/NĐ-CP, không có trong bộ dữ liệu.
+  - **GDPR:** chưa có sửa đổi có hiệu lực. Gói Digital Omnibus về dữ liệu vẫn đang đàm phán.
+
+  Bộ dữ liệu dùng bản gốc, nên các Điều đã bị sửa (danh sách ở `amended_articles` trong manifest) được loại khỏi golden set.
 - **Bản quyền:** văn bản quy phạm pháp luật Việt Nam không thuộc đối tượng bảo hộ quyền tác giả, nhưng bản dịch của bên thứ ba thì có thể có. Vì vậy repo chỉ lưu link và script tải, không lưu file.

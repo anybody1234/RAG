@@ -2,6 +2,10 @@
 pythonpath = ["backend"]
 testpaths = ["backend/tests"]
 
+[tool.pyrefly]
+# Cho IDE biết gốc import là backend/ (import app.*), giống pytest.
+search-path = ["backend"]
+
 [tool.ruff]
 line-length = 110
 target-version = "py313"

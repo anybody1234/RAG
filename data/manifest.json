@@ -20,7 +20,23 @@
           "url": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2019/11/30232/29070-1-2019993-99445-2019-qh14.pdf",
           "sha256": "3c865f3d92ba23604e316360b902297ddbc0d1c394d3c08a466029a9d43b5b6c"
         }
-      ]
+      ],
+      "amended_by": [
+        "71/2025/QH15",
+        "113/2025/QH15",
+        "124/2025/QH15"
+      ],
+      "amended_articles": [
+        "Điều 60 khoản 2",
+        "Điều 62",
+        "Điều 139 khoản 1",
+        "Điều 154 (bổ sung khoản 8a)"
+      ],
+      "consolidated": {
+        "so_hieu": "18/VBHN-VPQH",
+        "date": "2026-02-12",
+        "page_url": "https://congbao.chinhphu.vn/van-ban/van-ban-hop-nhat-so-18-vbhn-vpqh-468971.htm"
+      }
     },
     {
       "doc_id": "en-labour-code-2019",
@@ -40,7 +56,23 @@
           "url": "https://asean.org/wp-content/uploads/2016/08/Labor-Code-No.-45-Year-2019.pdf",
           "sha256": "00a7f0274c27220c3d8f43dc7eab6671b63e446c5dc978720e47faf481221c1f"
         }
-      ]
+      ],
+      "amended_by": [
+        "71/2025/QH15",
+        "113/2025/QH15",
+        "124/2025/QH15"
+      ],
+      "amended_articles": [
+        "Điều 60 khoản 2",
+        "Điều 62",
+        "Điều 139 khoản 1",
+        "Điều 154 (bổ sung khoản 8a)"
+      ],
+      "consolidated": {
+        "so_hieu": "18/VBHN-VPQH",
+        "date": "2026-02-12",
+        "page_url": "https://congbao.chinhphu.vn/van-ban/van-ban-hop-nhat-so-18-vbhn-vpqh-468971.htm"
+      }
     },
     {
       "doc_id": "vi-luat-doanh-nghiep-2020",
@@ -69,7 +101,50 @@
           "url": "https://congbaocdn.chinhphu.vn/CongBaoCP/VanBan/2020/6/31674/31833-1-2020715-71659-2020-qh14.pdf",
           "sha256": "ed316e996f5c8cd1664e65df33c38d377339b451e016f364ee7b1d244adb7766"
         }
-      ]
+      ],
+      "amended_articles": [
+        "Điều 3",
+        "Điều 4",
+        "Điều 5",
+        "Điều 9",
+        "Điều 12",
+        "Điều 14",
+        "Điều 16",
+        "Điều 17",
+        "Điều 18",
+        "Điều 21",
+        "Điều 23",
+        "Điều 24",
+        "Điều 25",
+        "Điều 26",
+        "Điều 28",
+        "Điều 31",
+        "Điều 35",
+        "Điều 49",
+        "Điều 51",
+        "Điều 53",
+        "Điều 57",
+        "Điều 61",
+        "Điều 109",
+        "Điều 113",
+        "Điều 115",
+        "Điều 128",
+        "Điều 129",
+        "Điều 141",
+        "Điều 148",
+        "Điều 158",
+        "Điều 176",
+        "Điều 208",
+        "Điều 213",
+        "Điều 216",
+        "Điều 217",
+        "Điều 218"
+      ],
+      "consolidated": {
+        "so_hieu": "67/VBHN-VPQH",
+        "date": "2025-08-15",
+        "page_url": "https://congbao.chinhphu.vn/van-ban/van-ban-hop-nhat-so-67-vbhn-vpqh-45865.htm"
+      }
     },
     {
       "doc_id": "en-law-on-enterprises-2020",
@@ -93,7 +168,50 @@
           "url": "https://investdanang.gov.vn/documents/37916/163631/Law+on+Enterprises+2020.pdf/4accf215-054b-ddbb-845e-74fd9d4fe34a?t=1658302010574&download=true",
           "sha256": "079ee72bc15a13a74f56a21e57025589f77a83903b5b29371bf50d385e33b5d0"
         }
-      ]
+      ],
+      "amended_articles": [
+        "Điều 3",
+        "Điều 4",
+        "Điều 5",
+        "Điều 9",
+        "Điều 12",
+        "Điều 14",
+        "Điều 16",
+        "Điều 17",
+        "Điều 18",
+        "Điều 21",
+        "Điều 23",
+        "Điều 24",
+        "Điều 25",
+        "Điều 26",
+        "Điều 28",
+        "Điều 31",
+        "Điều 35",
+        "Điều 49",
+        "Điều 51",
+        "Điều 53",
+        "Điều 57",
+        "Điều 61",
+        "Điều 109",
+        "Điều 113",
+        "Điều 115",
+        "Điều 128",
+        "Điều 129",
+        "Điều 141",
+        "Điều 148",
+        "Điều 158",
+        "Điều 176",
+        "Điều 208",
+        "Điều 213",
+        "Điều 216",
+        "Điều 217",
+        "Điều 218"
+      ],
+      "consolidated": {
+        "so_hieu": "67/VBHN-VPQH",
+        "date": "2025-08-15",
+        "page_url": "https://congbao.chinhphu.vn/van-ban/van-ban-hop-nhat-so-67-vbhn-vpqh-45865.htm"
+      }
     },
     {
       "doc_id": "vi-luat-sua-doi-luat-doanh-nghiep-2025",

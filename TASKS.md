@@ -49,14 +49,19 @@
 - `/api/health/ready` trả HTTP 200 cho postgres, qdrant và redis.
 
 ## P1. Golden set v1 (tuần 1–2)
-- [ ] Đối chiếu tình trạng hiệu lực và văn bản sửa đổi của từng luật trên vbpl.vn, cập nhật `data/manifest.json`
-- [ ] Viết schema và script kiểm tra golden set. Script kiểm tra:
-  - Đủ các trường bắt buộc.
+- [x] Đối chiếu tình trạng hiệu lực và văn bản sửa đổi qua văn bản hợp nhất trên Công báo (18/VBHN-VPQH, 67/VBHN-VPQH), cập nhật `amended_by`, `amended_articles`, `consolidated` trong `data/manifest.json`
+- [x] Schema (`backend/app/evaluation/golden.py`) và script `eval/validate_golden.py`. Script kiểm tra:
+  - Đủ các trường bắt buộc và đúng quy tắc theo loại câu hỏi.
   - Đúng phân bố loại câu hỏi.
   - Có ≥ 20% câu khác ngôn ngữ với nguồn.
-  - `quote` thật sự xuất hiện ở đúng trang PDF đã ghi.
-- [ ] Claude soạn nháp 100 câu, kèm đáp án chuẩn và nguồn (doc, trang, đoạn trích), theo phân bố trong `CLAUDE.md`
-- [ ] **[L]** Duyệt và sửa từng câu (khoảng 3–4 giờ), đánh dấu `reviewed: true`
+  - `quote` thật sự xuất hiện ở đúng trang PDF đã ghi (có `--fix-pages` để tự sửa số trang).
+- [x] Claude soạn nháp 100 câu (06/10). Kết quả:
+  - Đúng phân bố cả 6 loại, 19% câu khác ngôn ngữ với nguồn (22% tính trên câu có nguồn).
+  - 100% đoạn trích được xác minh có thật trong PDF.
+  - Không câu nào hỏi vào Điều đã bị sửa đổi.
+- [x] Công cụ duyệt `eval/review_golden.py`: `export` tạo `golden_v1_review.md`, `apply` áp kết quả duyệt vào JSONL
+- [ ] **[L]** Duyệt `eval/datasets/golden_v1_review.md` (khoảng 3–4 giờ): tick câu đúng, ghi chú câu cần sửa, rồi chạy `python eval/review_golden.py apply`
+- [ ] Sửa các câu có ghi chú, lặp lại cho tới khi 100/100 câu được duyệt
 
 **Hoàn thành khi:** có `eval/datasets/golden_v1.jsonl` gồm 100 câu đã duyệt, script kiểm tra pass.
 
@@ -67,6 +72,7 @@
   - Đánh dấu trang `needs_ocr`.
 - [ ] Parser DOCX, HTML, MD/TXT; từ chối `.doc` kèm thông báo đổi sang `.docx`
 - [ ] Làm sạch văn bản: dùng `clean_vietnamese_text` (`backend/app/ingestion/text_cleaning.py`), sửa ký tự lỗi `�` trong bản dịch
+- [ ] Tách chữ ghép bằng NFKC (`ﬁ` thành `fi`) và nối từ bị gạch nối cuối dòng (`par-` + `ticular`) trong PDF GDPR. Nếu thiếu bước này, BM25 sẽ trượt các từ như "specific" và "official".
 - [ ] Chunker cho văn bản luật:
   - Tiếng Việt theo Phần/Chương/Mục/Điều/Khoản/Điểm; tiếng Anh theo Chapter/Section/Article/Clause.
   - Điều dài thì tách theo Khoản.

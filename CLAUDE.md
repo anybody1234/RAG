@@ -38,7 +38,11 @@ Dự án portfolio (xin việc AI Engineer). Người dùng upload PDF/DOCX/TXT/
   - Trường `page` trong metadata là số trang PDF, bắt đầu từ 1.
   - Luật Doanh nghiệp 2020 nằm trong 2 file nhưng là 1 `doc_id`.
 - **Bản tiếng Anh** đều là bản dịch không chính thức. Khi hai bản lệch nhau, bản tiếng Việt là căn cứ.
-- **Chuẩn hoá:** đưa mọi văn bản về Unicode NFC trước khi chunk, và mọi câu hỏi về NFC trước khi search.
+- **Chuẩn hoá:** đưa mọi văn bản về Unicode NFC trước khi chunk, và mọi câu hỏi về NFC trước khi search. PDF GDPR có chữ ghép (`ﬁ`, `ﬃ`) và gạch nối cuối dòng (`par-` + `ticular`), nên bước ingestion phải tách chữ ghép (NFKC) và nối lại các từ bị ngắt dòng.
+- **Hiệu lực (đối chiếu 06/10/2026):**
+  - Bộ luật Lao động đã bị sửa bởi 71/2025, 113/2025 và 124/2025 ở Điều 60, 62, 139 khoản 1 và Điều 154.
+  - Luật Doanh nghiệp đã bị sửa bởi 03/2022 và 76/2025.
+  - Văn bản hợp nhất mới nhất là 18/VBHN-VPQH (Bộ luật Lao động) và 67/VBHN-VPQH (Luật Doanh nghiệp), có ghi trong manifest. Bộ dữ liệu hiện dùng bản gốc nên **chưa phản ánh** các sửa đổi này, trừ luật 76/2025 có trong bộ dữ liệu.
 - **Đặc thù văn bản luật:**
   - Chunk theo cấu trúc Phần/Chương/Mục/**Điều**/Khoản/Điểm (dùng regex). Đơn vị chính là Điều. Điều quá dài thì tách theo Khoản, và giữ tiêu đề Điều ở đầu mỗi chunk.
   - Metadata bắt buộc: `doc_id, so_hieu, title, language, page, heading_path` (ví dụ `"Chương III > Điều 35 > Khoản 2"`), `effective_date, status` (còn hay hết hiệu lực).
@@ -72,7 +76,17 @@ Các metric sau luôn được ghi để chẩn đoán, nhưng không đặt ng�
 Latency đo riêng cho từng bước: rewrite, embed, search, rerank, TTFT, tổng.
 
 ## Golden set và eval
-- **File:** `eval/datasets/golden_v1.jsonl`, mỗi dòng có dạng `{id, question, reference_answer, gold_sources: [{doc_id, page, quote}], type, language}`.
+- **File:** `eval/datasets/golden_v1.jsonl`. Mỗi dòng có dạng `{id, question, language, type, reference_answer, gold_sources: [{doc_id, page, quote}], history, reviewed}`. Schema nằm ở `backend/app/evaluation/golden.py`.
+  - `type` là một trong: `single_article`, `numeric`, `multi_hop`, `paraphrase`, `unanswerable`, `multi_turn`.
+  - `history` chỉ có ở câu `multi_turn`: các lượt hỏi đáp trước đó, câu hỏi hiện tại nằm ở `question`.
+  - Câu `unanswerable` không có `gold_sources`. Câu `multi_hop` phải có ít nhất 2 nguồn.
+  - `page` là số trang PDF bắt đầu từ 1, **đánh liên tục qua các file** của cùng một `doc_id`. Ví dụ Luật Doanh nghiệp 2020: phần 1 là trang 1–94, phần 2 là trang 95–168. Đọc trang bằng `read_pdf_pages()` trong `backend/app/ingestion/manifest.py`.
+  - `quote` được so khớp sau khi chuẩn hoá NFKC và gộp khoảng trắng (`normalize_for_match`).
+- **Câu khác ngôn ngữ:** một câu được tính là khác ngôn ngữ khi không nguồn nào cùng ngôn ngữ với câu hỏi. Hiện các câu loại này đều là câu hỏi tiếng Việt về GDPR.
+- **Không hỏi vào Điều đã bị sửa đổi** (danh sách ở `amended_articles` trong manifest), vì bản Công báo gốc đã lỗi thời ở các Điều đó. Ngoại lệ: câu `multi_hop` có kèm nguồn là chính luật sửa đổi.
+- **Công cụ:**
+  - `python eval/validate_golden.py [--fix-pages]`: kiểm tra schema, đoạn trích có thật ở đúng trang, và phân bố.
+  - `python eval/review_golden.py export|apply`: xuất file duyệt dạng Markdown (`golden_v1_review.md`) và áp kết quả duyệt ngược vào JSONL.
 - **Quy mô:** 100 câu (v1), sau đó tăng lên 200.
 - **Phân bố câu hỏi:**
 
@@ -118,10 +132,14 @@ RAG/
   backend/app/main.py       # FastAPI; /api/health/live, /api/health/ready
   backend/app/core/{config.py, rag_config.py}   # Settings (.env) và loader cho config/rag.toml
   backend/app/ingestion/text_cleaning.py         # chuẩn hoá NFC, bỏ ký tự control, giữ ranh giới dòng
+  backend/app/ingestion/manifest.py              # đọc data/manifest.json, read_pdf_pages()
+  backend/app/evaluation/golden.py               # schema + kiểm tra golden set
   backend/tests/
+  eval/datasets/golden_v1.jsonl, golden_v1_review.md
+  eval/validate_golden.py, eval/review_golden.py
   frontend/                 # React 19 + Vite 8 + TS, lint bằng oxlint; dev proxy /api -> :8000
   .github/workflows/ci.yml  # ruff + pytest, oxlint + build
-  pyproject.toml            # cấu hình pytest (pythonpath = backend) và ruff
+  pyproject.toml            # cấu hình pytest, pyrefly (gốc import = backend) và ruff
   docker-compose.yml        # qdrant, postgres, redis
   requirements.txt, requirements-dev.txt   # ghim version, đã cài thử trên Python 3.13
 ```
@@ -132,7 +150,7 @@ RAG/
 Dự kiến thêm:
 ```
   backend/app/{api, retrieval, generation, auth, storage}
-  eval/{datasets, judges, results, run_retrieval_eval.py, run_e2e_eval.py}
+  eval/{judges, results, run_retrieval_eval.py, run_e2e_eval.py}
   docs/experiments.md
 ```
 
@@ -145,6 +163,8 @@ python scripts/download_data.py      # tải dữ liệu; thêm --force để t�
 docker compose up -d                 # qdrant, postgres, redis
 python scripts/check_env.py          # kiểm tra .env, key OpenAI/Langfuse, model, service (không in key)
 uvicorn app.main:app --app-dir backend --reload --port 8000
+python eval/validate_golden.py       # kiểm tra golden set (thêm --fix-pages để sửa số trang)
+python eval/review_golden.py export  # tạo file duyệt; sau khi duyệt chạy: ... apply
 python -m pytest                     # test backend
 ruff check .                         # lint backend
 cd frontend; npm install; npm run dev     # http://localhost:5173
