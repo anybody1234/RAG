@@ -5,3 +5,4 @@ testpaths = ["backend/tests"]
 [tool.ruff]
 line-length = 110
 target-version = "py313"
+src = ["backend"]

@@ -111,21 +111,29 @@ Latency đo riêng cho từng bước: rewrite, embed, search, rerank, TTFT, t�
 Đã có:
 ```
 RAG/
+  TASKS.md                  # kế hoạch 10 tuần + checklist; cập nhật khi xong task
+  config/rag.toml           # siêu tham số RAG + config_version
   data/{manifest.json, SOURCES.md, raw/ (gitignore)}
   scripts/download_data.py
-  backend/app/ingestion/text_cleaning.py   # chuẩn hoá NFC, bỏ ký tự control, giữ ranh giới dòng
+  backend/app/main.py       # FastAPI; /api/health/live, /api/health/ready
+  backend/app/core/{config.py, rag_config.py}   # Settings (.env) và loader cho config/rag.toml
+  backend/app/ingestion/text_cleaning.py         # chuẩn hoá NFC, bỏ ký tự control, giữ ranh giới dòng
   backend/tests/
+  frontend/                 # React 19 + Vite 8 + TS, lint bằng oxlint; dev proxy /api -> :8000
+  .github/workflows/ci.yml  # ruff + pytest, oxlint + build
   pyproject.toml            # cấu hình pytest (pythonpath = backend) và ruff
   docker-compose.yml        # qdrant, postgres, redis
   requirements.txt, requirements-dev.txt   # ghim version, đã cài thử trên Python 3.13
 ```
-Import theo gốc `backend/`, ví dụ `from app.ingestion.text_cleaning import clean_vietnamese_text`.
+- Import theo gốc `backend/`, ví dụ `from app.ingestion.text_cleaning import clean_vietnamese_text`.
+- Mọi API nằm dưới tiền tố `/api`.
+- Đọc cấu hình qua `get_settings()` và `get_rag_config()`, không đọc trực tiếp `os.environ` hay file toml.
 
 Dự kiến thêm:
 ```
-  backend/app/{api, retrieval, generation, auth, storage, core}
-  frontend/
+  backend/app/{api, retrieval, generation, auth, storage}
   eval/{datasets, judges, results, run_retrieval_eval.py, run_e2e_eval.py}
+  docs/experiments.md
 ```
 
 ## Lệnh thường dùng
@@ -135,15 +143,18 @@ Các lệnh dưới đây là PowerShell, chạy từ thư mục gốc của rep
 pip install -r requirements-dev.txt
 python scripts/download_data.py      # tải dữ liệu; thêm --force để tải lại
 docker compose up -d                 # qdrant, postgres, redis
+uvicorn app.main:app --app-dir backend --reload --port 8000
 python -m pytest                     # test backend
-ruff check .                         # lint
+ruff check .                         # lint backend
+cd frontend; npm install; npm run dev     # http://localhost:5173
+cd frontend; npm run lint; npm run build
 ```
 
 ## Repo
 GitHub: https://github.com/anybody1234/RAG, nhánh `main`. Thư mục RAG có repo git riêng, nằm lồng trong repo `C:\Users\asus`. Luôn chạy lệnh git từ thư mục RAG.
 
-## Việc còn mở
-- Đối chiếu tình trạng hiệu lực và các văn bản sửa đổi của từng luật trên vbpl.vn trước khi gán nhãn golden set.
+## Tiến độ
+- Kế hoạch và trạng thái từng task nằm trong `TASKS.md`. Đánh dấu `[x]` ngay khi xong một task.
+- Task có nhãn **[L]** là việc của Long; nhắc Long khi task đó chặn bước tiếp theo.
+- Deploy demo công khai: Long quyết định ở tuần 10.
 - GDPR đang lấy từ bản sao trên gdpr.eu.org. Có thể thay bằng bản chính thức tải tay từ EUR-Lex.
-- Dựng khung backend, frontend và eval.
-- Để sau: OCR, hỗ trợ `.doc`, reranker chạy trên máy, deploy demo công khai.

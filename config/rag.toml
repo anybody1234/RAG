@@ -1,0 +1,28 @@
+# Siêu tham số RAG. Đổi bất kỳ giá trị nào thì phải tăng config_version
+# và chạy lại eval (xem quy tắc trong CLAUDE.md).
+config_version = "v0.1-baseline"
+
+[chunking]
+# Đơn vị chính là Điều; Điều dài hơn max_tokens thì tách theo Khoản.
+max_tokens = 800
+overlap_ratio = 0.1
+
+[embedding]
+model = "text-embedding-3-small"
+dimensions = 1536
+
+[retrieval]
+mode = "hybrid"        # dense | sparse | hybrid
+prefetch_limit = 50    # số ứng viên mỗi nhánh trước khi gộp RRF
+top_k = 5              # số chunk đưa cho LLM
+reranker = "none"      # none | llm
+
+[generation]
+answer_model = "gpt-6.1-sol"
+answer_reasoning_effort = "low"
+rewrite_model = "gpt-6-luna"
+prompt_version = "answer-v1"
+
+[eval]
+judge_model = "gpt-6.1-sol"
+judge_reasoning_effort = "high"

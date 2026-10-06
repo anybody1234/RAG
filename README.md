@@ -4,7 +4,7 @@ Chatbot RAG cho phép tải lên tài liệu (PDF, DOCX, TXT, Markdown, HTML), �
 
 Trọng tâm của dự án là **đo lường được**. Mọi thay đổi về cách chunk, truy xuất, prompt hay model đều phải có số liệu eval trước và sau trên một bộ câu hỏi chuẩn.
 
-> **Trạng thái:** đang khởi tạo. Đã chốt thiết kế, môi trường và bộ dữ liệu. Code mới có bước làm sạch văn bản; chưa có API và giao diện.
+> **Trạng thái:** đã xong setup ban đầu (khung backend, frontend, CI, bộ dữ liệu). Kế hoạch 10 tuần và tiến độ nằm trong [`TASKS.md`](TASKS.md).
 
 ## Kiến trúc
 
@@ -46,8 +46,15 @@ pip install -r requirements-dev.txt
 copy .env.example .env               # rồi điền OPENAI_API_KEY, LANGFUSE_*, JWT_SECRET
 python scripts/download_data.py      # tải bộ văn bản luật về data/raw/
 docker compose up -d                 # qdrant, postgres, redis
+uvicorn app.main:app --app-dir backend --reload --port 8000
 python -m pytest                     # chạy test
+
+cd frontend
+npm install
+npm run dev                          # http://localhost:5173
 ```
+
+Kiểm tra hạ tầng: mở http://localhost:8000/api/health/ready. Kết quả phải là `ok` cho postgres, qdrant và redis.
 
 ## Dữ liệu
 
@@ -55,9 +62,14 @@ Danh sách văn bản, nguồn tải và các lưu ý khi parse nằm trong [`da
 
 ## Lộ trình
 
-1. Bộ câu hỏi chuẩn (golden set) v1: 100 câu
-2. Ingestion: parse, chuẩn hoá, chunk theo cấu trúc văn bản luật, index
-3. Retrieval và eval retrieval (dense, hybrid, rerank)
-4. Sinh câu trả lời có trích dẫn, eval end-to-end
-5. API, giao diện web (upload, chat streaming, xem nguồn)
-6. Tracing, load test, tối ưu theo số liệu eval
+Xem chi tiết trong [`TASKS.md`](TASKS.md):
+
+1. Golden set v1 (100 câu)
+2. Ingestion: parse, chuẩn hoá, chunk theo cấu trúc văn bản luật
+3. Index và retrieval baseline
+4. Thí nghiệm retrieval
+5. Sinh câu trả lời có trích dẫn, eval end-to-end
+6. Backend API
+7. Giao diện web
+8. Load test và tối ưu
+9. Hoàn thiện portfolio
