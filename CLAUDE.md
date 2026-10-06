@@ -102,7 +102,7 @@ Latency đo riêng cho từng bước: rewrite, embed, search, rerank, TTFT, t�
 
   Ngoài ra, ít nhất 20% câu hỏi phải khác ngôn ngữ với nguồn (hỏi tiếng Việt, nguồn tiếng Anh, hoặc ngược lại).
 - **Gán nguồn:** `gold_sources` ghi theo trang + đoạn trích, **không** theo `chunk_id`, để đổi cách chunk vẫn dùng lại được bộ eval.
-- **Câu do LLM sinh nháp** phải được người duyệt trước khi đưa vào.
+- **Câu do LLM sinh nháp** phải được người duyệt trước khi đưa vào. Ngoại lệ: golden set v1 do Claude duyệt (đối chiếu toàn văn Điều) và đã được Long chấp thuận ngày 06/10/2026, xem TASKS.md P1. Từ v2 trở đi vẫn áp dụng quy tắc người duyệt, trừ khi Long quyết định khác.
 - **Cách chấm:**
   - Metric retrieval do script tự viết tính, không cần LLM.
   - Metric câu trả lời do LLM-judge tự viết chấm. Prompt của judge được version hoá trong `eval/judges/`. Điểm được đẩy lên Langfuse.

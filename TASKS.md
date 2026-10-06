@@ -68,8 +68,10 @@
   - g054 thêm nguồn Điều 106 trang 44.
   - g078 đổi sang `single_article`.
   - Phân bố không đổi.
-- [ ] **[L]** Duyệt lại 3 câu g014, g054, g078 trong `golden_v1_review.md`, rồi chạy `python eval/review_golden.py apply`
-- [ ] **[L]** Quyết định về người duyệt. Theo ghi chú ở trên, lượt duyệt 97 câu do Claude thực hiện, trong khi `CLAUDE.md` yêu cầu câu do LLM sinh nháp phải được **người** duyệt. Hai cách xử lý: Long tự duyệt lại (ít nhất lấy mẫu, ví dụ 20 câu), hoặc ghi nhận đây là ngoại lệ có chủ đích.
+- [x] Duyệt lại 3 câu g014, g054, g078 (06/10, Claude duyệt theo yêu cầu của Long, đối chiếu với toàn văn Điều):
+  - g014 và g054 đạt.
+  - g078 bổ sung lộ trình tuổi nghỉ hưu từ năm 2021 (60 tuổi 3 tháng, mỗi năm tăng 3 tháng) vào đáp án và thêm đoạn trích trang 64, để trả lời đúng câu "What is the retirement age" và nhất quán với g007.
+- [x] **[L]** Quyết định về người duyệt (06/10). Long đã đọc phần sửa và đồng ý, giao Claude duyệt. Ghi nhận: golden set v1 được Claude duyệt bằng cách đối chiếu toàn văn Điều trong PDF, Long chấp thuận. Đây là ngoại lệ có chủ đích so với quy tắc "người duyệt" trong `CLAUDE.md`. Nên được nhắc tới khi trình bày kết quả eval.
 - [x] Bổ sung `amended_articles` trong `data/manifest.json` (06/10). Ghi nguồn xác minh vào trường mới `amended_articles_source`.
   - **Luật Doanh nghiệp:** lập lại từ toàn văn, được 33 Điều.
     - Luật 76/2025 (khoản 1–28 Điều 1) sửa 27 Điều, gồm đủ 11 Điều còn thiếu: 8, 11, 13, 20, 22, 33, 52, 112, 140, 207, 215.
@@ -79,6 +81,12 @@
 - [x] `validate_golden.py` tự báo lỗi khi đoạn trích nằm trong Điều có ở `amended_articles` mà câu hỏi không có nguồn từ luật sửa đổi. Chạy thử trên bản trước khi sửa: bắt đúng g014 và không báo nhầm câu nào khác.
 
 **Hoàn thành khi:** có `eval/datasets/golden_v1.jsonl` gồm 100 câu đã duyệt, script kiểm tra pass.
+
+**Kết quả (06/10):** đã hoàn thành.
+- 100/100 câu đã duyệt.
+- `validate_golden.py` không có lỗi.
+- Phân bố: single_article 33, numeric 17, multi_hop 14, paraphrase 15, unanswerable 12, multi_turn 9.
+- 22% câu có nguồn là câu khác ngôn ngữ với nguồn.
 
 ## P2. Ingestion (tuần 2–3)
 - [ ] Parser PDF bằng `pymupdf4llm`:

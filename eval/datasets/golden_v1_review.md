@@ -168,7 +168,7 @@ Ghi chú:
 Ghi chú:
 
 ## g014 · multi_hop · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Theo quy định hiện hành, doanh nghiệp bị giải thể trong những trường hợp nào?
 
@@ -649,7 +649,7 @@ Ghi chú:
 Ghi chú:
 
 ## g054 · paraphrase · vi
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** Tôi làm ca từ 11 giờ đêm đến 5 giờ sáng thì có được trả thêm tiền không?
 
@@ -951,14 +951,15 @@ Ghi chú:
 Ghi chú:
 
 ## g078 · single_article · en
-- [ ] Đã duyệt
+- [x] Đã duyệt
 
 **Hỏi:** What is the retirement age for men in normal working conditions in Vietnam, and how much earlier can someone doing hazardous work retire?
 
-**Đáp án chuẩn:** It rises gradually to 62 for men by 2028 (60 for women by 2035). Employees with reduced work capacity, doing laborious, toxic or dangerous work, or working in highly disadvantaged areas may retire up to 05 years earlier (Article 169.2–3).
+**Đáp án chuẩn:** In normal working conditions it is being raised gradually to 62 for men by 2028 (60 for women by 2035): from 2021 it was 60 years 3 months for men (55 years 4 months for women), increasing by 3 months for men (4 months for women) each year. Employees with reduced work capacity, doing laborious, toxic or dangerous work, or working in highly disadvantaged areas may retire up to 05 years earlier, unless otherwise prescribed by law (Article 169.2–3).
 
 **Nguồn:**
 - `en-labour-code-2019` trang 63: “shall be gradually increased to 62 for males by 2028 and 60 for females in 2035”
+- `en-labour-code-2019` trang 64: “From 2021, the retirement ages of employees in normal working conditions shall be 60”
 - `en-labour-code-2019` trang 64: “may be younger by up to 05 years than the retirement ages specified in Clause 2 of this Article”
 
 Ghi chú:
