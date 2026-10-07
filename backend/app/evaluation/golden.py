@@ -14,6 +14,12 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_valida
 from app.ingestion.manifest import Manifest, amended_article_numbers
 
 QuestionType = Literal["single_article", "numeric", "multi_hop", "paraphrase", "unanswerable", "multi_turn"]
+# Nhãn phụ để cắt kết quả eval (có từ golden set v2):
+# - explicit_ref: câu nêu thẳng Điều/Article/khoản hoặc số hiệu văn bản;
+# - colloquial: dùng lời lẽ đời thường;
+# - no_doc_name: không nêu tên văn bản (kể cả "GDPR");
+# - comparison: so sánh hai văn bản.
+Tag = Literal["explicit_ref", "colloquial", "no_doc_name", "comparison"]
 
 # Khoảng tỉ lệ cho phép của từng loại câu hỏi (xem CLAUDE.md).
 TARGET_DISTRIBUTION: dict[str, tuple[float, float]] = {
@@ -53,6 +59,7 @@ class GoldenItem(BaseModel):
     reference_answer: str
     gold_sources: list[GoldSource] = []
     history: list[Turn] = []
+    tags: list[Tag] = []
     reviewed: bool = False
 
     @model_validator(mode="after")
@@ -65,6 +72,8 @@ class GoldenItem(BaseModel):
             raise ValueError("câu multi_hop phải có ít nhất 2 gold_source khác nhau")
         if (self.type == "multi_turn") != bool(self.history):
             raise ValueError("chỉ câu multi_turn mới có history, và câu multi_turn phải có history")
+        if len(set(self.tags)) != len(self.tags):
+            raise ValueError("tags bị lặp")
         return self
 
 
@@ -140,6 +149,8 @@ def cites_amending_law(item: GoldenItem, so_hieu: str, manifest: Manifest) -> bo
 class ValidationReport:
     errors: list[str] = field(default_factory=list)
     type_counts: Counter = field(default_factory=Counter)
+    tag_counts: Counter = field(default_factory=Counter)
+    language_counts: Counter = field(default_factory=Counter)
     cross_lingual: int = 0
     answerable: int = 0
     reviewed: int = 0
@@ -164,6 +175,8 @@ def validate_golden(
 
     for item in items:
         report.type_counts[item.type] += 1
+        report.tag_counts.update(item.tags)
+        report.language_counts[item.language] += 1
         report.reviewed += item.reviewed
         if item.gold_sources:
             report.answerable += 1

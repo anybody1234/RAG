@@ -3,7 +3,15 @@ import unicodedata
 import pytest
 from pydantic import ValidationError
 
-from app.evaluation.golden import GoldenItem, article_at, is_cross_lingual, validate_golden
+from app.evaluation.golden import (
+    GoldenItem,
+    article_at,
+    is_cross_lingual,
+    load_golden,
+    save_golden,
+    validate_golden,
+)
+from app.evaluation.golden_review import apply_review, parse_review, render_review
 from app.ingestion.manifest import Manifest
 
 
@@ -101,3 +109,32 @@ def test_amended_article_is_allowed_when_the_amending_law_is_cited():
 def test_distribution_outside_target_is_an_error():
     report = validate_golden([item()], make_manifest(), PAGES.__getitem__)
     assert any("single_article" in error for error in report.errors)
+
+
+def test_tags_are_optional_validated_and_counted(tmp_path):
+    tagged = item(id="g002", tags=["explicit_ref", "no_doc_name"])
+    with pytest.raises(ValidationError):
+        item(tags=["slang"])
+    with pytest.raises(ValidationError):
+        item(tags=["colloquial", "colloquial"])
+    report = validate([item(), tagged])
+    assert report.tag_counts == {"explicit_ref": 1, "no_doc_name": 1}
+    assert report.language_counts == {"vi": 2}
+
+    path = tmp_path / "golden.jsonl"
+    save_golden([item(), tagged], path)
+    first, second = path.read_text(encoding="utf-8").splitlines()
+    assert "tags" not in first and '"tags": ["explicit_ref", "no_doc_name"]' in second  # v1 không có tags
+    assert load_golden(path)[1].tags == ["explicit_ref", "no_doc_name"]
+
+
+def test_review_roundtrip_marks_ticked_items_and_lists_notes():
+    items = [item(), item(id="g002", tags=["colloquial"]), item(id="g003")]
+    text = render_review(items, make_manifest(), "v2 draft", "python eval/review_golden.py apply x.jsonl")
+    assert text.startswith("# Duyệt golden set v2 draft")
+    assert "## g002 · single_article · vi · colloquial\n- [ ] Đã duyệt" in text
+    text = text.replace("- [ ] Đã duyệt", "- [x] Đã duyệt", 2)  # tick g001, g002; g003 để trống
+    text = text.replace("Ghi chú:\n\n## g003", "Ghi chú: sai số ngày\n\n## g003")  # ghi chú của g002
+    needs_fix = apply_review(items, parse_review(text))
+    assert [i.reviewed for i in items] == [True, False, False]
+    assert needs_fix == [("g002", "sai số ngày")]
