@@ -79,18 +79,26 @@ Các metric sau luôn được ghi để chẩn đoán, nhưng không đặt ng�
 Latency đo riêng cho từng bước: rewrite, embed, search, rerank, TTFT, tổng.
 
 ## Golden set và eval
-- **File:** `eval/datasets/golden_v1.jsonl`. Mỗi dòng có dạng `{id, question, language, type, reference_answer, gold_sources: [{doc_id, page, quote}], history, reviewed}`. Schema nằm ở `backend/app/evaluation/golden.py`.
+- **File:**
+  - `eval/datasets/golden_v1.jsonl`: bộ phát triển, dùng để chẩn đoán và tinh chỉnh.
+  - `eval/datasets/golden_v2.jsonl`: **bộ test giữ riêng**, 100 câu, dùng để xác nhận con số cuối của mỗi thay đổi. **Không tinh chỉnh trên v2:** không sửa prompt, config hay chunking dựa trên lỗi của từng câu v2, không đưa câu v2 vào ví dụ trong prompt. Lỗi thấy trên v2 thì tái hiện và sửa bằng v1.
+  - Bản nháp v2 (128 câu, `golden_v2_draft.jsonl`) và nhật ký duyệt (`golden_v2_review.md`) được giữ để truy vết. Id trong v2 trùng id nháp.
+
+  Mỗi dòng có dạng `{id, question, language, type, reference_answer, gold_sources: [{doc_id, page, quote}], history, tags, reviewed}`. Schema nằm ở `backend/app/evaluation/golden.py`.
   - `type` là một trong: `single_article`, `numeric`, `multi_hop`, `paraphrase`, `unanswerable`, `multi_turn`.
   - `history` chỉ có ở câu `multi_turn`: các lượt hỏi đáp trước đó, câu hỏi hiện tại nằm ở `question`.
   - Câu `unanswerable` không có `gold_sources`. Câu `multi_hop` phải có ít nhất 2 nguồn.
   - `page` là số trang PDF bắt đầu từ 1, **đánh liên tục qua các file** của cùng một `doc_id`. Ví dụ Luật Doanh nghiệp 2020: phần 1 là trang 1–94, phần 2 là trang 95–168. Đọc trang bằng `read_pdf_pages()` trong `backend/app/ingestion/manifest.py`.
   - `quote` được so khớp sau khi chuẩn hoá NFKC và gộp khoảng trắng (`normalize_for_match`).
-- **Câu khác ngôn ngữ:** một câu được tính là khác ngôn ngữ khi không nguồn nào cùng ngôn ngữ với câu hỏi. Hiện các câu loại này đều là câu hỏi tiếng Việt về GDPR.
+  - `tags` (từ v2, không bắt buộc) dùng để cắt kết quả eval: `explicit_ref` (câu nêu thẳng Điều/khoản hoặc số hiệu), `colloquial` (lời lẽ đời thường), `no_doc_name` (không nêu tên văn bản, kể cả "GDPR"), `comparison` (so sánh hai văn bản). Câu `multi_turn` không gắn `no_doc_name`. v2 có `explicit_ref` 17, `colloquial` 21, `no_doc_name` 63, `comparison` 3.
+- **Câu khác ngôn ngữ:** một câu được tính là khác ngôn ngữ khi không nguồn nào cùng ngôn ngữ với câu hỏi.
+  - Ở v1, các câu loại này đều là câu hỏi tiếng Việt về GDPR. Từ v2 có thêm chiều ngược lại: câu tiếng Anh về Nghị định 356, văn bản chỉ có tiếng Việt. v2 có 25/88 câu khác ngôn ngữ: 14 câu tiếng Việt về GDPR, 11 câu tiếng Anh về Nghị định 356.
+  - Câu khác ngôn ngữ chỉ hợp lệ khi văn bản cùng ngôn ngữ với câu hỏi không trả lời được câu đó. Ví dụ, Luật 91/2025 bản dịch tiếng Anh không được trả lời được câu tiếng Anh chỉ có nguồn Nghị định 356. Nếu không, phải thêm nguồn đó và câu hết là khác ngôn ngữ.
 - **Không hỏi vào Điều đã bị sửa đổi** (danh sách ở `amended_articles` trong manifest), vì bản Công báo gốc đã lỗi thời ở các Điều đó. Ngoại lệ: câu `multi_hop` có kèm nguồn là chính luật sửa đổi. `validate_golden.py` tự kiểm tra quy tắc này bằng cách xác định Điều chứa đoạn trích qua tiêu đề "Điều N." / "Article N." gần nhất.
 - **Công cụ:**
   - `python eval/validate_golden.py [--fix-pages]`: kiểm tra schema, đoạn trích có thật ở đúng trang, và phân bố.
-  - `python eval/review_golden.py export|apply`: xuất file duyệt dạng Markdown (`golden_v1_review.md`) và áp kết quả duyệt ngược vào JSONL.
-- **Quy mô:** 100 câu (v1), sau đó tăng lên 200.
+  - `python eval/review_golden.py export|apply [FILE]`: xuất file duyệt dạng Markdown (`<tên file>_review.md`, mặc định `golden_v1_review.md`) và áp kết quả duyệt ngược vào JSONL. Không chạy `export` trên `golden_v2.jsonl`, vì lệnh này ghi đè nhật ký duyệt `golden_v2_review.md`.
+- **Quy mô:** v1 và v2 mỗi bộ 100 câu, sau đó tăng lên 200. Phân bố v2: single_article 33, numeric 15, multi_hop 15, paraphrase 15, unanswerable 12, multi_turn 10; 40 câu tiếng Anh.
 - **Phân bố câu hỏi:**
 
   | Loại | Tỉ lệ |
@@ -104,7 +112,11 @@ Latency đo riêng cho từng bước: rewrite, embed, search, rerank, TTFT, t�
 
   Ngoài ra, ít nhất 20% câu hỏi phải khác ngôn ngữ với nguồn (hỏi tiếng Việt, nguồn tiếng Anh, hoặc ngược lại).
 - **Gán nguồn:** `gold_sources` ghi theo trang + đoạn trích, **không** theo `chunk_id`, để đổi cách chunk vẫn dùng lại được bộ eval.
-- **Câu do LLM sinh nháp** phải được người duyệt trước khi đưa vào. Ngoại lệ: golden set v1 do Claude duyệt (đối chiếu toàn văn Điều) và đã được Long chấp thuận ngày 06/10/2026, xem TASKS.md P1. Từ v2 trở đi vẫn áp dụng quy tắc người duyệt, trừ khi Long quyết định khác.
+- **Câu do LLM sinh nháp** phải được người duyệt trước khi đưa vào. Ngoại lệ:
+  - golden set v1 do Claude duyệt (đối chiếu toàn văn Điều) và đã được Long chấp thuận ngày 06/10/2026, xem TASKS.md P1;
+  - golden set v2 do một phiên Claude soạn và một phiên Claude khác duyệt độc lập, theo quyết định của Long ngày 07/10/2026. Người duyệt đọc toàn văn Điều của mọi nguồn, dò toàn văn cho câu không có đáp án, rồi cắt 128 câu nháp còn 100.
+
+  Các bộ sau vẫn áp dụng quy tắc người duyệt, trừ khi Long quyết định khác.
 - **Cách chấm:**
   - Metric retrieval do script tự viết tính, không cần LLM. Một chunk trúng một nguồn gold khi cùng `doc_id`, khoảng trang của chunk chứa trang gold, và text chunk chứa đoạn trích (sau `normalize_for_match`).
   - Metric câu trả lời do LLM-judge tự viết chấm. Prompt của judge được version hoá trong `eval/judges/`. Điểm được đẩy lên Langfuse.
@@ -162,9 +174,12 @@ RAG/
     query.py                # viết lại câu hỏi theo lịch sử + dịch vi<->en trong một lần gọi (prompt query-v1)
     rerank.py               # rerank listwise bằng LLM trên top-N (prompt rerank-v1)
   backend/app/evaluation/golden.py               # schema + kiểm tra golden set
+  backend/app/evaluation/golden_review.py        # xuất/đọc file duyệt golden set dạng Markdown
   backend/app/evaluation/retrieval_metrics.py    # so khớp chunk với nguồn gold, Hit/Recall/MRR/nDCG@k
   backend/tests/
-  eval/datasets/golden_v1.jsonl, golden_v1_review.md
+  eval/datasets/golden_v1.jsonl, golden_v1_review.md   # bộ phát triển
+  eval/datasets/golden_v2.jsonl, golden_v2_review.md   # bộ test giữ riêng + nhật ký duyệt
+  eval/datasets/golden_v2_draft.jsonl                  # bản nháp v2 (128 câu), giữ để truy vết
   eval/validate_golden.py, eval/review_golden.py
   eval/run_retrieval_eval.py   # eval retrieval 3 chế độ, chia theo loại câu/ngôn ngữ/khác ngôn ngữ, latency p50/p95
   eval/results/             # kết quả eval (commit vào repo)

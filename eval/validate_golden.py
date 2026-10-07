@@ -58,6 +58,9 @@ def main() -> int:
     if report.answerable:
         print(f"  khác ngôn ngữ với nguồn: {report.cross_lingual}/{report.answerable} câu có nguồn "
               f"({report.cross_lingual / report.answerable:.0%})")
+    print("  ngôn ngữ câu hỏi: " + ", ".join(f"{lang} {n}" for lang, n in sorted(report.language_counts.items())))
+    if report.tag_counts:
+        print("  tags: " + ", ".join(f"{tag} {n}" for tag, n in report.tag_counts.most_common()))
 
     if report.errors:
         print(f"\n{len(report.errors)} lỗi:")
