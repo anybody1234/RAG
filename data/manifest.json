@@ -316,6 +316,37 @@
           "sha256": "8b0cb0aacf8061c3b595cdb7e4fac00943de7ce0846294b3b2a1ec60dd645a89"
         }
       ]
+    },
+    {
+      "doc_id": "vi-nghi-dinh-bao-ve-du-lieu-ca-nhan-2025",
+      "pair_id": null,
+      "title": "Nghị định quy định chi tiết một số điều và biện pháp thi hành Luật Bảo vệ dữ liệu cá nhân",
+      "so_hieu": "356/2025/NĐ-CP",
+      "language": "vi",
+      "kind": "original",
+      "issued_date": "2025-12-31",
+      "effective_date": "2026-01-01",
+      "status": "in_force",
+      "amended_by": [
+        "22/2026/NQ-CP"
+      ],
+      "amended_articles": [
+        "Điều 18",
+        "Điều 19",
+        "Điều 20",
+        "Điều 25",
+        "Điều 26"
+      ],
+      "amended_articles_source": "Phụ lục I.7 (mục A.III, A.IV, B.I, B.II, B.III) và Phụ lục II (dòng 8) Nghị quyết 22/2026/NQ-CP ngày 29/04/2026 (Công báo số 275 ngày 15/05/2026). Nghị quyết có hiệu lực từ 29/04/2026 đến hết 01/03/2027; khoản 2 Điều 6 cho phép quy định thủ tục trong Nghị quyết thay cho văn bản liên quan",
+      "source": "Công báo Chính phủ, số 18 ngày 18-01-2026",
+      "page_url": "https://congbao.chinhphu.vn/van-ban/nghi-dinh-so-356-2025-nd-cp-468371.htm",
+      "files": [
+        {
+          "filename": "vi-nghi-dinh-bao-ve-du-lieu-ca-nhan-2025.pdf",
+          "url": "https://g7.cdnchinhphu.vn/api/download/stream?Url=tm-8mq6BhNw0NbrKRhTDAaHMpvrqWaeHuYm7lW3HNfzTzww8Myg35dDL_fJB4izwTNxSOe23WukehvU2rZ3YToHs7PSiEDZn92PNIzK7N1sIMkGTH_Q5E37i-ckJTpifxoQyIwHub4vEA2i5FWBBbQ~~&file_name=2026_18_356%2f2025%2fN%c4%90-CP.pdf",
+          "sha256": "f24747bf3c374b04901e66704423ea1e1a60460376c4d052d649ecc8a2a2f1eb"
+        }
+      ]
     }
   ]
 }

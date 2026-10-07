@@ -56,6 +56,22 @@ def test_pdf_law_drops_page_furniture_and_keeps_page_numbers(tmp_path):
     ]
 
 
+def test_pdf_law_drops_2026_signature_block(tmp_path):
+    """Công báo năm 2026 header không có số trang cùng dòng, chữ ký số ghi "Ngày ký" thay cho "Thời gian ký"."""
+    pages = [
+        ["CÔNG BÁO/Số 18/Ngày 18-01-2026", str(number + 2), *body]
+        for number, (_, *body) in enumerate(LAW_PAGES, start=1)
+    ]
+    pages[0][-4:] = [
+        "Ký bởi: CÔNG BÁO NƯỚC CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM", "Cơ quan: VĂN PHÒNG CHÍNH PHỦ",
+        "Ngày ký: 2026-01-17 14:12:26 +07:00",
+    ]
+    joined = "\n".join(texts(parse_file(make_pdf(tmp_path / "law.pdf", pages))))
+    for furniture in ["CÔNG BÁO", "Ký bởi", "Cơ quan:", "Ngày ký"]:
+        assert furniture not in joined
+    assert "Bộ luật này quy định tiêu chuẩn lao động." in joined
+
+
 def test_pages_continue_across_files_of_one_document(tmp_path):
     first = make_pdf(tmp_path / "part1.pdf", LAW_PAGES[:2])
     second = make_pdf(tmp_path / "part2.pdf", [["(Tiếp theo Công báo số 993 + 994)"] + LAW_PAGES[2][1:], LAW_PAGES[3]])
