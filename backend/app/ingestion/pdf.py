@@ -34,10 +34,14 @@ MIN_TEXT_CHARS = 50
 _CONG_BAO_HEADER = re.compile(r"^CÔNG BÁO/Số [\d +]+/Ngày \d{1,2}-\d{1,2}-\d{4}(?: \d+)?$")
 _CONTINUED_FROM = re.compile(r"^\(Tiếp theo Công báo số [\d +]+\)$")
 _CONTINUED_IN = re.compile(r"^\(Xem tiếp Công báo số [\d +]+\)$")
-# Khối chữ ký số của Cổng Thông tin điện tử Chính phủ ở trang đầu bản Công báo. Bản năm 2026 ghi "Ngày ký"
-# thay cho "Thời gian ký".
-_SIGNATURE_START = re.compile(r"^Ký bởi: ")
+# Khối chữ ký số của Cổng Thông tin điện tử Chính phủ ở trang đầu bản Công báo. Dòng đầu là "Ký bởi:", hoặc
+# "Người ký:" (Công báo năm 2025); bản năm 2026 ghi "Ngày ký" thay cho "Thời gian ký". Các dòng "Email:",
+# "Cơ quan:" chỉ bị bỏ khi nằm trong khối này, vì phụ lục mẫu biểu (Nghị định 356) có dòng "Email:……" thật.
+_SIGNATURE_START = re.compile(r"^(Ký bởi|Người ký): ")
 _SIGNATURE_REST = re.compile(r"^(Email|Cơ quan|Thời gian ký|Ngày ký): ")
+# Tên người ký dài bị ngắt sang dòng sau ("Ký bởi: Cổng Thông tin điện tử Chính" / "phủ"): dòng ngắn, không có
+# dấu hai chấm, nằm ngay sau dòng đầu của khối.
+_SIGNATURE_WRAP_MAX_CHARS = 30
 
 # Header/footer lặp: dòng nằm trong _EDGE_LINES dòng đầu hoặc cuối trang, xuất hiện (sau khi thay chữ số
 # bằng #) ở ít nhất _RUNNING_MIN_RATIO số trang và ít nhất _RUNNING_MIN_PAGES trang. Bắt được số trang,
@@ -73,15 +77,19 @@ def _strip_page_furniture(lines: list[str], running: set[str]) -> list[str]:
         # Trang đầu file Công báo thứ hai lặp lại tên văn bản trước dòng "(Tiếp theo Công báo số ...)".
         lines = lines[start:]
     kept: list[str] = []
-    in_signature = False
+    in_signature = after_start = False
     for i, line in enumerate(lines):
         at_edge = i < _EDGE_LINES or i >= len(lines) - _EDGE_LINES
         if _SIGNATURE_START.match(line):
-            in_signature = True
+            in_signature = after_start = True
             continue
-        if in_signature and _SIGNATURE_REST.match(line):
-            continue
-        in_signature = False
+        if in_signature:
+            if _SIGNATURE_REST.match(line):
+                after_start = False
+                continue
+            if after_start and ":" not in line and len(line.strip()) <= _SIGNATURE_WRAP_MAX_CHARS:
+                continue
+        in_signature = after_start = False
         if _CONG_BAO_HEADER.match(line) or _CONTINUED_IN.match(line) or (at_edge and _edge_key(line) in running):
             continue
         kept.append(line)
