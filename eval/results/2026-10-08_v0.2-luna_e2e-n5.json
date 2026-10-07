@@ -1,0 +1,1578 @@
+{
+ "kind": "e2e",
+ "run_at": "2026-10-08T00:29:44+07:00",
+ "config_version": "v0.2-luna",
+ "overrides": [
+  "config_version=v0.2-luna",
+  "generation.answer_model=gpt-6-luna",
+  "generation.answer_reasoning_effort=none"
+ ],
+ "git": {
+  "commit": "08253e8",
+  "dirty": false
+ },
+ "corpus": {
+  "manifest_sha256": "74c2eeedee954c8a4ab050690b8ecd90104cc621e048e7bae0d4ecde84bd308a",
+  "documents": {
+   "en-gdpr-2016": 157,
+   "en-labour-code-2019": 223,
+   "en-law-amending-enterprises-2025": 8,
+   "en-law-on-enterprises-2020": 224,
+   "en-personal-data-protection-law-2025": 40,
+   "vi-bo-luat-lao-dong-2019": 252,
+   "vi-luat-bao-ve-du-lieu-ca-nhan-2025": 51,
+   "vi-luat-doanh-nghiep-2020": 313,
+   "vi-luat-sua-doi-luat-doanh-nghiep-2025": 13,
+   "vi-nghi-dinh-bao-ve-du-lieu-ca-nhan-2025": 100
+  },
+  "chunks": 1381
+ },
+ "complete": true,
+ "stopped_reason": null,
+ "golden": {
+  "path": "eval/datasets/golden_v1.jsonl",
+  "questions": 5,
+  "sample": 5
+ },
+ "judge": {
+  "profile": "groq",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "api": "chat",
+  "base_url": "https://api.groq.com/openai/v1",
+  "reasoning_effort": "medium",
+  "service_tier": "default",
+  "prompt_version": "judge-v1",
+  "repeats": 1,
+  "judged": 5,
+  "missing": 0,
+  "stopped_reason": null
+ },
+ "config": {
+  "config_version": "v0.2-luna",
+  "chunking": {
+   "max_tokens": 800,
+   "overlap_ratio": 0.1
+  },
+  "embedding": {
+   "model": "text-embedding-3-large",
+   "dimensions": 3072
+  },
+  "sparse": {
+   "k1": 1.2,
+   "b": 0.75,
+   "avg_doc_len": 215.0
+  },
+  "query": {
+   "model": "gpt-6-luna",
+   "reasoning_effort": "none",
+   "prompt_version": "query-v1",
+   "rewrite": "llm",
+   "rewrite_timeout_ms": 0,
+   "translate": false,
+   "translation_weight": 1.0
+  },
+  "retrieval": {
+   "mode": "hybrid",
+   "prefetch_limit": 50,
+   "rrf_k": 2,
+   "dense_weight": 2.0,
+   "sparse_weight": 1.0,
+   "top_k": 5,
+   "reranker": "none"
+  },
+  "rerank": {
+   "model": "gpt-6-luna",
+   "reasoning_effort": "none",
+   "prompt_version": "rerank-v1",
+   "candidates": 50,
+   "max_chunk_tokens": 200
+  },
+  "index": {
+   "collection_prefix": "chunks",
+   "embed_title": true
+  },
+  "generation": {
+   "answer_model": "gpt-6-luna",
+   "answer_reasoning_effort": "none",
+   "prompt_version": "answer-v1",
+   "max_output_tokens": 2000
+  },
+  "eval": {
+   "judge": "gemini",
+   "judge_prompt_version": "judge-v1"
+  },
+  "judges": {
+   "gemini": {
+    "provider": "gemini",
+    "api": "chat",
+    "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
+    "api_key_env": "GEMINI_API_KEY",
+    "model": "gemini-3.8-flash",
+    "reasoning_effort": "high",
+    "max_output_tokens": 8000,
+    "service_tier": "default",
+    "timeout_seconds": 120.0,
+    "rpm": 5,
+    "tpm": 0,
+    "rpd": 100,
+    "tpd": 0,
+    "quota_reset": "pacific"
+   },
+   "groq": {
+    "provider": "groq",
+    "api": "chat",
+    "base_url": "https://api.groq.com/openai/v1",
+    "api_key_env": "GROQ_API_KEY",
+    "model": "openai/gpt-oss-120b",
+    "reasoning_effort": "medium",
+    "max_output_tokens": 3000,
+    "service_tier": "default",
+    "timeout_seconds": 120.0,
+    "rpm": 30,
+    "tpm": 8000,
+    "rpd": 1000,
+    "tpd": 200000,
+    "quota_reset": "utc"
+   },
+   "sol": {
+    "provider": "openai",
+    "api": "responses",
+    "base_url": null,
+    "api_key_env": "OPENAI_API_KEY",
+    "model": "gpt-6.1-sol",
+    "reasoning_effort": "high",
+    "max_output_tokens": 16000,
+    "service_tier": "default",
+    "timeout_seconds": 300,
+    "rpm": 0,
+    "tpm": 0,
+    "rpd": 0,
+    "tpd": 0,
+    "quota_reset": "utc"
+   }
+  }
+ },
+ "cost_estimate_usd": {
+  "answers": 0.0028,
+  "judge": 0.0,
+  "total": 0.0028
+ },
+ "cost_ledger": {
+  "spent_before_usd": 0.0,
+  "spent_after_usd": 0.0012
+ },
+ "notes": [
+  "Từ chối đếm trực tiếp bằng is_abstention; false_refusal_gold_in_context là từ chối dù context có nguồn gold.",
+  "Điểm judge của mỗi câu là trung bình các lần chấm; faithfulness/citation chỉ tính trên câu trả lời có ý.",
+  "ttft = rewrite + retrieval + llm_ttft; latency đo tuần tự, không tải đồng thời."
+ ],
+ "summary": {
+  "quality": {
+   "all": {
+    "all": {
+     "n": 5,
+     "answerable": 4,
+     "unanswerable": 1,
+     "correct_refusal": 1.0,
+     "false_refusal": 0.25,
+     "false_refusal_gold_in_context": 0.0,
+     "hit": 0.75,
+     "recall": 0.75,
+     "context_precision": 0.15,
+     "invalid_citation_rate": 0.0,
+     "answers_with_amendment_warning": 0,
+     "failed_answers": 0,
+     "judged": 5,
+     "faithfulness": 0.9167,
+     "faithfulness_n": 4,
+     "citation_precision": 1.0,
+     "citation_precision_n": 4,
+     "citation_recall": 0.9167,
+     "citation_recall_n": 4,
+     "correctness": 0.8,
+     "correctness_n": 5,
+     "relevancy": 1.0,
+     "relevancy_n": 5
+    }
+   },
+   "type": {
+    "numeric": {
+     "n": 1,
+     "answerable": 1,
+     "unanswerable": 0,
+     "correct_refusal": null,
+     "false_refusal": 0.0,
+     "false_refusal_gold_in_context": 0.0,
+     "hit": 1.0,
+     "recall": 1.0,
+     "context_precision": 0.2,
+     "invalid_citation_rate": 0.0,
+     "answers_with_amendment_warning": 0,
+     "failed_answers": 0,
+     "judged": 1,
+     "faithfulness": 1.0,
+     "faithfulness_n": 1,
+     "citation_precision": 1.0,
+     "citation_precision_n": 1,
+     "citation_recall": 1.0,
+     "citation_recall_n": 1,
+     "correctness": 1.0,
+     "correctness_n": 1,
+     "relevancy": 1.0,
+     "relevancy_n": 1
+    },
+    "paraphrase": {
+     "n": 1,
+     "answerable": 1,
+     "unanswerable": 0,
+     "correct_refusal": null,
+     "false_refusal": 1.0,
+     "false_refusal_gold_in_context": 0.0,
+     "hit": 0.0,
+     "recall": 0.0,
+     "context_precision": 0.0,
+     "invalid_citation_rate": 0.0,
+     "answers_with_amendment_warning": 0,
+     "failed_answers": 0,
+     "judged": 1,
+     "faithfulness": 0.6667,
+     "faithfulness_n": 1,
+     "citation_precision": 1.0,
+     "citation_precision_n": 1,
+     "citation_recall": 0.6667,
+     "citation_recall_n": 1,
+     "correctness": 0.0,
+     "correctness_n": 1,
+     "relevancy": 1.0,
+     "relevancy_n": 1
+    },
+    "single_article": {
+     "n": 2,
+     "answerable": 2,
+     "unanswerable": 0,
+     "correct_refusal": null,
+     "false_refusal": 0.0,
+     "false_refusal_gold_in_context": 0.0,
+     "hit": 1.0,
+     "recall": 1.0,
+     "context_precision": 0.2,
+     "invalid_citation_rate": 0.0,
+     "answers_with_amendment_warning": 0,
+     "failed_answers": 0,
+     "judged": 2,
+     "faithfulness": 1.0,
+     "faithfulness_n": 2,
+     "citation_precision": 1.0,
+     "citation_precision_n": 2,
+     "citation_recall": 1.0,
+     "citation_recall_n": 2,
+     "correctness": 1.0,
+     "correctness_n": 2,
+     "relevancy": 1.0,
+     "relevancy_n": 2
+    },
+    "unanswerable": {
+     "n": 1,
+     "answerable": 0,
+     "unanswerable": 1,
+     "correct_refusal": 1.0,
+     "false_refusal": null,
+     "false_refusal_gold_in_context": null,
+     "hit": null,
+     "recall": null,
+     "context_precision": null,
+     "invalid_citation_rate": 0.0,
+     "answers_with_amendment_warning": 0,
+     "failed_answers": 0,
+     "judged": 1,
+     "faithfulness": null,
+     "faithfulness_n": 0,
+     "citation_precision": null,
+     "citation_precision_n": 0,
+     "citation_recall": null,
+     "citation_recall_n": 0,
+     "correctness": 1.0,
+     "correctness_n": 1,
+     "relevancy": 1.0,
+     "relevancy_n": 1
+    }
+   },
+   "language": {
+    "en": {
+     "n": 1,
+     "answerable": 1,
+     "unanswerable": 0,
+     "correct_refusal": null,
+     "false_refusal": 0.0,
+     "false_refusal_gold_in_context": 0.0,
+     "hit": 1.0,
+     "recall": 1.0,
+     "context_precision": 0.2,
+     "invalid_citation_rate": 0.0,
+     "answers_with_amendment_warning": 0,
+     "failed_answers": 0,
+     "judged": 1,
+     "faithfulness": 1.0,
+     "faithfulness_n": 1,
+     "citation_precision": 1.0,
+     "citation_precision_n": 1,
+     "citation_recall": 1.0,
+     "citation_recall_n": 1,
+     "correctness": 1.0,
+     "correctness_n": 1,
+     "relevancy": 1.0,
+     "relevancy_n": 1
+    },
+    "vi": {
+     "n": 4,
+     "answerable": 3,
+     "unanswerable": 1,
+     "correct_refusal": 1.0,
+     "false_refusal": 0.3333,
+     "false_refusal_gold_in_context": 0.0,
+     "hit": 0.6667,
+     "recall": 0.6667,
+     "context_precision": 0.1333,
+     "invalid_citation_rate": 0.0,
+     "answers_with_amendment_warning": 0,
+     "failed_answers": 0,
+     "judged": 4,
+     "faithfulness": 0.8889,
+     "faithfulness_n": 3,
+     "citation_precision": 1.0,
+     "citation_precision_n": 3,
+     "citation_recall": 0.8889,
+     "citation_recall_n": 3,
+     "correctness": 0.75,
+     "correctness_n": 4,
+     "relevancy": 1.0,
+     "relevancy_n": 4
+    }
+   },
+   "cross_lingual": {
+    "cross_lingual": {
+     "n": 1,
+     "answerable": 1,
+     "unanswerable": 0,
+     "correct_refusal": null,
+     "false_refusal": 1.0,
+     "false_refusal_gold_in_context": 0.0,
+     "hit": 0.0,
+     "recall": 0.0,
+     "context_precision": 0.0,
+     "invalid_citation_rate": 0.0,
+     "answers_with_amendment_warning": 0,
+     "failed_answers": 0,
+     "judged": 1,
+     "faithfulness": 0.6667,
+     "faithfulness_n": 1,
+     "citation_precision": 1.0,
+     "citation_precision_n": 1,
+     "citation_recall": 0.6667,
+     "citation_recall_n": 1,
+     "correctness": 0.0,
+     "correctness_n": 1,
+     "relevancy": 1.0,
+     "relevancy_n": 1
+    },
+    "same_language": {
+     "n": 4,
+     "answerable": 3,
+     "unanswerable": 1,
+     "correct_refusal": 1.0,
+     "false_refusal": 0.0,
+     "false_refusal_gold_in_context": 0.0,
+     "hit": 1.0,
+     "recall": 1.0,
+     "context_precision": 0.2,
+     "invalid_citation_rate": 0.0,
+     "answers_with_amendment_warning": 0,
+     "failed_answers": 0,
+     "judged": 4,
+     "faithfulness": 1.0,
+     "faithfulness_n": 3,
+     "citation_precision": 1.0,
+     "citation_precision_n": 3,
+     "citation_recall": 1.0,
+     "citation_recall_n": 3,
+     "correctness": 1.0,
+     "correctness_n": 4,
+     "relevancy": 1.0,
+     "relevancy_n": 4
+    }
+   },
+   "turn": {
+    "first_turn": {
+     "n": 5,
+     "answerable": 4,
+     "unanswerable": 1,
+     "correct_refusal": 1.0,
+     "false_refusal": 0.25,
+     "false_refusal_gold_in_context": 0.0,
+     "hit": 0.75,
+     "recall": 0.75,
+     "context_precision": 0.15,
+     "invalid_citation_rate": 0.0,
+     "answers_with_amendment_warning": 0,
+     "failed_answers": 0,
+     "judged": 5,
+     "faithfulness": 0.9167,
+     "faithfulness_n": 4,
+     "citation_precision": 1.0,
+     "citation_precision_n": 4,
+     "citation_recall": 0.9167,
+     "citation_recall_n": 4,
+     "correctness": 0.8,
+     "correctness_n": 5,
+     "relevancy": 1.0,
+     "relevancy_n": 5
+    }
+   }
+  },
+  "latency_ms": {
+   "rewrite": {
+    "p50": 0.0,
+    "p95": 0.0,
+    "mean": 0.0,
+    "max": 0.0
+   },
+   "embed": {
+    "p50": 598.0,
+    "p95": 944.5,
+    "mean": 642.7,
+    "max": 974.0
+   },
+   "sparse": {
+    "p50": 0.1,
+    "p95": 0.2,
+    "mean": 0.1,
+    "max": 0.2
+   },
+   "search": {
+    "p50": 70.7,
+    "p95": 85.8,
+    "mean": 72.9,
+    "max": 87.6
+   },
+   "rerank": {
+    "p50": 0.0,
+    "p95": 0.0,
+    "mean": 0.0,
+    "max": 0.0
+   },
+   "retrieval": {
+    "p50": 666.0,
+    "p95": 1026.6,
+    "mean": 715.7,
+    "max": 1061.7
+   },
+   "llm_ttft": {
+    "p50": 1177.6,
+    "p95": 2418.5,
+    "mean": 1370.2,
+    "max": 2719.1
+   },
+   "generation": {
+    "p50": 1805.2,
+    "p95": 3023.3,
+    "mean": 1990.1,
+    "max": 3308.4
+   },
+   "ttft": {
+    "p50": 1664.8,
+    "p95": 3364.4,
+    "mean": 2086.0,
+    "max": 3780.8
+   },
+   "total": {
+    "p50": 2364.7,
+    "p95": 4030.5,
+    "mean": 2705.8,
+    "max": 4370.1
+   }
+  },
+  "ttft_ms": {
+   "first_turn": {
+    "p50": 1664.8,
+    "p95": 3364.4,
+    "mean": 2086.0,
+    "max": 3780.8,
+    "n": 5
+   }
+  },
+  "cost_usd": {
+   "pipeline_per_question": 0.000243,
+   "pipeline_total": 0.0012,
+   "judge_per_question": 0.0,
+   "judge_total": 0.0
+  },
+  "tokens_mean": {
+   "answer": {
+    "input_tokens": 2092.0,
+    "cached_input_tokens": 0.0,
+    "cache_write_tokens": 0.0,
+    "output_tokens": 58.2,
+    "reasoning_tokens": 0.0
+   },
+   "judge_call": {
+    "input_tokens": 3225.8,
+    "cached_input_tokens": 0.0,
+    "cache_write_tokens": 0.0,
+    "output_tokens": 665.0,
+    "reasoning_tokens": 506.4
+   }
+  },
+  "judge_latency_ms": {
+   "p50": 55660.5,
+   "p95": 59589.4,
+   "mean": 46122.5,
+   "max": 60011.7
+  }
+ },
+ "questions": [
+  {
+   "id": "g001",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "follow_up": false,
+   "question": "Quấy rối tình dục tại nơi làm việc được Bộ luật Lao động định nghĩa như thế nào?",
+   "contexts": [
+    {
+     "n": 1,
+     "score": 1.0,
+     "chunk_id": "vi-bo-luat-lao-dong-2019:0004",
+     "doc_id": "vi-bo-luat-lao-dong-2019",
+     "title": "Bộ luật Lao động",
+     "so_hieu": "45/2019/QH14",
+     "language": "vi",
+     "heading_path": "Chương I > Điều 3 > Khoản 6–9",
+     "article": "Điều 3",
+     "page": 2,
+     "page_end": 2,
+     "amended": false,
+     "amended_by": [
+      "71/2025/QH15",
+      "113/2025/QH15",
+      "124/2025/QH15"
+     ],
+     "text": "Điều 3. Giải thích từ ngữ\n6. Người làm việc không có quan hệ lao động là người làm việc không trên cơ sở thuê mướn bằng hợp đồng lao động.\n7. Cưỡng bức lao động là việc dùng vũ lực, đe dọa dùng vũ lực hoặc các thủ đoạn khác để ép buộc người lao động phải làm việc trái ý muốn của họ.\n8. Phân biệt đối xử trong lao động là hành vi phân biệt, loại trừ hoặc ưu tiên dựa trên chủng tộc, màu da, nguồn gốc quốc gia hoặc nguồn gốc xã hội, dân tộc, giới tính, độ tuổi, tình trạng thai sản, tình trạng hôn nhân, tôn giáo, tín ngưỡng, chính kiến, khuyết tật, trách nhiệm gia đình hoặc trên cơ sở tình trạng nhiễm HIV hoặc vì lý do thành lập, gia nhập và hoạt động công đoàn, tổ chức của người lao động tại doanh nghiệp có tác động làm ảnh hưởng đến bình đẳng về cơ hội việc làm hoặc nghề nghiệp.\nViệc phân biệt, loại trừ hoặc ưu tiên xuất phát từ yêu cầu đặc thù của công việc và các hành vi duy trì, bảo vệ việc làm cho người lao động dễ bị tổn thương thì không bị xem là phân biệt đối xử.\n9. Quấy rối tình dục tại nơi làm việc là hành vi có tính chất tình dục của bất kỳ người nào đối với người khác tại nơi làm việc mà không được người đó mong muốn hoặc chấp nhận. Nơi làm việc là bất kỳ nơi nào mà người lao động thực tế làm việc theo thỏa thuận hoặc phân công của người sử dụng lao động.",
+     "pages": "2"
+    },
+    {
+     "n": 2,
+     "score": 0.8333,
+     "chunk_id": "vi-bo-luat-lao-dong-2019:0133",
+     "doc_id": "vi-bo-luat-lao-dong-2019",
+     "title": "Bộ luật Lao động",
+     "so_hieu": "45/2019/QH14",
+     "language": "vi",
+     "heading_path": "Chương VIII > Mục 1 > Điều 118",
+     "article": "Điều 118",
+     "page": 49,
+     "page_end": 49,
+     "amended": false,
+     "amended_by": [
+      "71/2025/QH15",
+      "113/2025/QH15",
+      "124/2025/QH15"
+     ],
+     "text": "Điều 118. Nội quy lao động\n1. Người sử dụng lao động phải ban hành nội quy lao động, nếu sử dụng từ 10 người lao động trở lên thì nội quy lao động phải bằng văn bản.\n2. Nội dung nội quy lao động không được trái với pháp luật về lao động và quy định của pháp luật có liên quan. Nội quy lao động bao gồm những nội dung chủ yếu sau đây:\na) Thời giờ làm việc, thời giờ nghỉ ngơi;\nb) Trật tự tại nơi làm việc;\nc) An toàn, vệ sinh lao động;\nd) Phòng, chống quấy rối tình dục tại nơi làm việc; trình tự, thủ tục xử lý hành vi quấy rối tình dục tại nơi làm việc;\nđ) Việc bảo vệ tài sản và bí mật kinh doanh, bí mật công nghệ, sở hữu trí tuệ của người sử dụng lao động;\ne) Trường hợp được tạm thời chuyển người lao động làm việc khác so với hợp đồng lao động;\ng) Các hành vi vi phạm kỷ luật lao động của người lao động và các hình thức xử lý kỷ luật lao động;\nh) Trách nhiệm vật chất;\ni) Người có thẩm quyền xử lý kỷ luật lao động.\n3. Trước khi ban hành nội quy lao động hoặc sửa đổi, bổ sung nội quy lao động, người sử dụng lao động phải tham khảo ý kiến của tổ chức đại diện người lao động tại cơ sở đối với nơi có tổ chức đại diện người lao động tại cơ sở.\n4. Nội quy lao động phải được thông báo đến người lao động và những nội dung chính phải được niêm yết ở những nơi cần thiết tại nơi làm việc.\n5. Chính phủ quy định chi tiết Điều này.",
+     "pages": "49"
+    },
+    {
+     "n": 3,
+     "score": 0.625,
+     "chunk_id": "vi-bo-luat-lao-dong-2019:0011",
+     "doc_id": "vi-bo-luat-lao-dong-2019",
+     "title": "Bộ luật Lao động",
+     "so_hieu": "45/2019/QH14",
+     "language": "vi",
+     "heading_path": "Chương I > Điều 8",
+     "article": "Điều 8",
+     "page": 5,
+     "page_end": 6,
+     "amended": false,
+     "amended_by": [
+      "71/2025/QH15",
+      "113/2025/QH15",
+      "124/2025/QH15"
+     ],
+     "text": "Điều 8. Các hành vi bị nghiêm cấm trong lĩnh vực lao động\n1. Phân biệt đối xử trong lao động.\n2. Ngược đãi người lao động, cưỡng bức lao động.\n3. Quấy rối tình dục tại nơi làm việc.\n4. Lợi dụng danh nghĩa dạy nghề, tập nghề để trục lợi, bóc lột sức lao động hoặc lôi kéo, dụ dỗ, ép buộc người học nghề, người tập nghề vào hoạt động trái pháp luật.\n5. Sử dụng lao động chưa qua đào tạo hoặc chưa có chứng chỉ kỹ năng nghề quốc gia đối với nghề, công việc phải sử dụng lao động đã được đào tạo hoặc phải có chứng chỉ kỹ năng nghề quốc gia.\n6. Lôi kéo, dụ dỗ, hứa hẹn, quảng cáo gian dối hoặc thủ đoạn khác để lừa gạt người lao động hoặc để tuyển dụng người lao động với mục đích mua bán người, bóc lột, cưỡng bức lao động hoặc lợi dụng dịch vụ việc làm, hoạt động đưa người lao động đi làm việc ở nước ngoài theo hợp đồng để thực hiện hành vi trái pháp luật.\n7. Sử dụng lao động chưa thành niên trái pháp luật.",
+     "pages": "5–6"
+    },
+    {
+     "n": 4,
+     "score": 0.4909,
+     "chunk_id": "vi-bo-luat-lao-dong-2019:0181",
+     "doc_id": "vi-bo-luat-lao-dong-2019",
+     "title": "Bộ luật Lao động",
+     "so_hieu": "45/2019/QH14",
+     "language": "vi",
+     "heading_path": "Chương XI > Mục 5 > Điều 165",
+     "article": "Điều 165",
+     "page": 66,
+     "page_end": 66,
+     "amended": false,
+     "amended_by": [
+      "71/2025/QH15",
+      "113/2025/QH15",
+      "124/2025/QH15"
+     ],
+     "text": "Điều 165. Các hành vi bị nghiêm cấm đối với người sử dụng lao động\n1. Ngược đãi, quấy rối tình dục, cưỡng bức lao động, dùng vũ lực đối với lao động là người giúp việc gia đình.\n2. Giao việc cho người giúp việc gia đình không theo hợp đồng lao động.\n3. Giữ giấy tờ tùy thân của người lao động.",
+     "pages": "66"
+    },
+    {
+     "n": 5,
+     "score": 0.2935,
+     "chunk_id": "vi-bo-luat-lao-dong-2019:0009",
+     "doc_id": "vi-bo-luat-lao-dong-2019",
+     "title": "Bộ luật Lao động",
+     "so_hieu": "45/2019/QH14",
+     "language": "vi",
+     "heading_path": "Chương I > Điều 6 > Khoản 2",
+     "article": "Điều 6",
+     "page": 4,
+     "page_end": 5,
+     "amended": false,
+     "amended_by": [
+      "71/2025/QH15",
+      "113/2025/QH15",
+      "124/2025/QH15"
+     ],
+     "text": "Điều 6. Quyền và nghĩa vụ của người sử dụng lao động\n2. Người sử dụng lao động có các nghĩa vụ sau đây:\na) Thực hiện hợp đồng lao động, thỏa ước lao động tập thể và thỏa thuận hợp pháp khác; tôn trọng danh dự, nhân phẩm của người lao động;\nb) Thiết lập cơ chế và thực hiện đối thoại, trao đổi với người lao động và tổ chức đại diện người lao động; thực hiện quy chế dân chủ ở cơ sở tại nơi làm việc;\nc) Đào tạo, đào tạo lại, bồi dưỡng nâng cao trình độ, kỹ năng nghề nhằm duy trì, chuyển đổi nghề nghiệp, việc làm cho người lao động;\nd) Thực hiện quy định của pháp luật về lao động, việc làm, giáo dục nghề nghiệp, bảo hiểm xã hội, bảo hiểm y tế, bảo hiểm thất nghiệp và an toàn, vệ sinh lao động; xây dựng và thực hiện các giải pháp phòng, chống quấy rối tình dục tại nơi làm việc;\nđ) Tham gia phát triển tiêu chuẩn kỹ năng nghề quốc gia, đánh giá, công nhận kỹ năng nghề cho người lao động.",
+     "pages": "4–5"
+    }
+   ],
+   "answer": {
+    "text": "Quấy rối tình dục tại nơi làm việc là hành vi có tính chất tình dục của bất kỳ người nào đối với người khác tại nơi làm việc mà người đó không mong muốn hoặc không chấp nhận. [1]\n\n“Nơi làm việc” là bất kỳ nơi nào người lao động thực tế làm việc theo thỏa thuận hoặc phân công của người sử dụng lao động. [1]",
+    "status": "completed",
+    "error": null,
+    "model": "gpt-6-luna",
+    "prompt_version": "answer-v1",
+    "abstained": false,
+    "citations": [
+     {
+      "n": 1,
+      "chunk_id": "vi-bo-luat-lao-dong-2019:0004",
+      "label": "45/2019/QH14, Điều 3, Khoản 6–9, tr. 2"
+     }
+    ],
+    "invalid_citations": [],
+    "warnings": [],
+    "usage": {
+     "calls": 1,
+     "input_tokens": 1988,
+     "cached_input_tokens": 0,
+     "cache_write_tokens": 0,
+     "output_tokens": 84,
+     "reasoning_tokens": 0,
+     "cost_usd": 0.0002408
+    }
+   },
+   "timings_ms": {
+    "rewrite": 0.0,
+    "embed": 412.0,
+    "sparse": 0.1,
+    "search": 70.7,
+    "rerank": 0.0,
+    "retrieval": 482.8,
+    "llm_ttft": 1216.2,
+    "generation": 1805.2,
+    "ttft": 1699.0,
+    "total": 2288.1
+   },
+   "retrieval": {
+    "source_ranks": [
+     1
+    ],
+    "hit": 1.0,
+    "recall": 1.0,
+    "context_precision": 0.2
+   },
+   "cost_usd": {
+    "pipeline": 0.000247,
+    "judge": 0.0
+   },
+   "judge": {
+    "scores": {
+     "faithfulness": 1.0,
+     "citation_precision": 1.0,
+     "citation_recall": 1.0,
+     "correctness": 1.0,
+     "relevancy": 1.0
+    },
+    "runs": [
+     {
+      "scores": {
+       "faithfulness": 1.0,
+       "citation_precision": 1.0,
+       "citation_recall": 1.0,
+       "correctness": 1.0,
+       "relevancy": 1.0
+      },
+      "correctness": "correct",
+      "relevancy": "relevant",
+      "explanation": "The answer correctly restates the definition of sexual harassment at work and the meaning of \"nơi làm việc\" as given in Article 3, clause 9 of the Labor Code, matching the reference answer.",
+      "claims": [
+       {
+        "claim": "Quấy rối tình dục tại nơi làm việc là hành vi có tính chất tình dục của bất kỳ người nào đối với người khác tại nơi làm việc mà không được người đó mong muốn hoặc chấp nhận.",
+        "cited": [
+         1
+        ],
+        "supported": true,
+        "supporting_cited": [
+         1
+        ]
+       },
+       {
+        "claim": "“Nơi làm việc” là bất kỳ nơi nào người lao động thực tế làm việc theo thỏa thuận hoặc phân công của người sử dụng lao động.",
+        "cited": [
+         1
+        ],
+        "supported": true,
+        "supporting_cited": [
+         1
+        ]
+       }
+      ],
+      "model": "openai/gpt-oss-120b",
+      "usage": {
+       "calls": 1,
+       "input_tokens": 3185,
+       "cached_input_tokens": 0,
+       "cache_write_tokens": 0,
+       "output_tokens": 720,
+       "reasoning_tokens": 533,
+       "cost_usd": 0.0
+      },
+      "latency_ms": 2379.0,
+      "error": null
+     }
+    ]
+   }
+  },
+  {
+   "id": "g021",
+   "type": "single_article",
+   "language": "vi",
+   "cross_lingual": false,
+   "follow_up": false,
+   "question": "Sự đồng ý của chủ thể dữ liệu cá nhân chỉ có hiệu lực khi nào?",
+   "contexts": [
+    {
+     "n": 1,
+     "score": 1.1667,
+     "chunk_id": "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012",
+     "doc_id": "vi-luat-bao-ve-du-lieu-ca-nhan-2025",
+     "title": "Luật Bảo vệ dữ liệu cá nhân",
+     "so_hieu": "91/2025/QH15",
+     "language": "vi",
+     "heading_path": "Chương II > Mục 1 > Điều 9",
+     "article": "Điều 9",
+     "page": 6,
+     "page_end": 7,
+     "amended": false,
+     "amended_by": [],
+     "text": "Điều 9. Sự đồng ý của chủ thể dữ liệu cá nhân\n1. Sự đồng ý của chủ thể dữ liệu cá nhân là việc chủ thể dữ liệu cá nhân cho phép xử lý dữ liệu cá nhân của mình, trừ trường hợp pháp luật có quy định khác.\n2. Sự đồng ý của chủ thể dữ liệu cá nhân chỉ có hiệu lực khi dựa trên sự tự nguyện và biết rõ các thông tin sau đây:\na) Loại dữ liệu cá nhân được xử lý, mục đích xử lý dữ liệu cá nhân;\nb) Bên kiểm soát dữ liệu cá nhân hoặc bên kiểm soát và xử lý dữ liệu cá nhân;\nc) Các quyền, nghĩa vụ của chủ thể dữ liệu cá nhân.\n3. Sự đồng ý của chủ thể dữ liệu cá nhân được thể hiện bằng phương thức rõ ràng, cụ thể, có thể in, sao chép bằng văn bản, bao gồm cả dưới dạng điện tử hoặc định dạng kiểm chứng được.\n4. Sự đồng ý của chủ thể dữ liệu cá nhân phải bảo đảm các nguyên tắc sau đây:\na) Thể hiện sự đồng ý đối với từng mục đích;\nb) Không được kèm theo điều kiện bắt buộc phải đồng ý với các mục đích khác với nội dung thỏa thuận;\nc) Sự đồng ý có hiệu lực cho đến khi chủ thể dữ liệu cá nhân thay đổi sự đồng ý đó hoặc theo quy định của pháp luật;\nd) Sự im lặng hoặc không phản hồi không được coi là sự đồng ý.\n5. Chính phủ quy định chi tiết khoản 3 Điều này.",
+     "pages": "6–7"
+    },
+    {
+     "n": 2,
+     "score": 0.75,
+     "chunk_id": "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+     "doc_id": "vi-luat-bao-ve-du-lieu-ca-nhan-2025",
+     "title": "Luật Bảo vệ dữ liệu cá nhân",
+     "so_hieu": "91/2025/QH15",
+     "language": "vi",
+     "heading_path": "Chương II > Mục 1 > Điều 10",
+     "article": "Điều 10",
+     "page": 7,
+     "page_end": 7,
+     "amended": false,
+     "amended_by": [],
+     "text": "Điều 10. Yêu cầu rút lại sự đồng ý, yêu cầu hạn chế xử lý dữ liệu cá nhân\n1. Chủ thể dữ liệu cá nhân có quyền yêu cầu rút lại sự đồng ý cho phép xử lý dữ liệu cá nhân, yêu cầu hạn chế xử lý dữ liệu cá nhân của mình khi có nghi ngờ phạm vi, mục đích xử lý dữ liệu cá nhân hoặc tính chính xác của dữ liệu cá nhân, trừ trường hợp quy định tại Điều 19 của Luật này hoặc trường hợp pháp luật có quy định khác.\n2. Yêu cầu rút lại sự đồng ý, yêu cầu hạn chế xử lý dữ liệu cá nhân của chủ thể dữ liệu cá nhân phải được thể hiện bằng văn bản, bao gồm cả dạng điện tử hoặc định dạng kiểm chứng được và được gửi cho bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân. Yêu cầu rút lại sự đồng ý, yêu cầu hạn chế xử lý dữ liệu cá nhân của chủ thể dữ liệu cá nhân được thực hiện theo quy định của pháp luật và theo thỏa thuận giữa các bên.\n3. Bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân tiếp nhận, thực hiện và yêu cầu bên xử lý dữ liệu cá nhân thực hiện yêu cầu rút lại sự đồng ý, hạn chế xử lý dữ liệu cá nhân của chủ thể dữ liệu cá nhân trong thời gian theo quy định của pháp luật.\n4. Việc thực hiện yêu cầu rút lại sự đồng ý, yêu cầu hạn chế xử lý dữ liệu cá nhân không áp dụng đối với hoạt động xử lý dữ liệu cá nhân trước thời điểm chủ thể dữ liệu cá nhân yêu cầu rút lại sự đồng ý hoặc yêu cầu hạn chế xử lý dữ liệu cá nhân.",
+     "pages": "7"
+    },
+    {
+     "n": 3,
+     "score": 0.7333,
+     "chunk_id": "vi-nghi-dinh-bao-ve-du-lieu-ca-nhan-2025:0008",
+     "doc_id": "vi-nghi-dinh-bao-ve-du-lieu-ca-nhan-2025",
+     "title": "Nghị định quy định chi tiết một số điều và biện pháp thi hành Luật Bảo vệ dữ liệu cá nhân",
+     "so_hieu": "356/2025/NĐ-CP",
+     "language": "vi",
+     "heading_path": "Chương II > Điều 6",
+     "article": "Điều 6",
+     "page": 5,
+     "page_end": 6,
+     "amended": false,
+     "amended_by": [
+      "22/2026/NQ-CP"
+     ],
+     "text": "Điều 6. Phương thức thể hiện sự đồng ý của chủ thể dữ liệu cá nhân\n1. Các phương thức xin sự đồng ý của chủ thể dữ liệu cá nhân phải bảo đảm khả năng kiểm chứng được về việc xác định chủ thể dữ liệu cá nhân đã thực hiện sự đồng ý, thời điểm và nội dung được đồng ý, bao gồm:\na) Bằng văn bản;\nb) Bằng cuộc gọi ghi âm;\nc) Cú pháp đồng ý qua tin nhắn điện thoại;\nd) Qua thư điện tử, trên trang thông tin điện tử, nền tảng, ứng dụng có thiết lập kỹ thuật xin sự đồng ý;\nđ) Bằng các phương thức khác phù hợp có thể in, sao chép bằng văn bản, bao gồm cả dưới dạng điện tử hoặc định dạng kiếm chứng được.\n2. Bên kiểm soát dữ liệu, bên kiểm soát và xử lý dữ liệu cá nhân phải lưu trữ sự đồng ý của chủ thể dữ liệu. Trong trường hợp có tranh chấp, trách nhiệm chứng minh sự đồng ý của chủ thể dữ liệu thuộc về bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân.\n3. Bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân không được thiết lập phương thức mặc định đồng ý hoặc tạo ra các chỉ dẫn không rõ ràng, gây hiểu lầm giữa đồng ý và không đồng ý cho chủ thể dữ liệu.\nCác thiết lập mặc định sẵn có phải đảm bảo nguyên tắc bảo vệ dữ liệu cá nhân, tôn trọng các quyền của chủ thể dữ liệu cá nhân.\n4. Đối với việc xin sự đồng ý xử lý dữ liệu cá nhân nhạy cảm, chủ thể dữ liệu phải được thông báo rằng dữ liệu cần xử lý là dữ liệu cá nhân nhạy cảm.",
+     "pages": "5–6"
+    },
+    {
+     "n": 4,
+     "score": 0.4583,
+     "chunk_id": "vi-nghi-dinh-bao-ve-du-lieu-ca-nhan-2025:0005",
+     "doc_id": "vi-nghi-dinh-bao-ve-du-lieu-ca-nhan-2025",
+     "title": "Nghị định quy định chi tiết một số điều và biện pháp thi hành Luật Bảo vệ dữ liệu cá nhân",
+     "so_hieu": "356/2025/NĐ-CP",
+     "language": "vi",
+     "heading_path": "Chương II > Điều 5 > Khoản 1–2",
+     "article": "Điều 5",
+     "page": 3,
+     "page_end": 4,
+     "amended": false,
+     "amended_by": [
+      "22/2026/NQ-CP"
+     ],
+     "text": "Điều 5. Thực hiện quyền của chủ thể dữ liệu cá nhân\n1. Bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân phải xây dựng quy trình, thủ tục, biểu mẫu rõ ràng để thực hiện các quyền của chủ thể dữ liệu cá nhân phù hợp với hoạt động xử lý dữ liệu cá nhân và trách nhiệm các bộ phận có liên quan; đảm bảo chủ thể dữ liệu cá nhân được biết về thủ tục thực hiện các quyền quy định tại khoản 1 Điều 4 của Luật Bảo vệ dữ liệu cá nhân.\n2. Khi nhận được yêu cầu rút lại sự đồng ý cho phép xử lý dữ liệu cá nhân, hạn chế xử lý dữ liệu cá nhân, phản đối xử lý dữ liệu cá nhân theo đúng thủ tục của chủ thể dữ liệu cá nhân, bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân phải phản hồi trong thời hạn 02 ngày làm việc, cung cấp đầy đủ thông tin cho chủ thể dữ liệu cá nhân về thủ tục ngừng xử lý dữ liệu cá nhân và thực hiện trong thời hạn 15 ngày, trừ trường hợp xử lý dữ liệu cá nhân không cần sự đồng ý của chủ thể dữ liệu cá nhân theo quy định tại Điều 19 Luật Bảo vệ dữ liệu cá nhân.Trường hợp cần yêu cầu bên xử lý dữ liệu cá nhân, bên thứ ba ngừng xử lý dữ liệu cá nhân của chủ thể dữ liệu cá nhân thì thực hiện trong thời hạn 20 ngày.\nTùy theo tính chất, mức độ phức tạp của yêu cầu, trường hợp cần gia hạn thời gian xử lý thì kéo dài thêm tối đa 01 lần gia hạn trong thời hạn không quá 15 ngày, bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân thông báo cho chủ thể dữ liệu cá nhân lý do cần gia hạn và chịu trách nhiệm chứng minh việc gia hạn là cần thiết, hợp lý.",
+     "pages": "3–4"
+    },
+    {
+     "n": 5,
+     "score": 0.3333,
+     "chunk_id": "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005",
+     "doc_id": "vi-luat-bao-ve-du-lieu-ca-nhan-2025",
+     "title": "Luật Bảo vệ dữ liệu cá nhân",
+     "so_hieu": "91/2025/QH15",
+     "language": "vi",
+     "heading_path": "Chương I > Điều 4 > Khoản 1–2",
+     "article": "Điều 4",
+     "page": 3,
+     "page_end": 3,
+     "amended": false,
+     "amended_by": [],
+     "text": "Điều 4. Quyền và nghĩa vụ của chủ thể dữ liệu cá nhân\n1. Quyền của chủ thể dữ liệu cá nhân bao gồm:\na) Được biết về hoạt động xử lý dữ liệu cá nhân;\nb) Đồng ý hoặc không đồng ý, yêu cầu rút lại sự đồng ý cho phép xử lý dữ liệu cá nhân;\nc) Xem, chỉnh sửa hoặc yêu cầu chỉnh sửa dữ liệu cá nhân;\nd) Yêu cầu cung cấp, xóa, hạn chế xử lý dữ liệu cá nhân; gửi yêu cầu phản đối xử lý dữ liệu cá nhân;\nđ) Khiếu nại, tố cáo, khởi kiện, yêu cầu bồi thường thiệt hại theo quy định của pháp luật;\ne) Yêu cầu cơ quan có thẩm quyền hoặc cơ quan, tổ chức, cá nhân liên quan đến xử lý dữ liệu cá nhân thực hiện các biện pháp, giải pháp bảo vệ dữ liệu cá nhân của mình theo quy định của pháp luật.\n2. Nghĩa vụ của chủ thể dữ liệu cá nhân bao gồm:\na) Tự bảo vệ dữ liệu cá nhân của mình;\nb) Tôn trọng, bảo vệ dữ liệu cá nhân của người khác;\nc) Cung cấp đầy đủ, chính xác dữ liệu cá nhân của mình theo quy định của pháp luật, theo hợp đồng hoặc khi đồng ý cho phép xử lý dữ liệu cá nhân của mình;\nd) Chấp hành pháp luật về bảo vệ dữ liệu cá nhân và tham gia phòng, chống hoạt động xâm phạm dữ liệu cá nhân.",
+     "pages": "3"
+    }
+   ],
+   "answer": {
+    "text": "Sự đồng ý chỉ có hiệu lực khi dựa trên sự tự nguyện và chủ thể dữ liệu biết rõ: loại dữ liệu được xử lý và mục đích xử lý; bên kiểm soát dữ liệu cá nhân hoặc bên kiểm soát và xử lý dữ liệu cá nhân; cùng các quyền, nghĩa vụ của mình. [1, khoản 2 Điều 9]",
+    "status": "completed",
+    "error": null,
+    "model": "gpt-6-luna",
+    "prompt_version": "answer-v1",
+    "abstained": false,
+    "citations": [],
+    "invalid_citations": [],
+    "warnings": [],
+    "usage": {
+     "calls": 1,
+     "input_tokens": 2558,
+     "cached_input_tokens": 0,
+     "cache_write_tokens": 0,
+     "output_tokens": 81,
+     "reasoning_tokens": 0,
+     "cost_usd": 0.0002963
+    }
+   },
+   "timings_ms": {
+    "rewrite": 0.0,
+    "embed": 826.4,
+    "sparse": 0.2,
+    "search": 59.7,
+    "rerank": 0.0,
+    "retrieval": 886.2,
+    "llm_ttft": 739.4,
+    "generation": 1786.1,
+    "ttft": 1625.7,
+    "total": 2672.3
+   },
+   "retrieval": {
+    "source_ranks": [
+     1
+    ],
+    "hit": 1.0,
+    "recall": 1.0,
+    "context_precision": 0.2
+   },
+   "judge": {
+    "scores": {
+     "faithfulness": 1.0,
+     "citation_precision": 1.0,
+     "citation_recall": 1.0,
+     "correctness": 1.0,
+     "relevancy": 1.0
+    },
+    "runs": [
+     {
+      "scores": {
+       "faithfulness": 1.0,
+       "citation_precision": 1.0,
+       "citation_recall": 1.0,
+       "correctness": 1.0,
+       "relevancy": 1.0
+      },
+      "correctness": "correct",
+      "relevancy": "relevant",
+      "explanation": "The answer accurately reflects Article 9, clause 2 of the Personal Data Protection Law, matching the reference answer's key points about voluntariness and informed consent regarding data type, purpose, controller/processor, and rights/obligations.",
+      "claims": [
+       {
+        "claim": "Sự đồng ý của chủ thể dữ liệu chỉ có hiệu lực khi dựa trên sự tự nguyện và chủ thể biết rõ loại dữ liệu cá nhân được xử lý và mục đích xử lý của nó.",
+        "cited": [
+         1
+        ],
+        "supported": true,
+        "supporting_cited": [
+         1
+        ]
+       },
+       {
+        "claim": "Sự đồng ý của chủ thể dữ liệu chỉ có hiệu lực khi dựa trên sự tự nguyện và chủ thể biết rõ bên kiểm soát dữ liệu cá nhân hoặc bên kiểm soát và xử lý dữ liệu cá nhân.",
+        "cited": [
+         1
+        ],
+        "supported": true,
+        "supporting_cited": [
+         1
+        ]
+       },
+       {
+        "claim": "Sự đồng ý của chủ thể dữ liệu chỉ có hiệu lực khi dựa trên sự tự nguyện và chủ thể biết rõ các quyền và nghĩa vụ của mình.",
+        "cited": [
+         1
+        ],
+        "supported": true,
+        "supporting_cited": [
+         1
+        ]
+       }
+      ],
+      "model": "openai/gpt-oss-120b",
+      "usage": {
+       "calls": 1,
+       "input_tokens": 3730,
+       "cached_input_tokens": 0,
+       "cache_write_tokens": 0,
+       "output_tokens": 864,
+       "reasoning_tokens": 601,
+       "cost_usd": 0.0
+      },
+      "latency_ms": 57900.2,
+      "error": null
+     }
+    ]
+   },
+   "cost_usd": {
+    "pipeline": 0.0003,
+    "judge": 0.0
+   }
+  },
+  {
+   "id": "g041",
+   "type": "numeric",
+   "language": "en",
+   "cross_lingual": false,
+   "follow_up": false,
+   "question": "How many members can a multiple-member limited liability company have in Vietnam?",
+   "contexts": [
+    {
+     "n": 1,
+     "score": 1.1667,
+     "chunk_id": "en-law-on-enterprises-2020:0047",
+     "doc_id": "en-law-on-enterprises-2020",
+     "title": "Law on Enterprises",
+     "so_hieu": "59/2020/QH14",
+     "language": "en",
+     "heading_path": "Chapter III > Section 1 > Article 46",
+     "article": "Article 46",
+     "page": 26,
+     "page_end": 26,
+     "amended": false,
+     "amended_by": [
+      "03/2022/QH15",
+      "76/2025/QH15"
+     ],
+     "text": "Article 46. Multi-member limited liability companies\n1. A multiple-member limited liability company means an enterprise that has 02 – 50 members that are organizations or individuals. A member’s liability for the enterprise’s debts and other liabilities shall be equal to the amount of capital that member contributed to the enterprise, except for the cases specified in Clause 4 Article 47 of this Law. The member’s stake (contributed capital) may only be transferred in accordance with Articles 51, 52 and 53 of this Law.\n2. A multiple-member limited liability company has the status of a juridical person from the day on which the Certificate of Enterprise Registration is issued.\n3. Multiple-member limited liability companies must not issue shares except for equitization.\n4. Multiple-member limited liability companies may issue bonds in accordance with this Law and relevant laws; private placement of bonds shall comply with Article 128 and Article 129 of this Law.",
+     "pages": "26"
+    },
+    {
+     "n": 2,
+     "score": 0.8333,
+     "chunk_id": "en-law-on-enterprises-2020:0055",
+     "doc_id": "en-law-on-enterprises-2020",
+     "title": "Law on Enterprises",
+     "so_hieu": "59/2020/QH14",
+     "language": "en",
+     "heading_path": "Chapter III > Section 1 > Article 54",
+     "article": "Article 54",
+     "page": 31,
+     "page_end": 32,
+     "amended": false,
+     "amended_by": [
+      "03/2022/QH15",
+      "76/2025/QH15"
+     ],
+     "text": "Article 54. Organizational structure\n1. A multiple-member limited liability company shall have a Board of Members, President of the Board of Members, Director/General Director.\n2. A state-owned multiple-member limited liability company prescribed in Point b Clause 1 Article 88 of this Law and each subsidiary company of a state-owned enterprise prescribed in Clause 1 Article 88 of this Law shall have a Board of Controllers. The establishment of the Board of Controllers in other companies shall be decided by themselves.\n3. A company shall have at least one legal representative who holds the title of President of the Board of Members, Director/General Director. Unless otherwise prescribed by the company's charter, the President of the Board of Members shall be the company’s legal representative.",
+     "pages": "31–32"
+    },
+    {
+     "n": 3,
+     "score": 0.5357,
+     "chunk_id": "en-law-on-enterprises-2020:0209",
+     "doc_id": "en-law-on-enterprises-2020",
+     "title": "Law on Enterprises",
+     "so_hieu": "59/2020/QH14",
+     "language": "en",
+     "heading_path": "Chapter IX > Article 204",
+     "article": "Article 204",
+     "page": 127,
+     "page_end": 128,
+     "amended": false,
+     "amended_by": [
+      "03/2022/QH15",
+      "76/2025/QH15"
+     ],
+     "text": "Article 204. Conversion of a joint stock company into a multiple-member limited liability company\n1. A joint stock company can be converted into a multiple-member limited liability:\na) without raising additional capital or selling stakes;\nb) by raising additional capital from other organizations and individuals;\nc) by transfer all or part of the shares to other organizations and individuals;\nd) when only 02 shareholders remain in the company; or dd) combining the methods specified in Points a, b and c of this Clause and other methods.\n2. The conversion shall be registered with the business registration authority within 10 days from the day on which the conversion is complete. Within 03 working days from the receipt of the application for conversion, the business registration authority shall issue the Certificate of Enterprise Registration and update the company’s status to the national enterprise registration database.\n3. The limited liability company obviously inherits all lawful rights and interests, debts including tax debts, employment contract and other obligations of the joint stock company.",
+     "pages": "127–128"
+    },
+    {
+     "n": 4,
+     "score": 0.4444,
+     "chunk_id": "en-law-on-enterprises-2020:0075",
+     "doc_id": "en-law-on-enterprises-2020",
+     "title": "Law on Enterprises",
+     "so_hieu": "59/2020/QH14",
+     "language": "en",
+     "heading_path": "Chapter III > Section 2 > Article 74",
+     "article": "Article 74",
+     "page": 44,
+     "page_end": 44,
+     "amended": false,
+     "amended_by": [
+      "03/2022/QH15",
+      "76/2025/QH15"
+     ],
+     "text": "Article 74. SINGLE -MEMBER LIMITED LIABILITY COMPANIES\n1. A single-member limited liability company is an enterprise owned by a single organization or individual ((hereinafter referred to as “owner”). The owner’s liability for the company’s debts and other liabilities shall be equal to the company’s charter capital.\n2. A single-member limited liability company has the status of a juridical person from the day on which the Certificate of Enterprise Registration is issued.\n3. A single-member limited liability company must not issue shares except for equitization.\n4. Single-member limited liability companies may issue bonds in accordance with this Law and relevant laws; private placement of bonds shall comply with Article 128 and Article 129 of this Law.",
+     "pages": "44"
+    },
+    {
+     "n": 5,
+     "score": 0.4167,
+     "chunk_id": "en-law-on-enterprises-2020:0053",
+     "doc_id": "en-law-on-enterprises-2020",
+     "title": "Law on Enterprises",
+     "so_hieu": "59/2020/QH14",
+     "language": "en",
+     "heading_path": "Chapter III > Section 1 > Article 52",
+     "article": "Article 52",
+     "page": 30,
+     "page_end": 30,
+     "amended": true,
+     "amended_by": [
+      "03/2022/QH15",
+      "76/2025/QH15"
+     ],
+     "text": "Article 52. Transfer of stakes\n1. Except for the cases specified in Clause 4 Article 51, Clause 6 and Clause 7 Article 53 of this Law, a member of a multiple-member limited liability company is entitled to transfer part or all of their stake to another person as follows:\na) Offer the stake to other members in proportion to their holdings under the same conditions;\nb) Transfer the stake under the same conditions as those applied to other members mentioned in Point a of this Clause to a non-member if the other members do not purchase or fully purchase the stake within 30 days from the first day of offering.\n2. The transferor still has the rights and obligations to the company in proportion to the stake until information about the buyer mentioned in Point b, c and dd Clause 2 Article 48 of this Law is fully recorded in the member register.\n3. In case only one member remains after transfer or change of the members’ stakes, the company shall be converted into a single-member limited liability company and apply for change of enterprise registration information within 15 days from the day on which the transfer is complete.",
+     "pages": "30"
+    }
+   ],
+   "answer": {
+    "text": "A multiple-member limited liability company must have 2 to 50 members. [1]",
+    "status": "completed",
+    "error": null,
+    "model": "gpt-6-luna",
+    "prompt_version": "answer-v1",
+    "abstained": false,
+    "citations": [
+     {
+      "n": 1,
+      "chunk_id": "en-law-on-enterprises-2020:0047",
+      "label": "59/2020/QH14, Article 46, p. 26"
+     }
+    ],
+    "invalid_citations": [],
+    "warnings": [],
+    "usage": {
+     "calls": 1,
+     "input_tokens": 1577,
+     "cached_input_tokens": 0,
+     "cache_write_tokens": 0,
+     "output_tokens": 22,
+     "reasoning_tokens": 0,
+     "cost_usd": 0.0001687
+    }
+   },
+   "timings_ms": {
+    "rewrite": 0.0,
+    "embed": 974.0,
+    "sparse": 0.1,
+    "search": 87.6,
+    "rerank": 0.0,
+    "retrieval": 1061.7,
+    "llm_ttft": 2719.1,
+    "generation": 3308.4,
+    "ttft": 3780.8,
+    "total": 4370.1
+   },
+   "retrieval": {
+    "source_ranks": [
+     1
+    ],
+    "hit": 1.0,
+    "recall": 1.0,
+    "context_precision": 0.2
+   },
+   "judge": {
+    "scores": {
+     "faithfulness": 1.0,
+     "citation_precision": 1.0,
+     "citation_recall": 1.0,
+     "correctness": 1.0,
+     "relevancy": 1.0
+    },
+    "runs": [
+     {
+      "scores": {
+       "faithfulness": 1.0,
+       "citation_precision": 1.0,
+       "citation_recall": 1.0,
+       "correctness": 1.0,
+       "relevancy": 1.0
+      },
+      "correctness": "correct",
+      "relevancy": "relevant",
+      "explanation": "The answer gives the correct member range (2–50) as stated in Article 46, matching the reference; no contradictory information is presented.",
+      "claims": [
+       {
+        "claim": "A multiple-member limited liability company must have 2 to 50 members.",
+        "cited": [
+         1
+        ],
+        "supported": true,
+        "supporting_cited": [
+         1
+        ]
+       }
+      ],
+      "model": "openai/gpt-oss-120b",
+      "usage": {
+       "calls": 1,
+       "input_tokens": 2659,
+       "cached_input_tokens": 0,
+       "cache_write_tokens": 0,
+       "output_tokens": 402,
+       "reasoning_tokens": 306,
+       "cost_usd": 0.0
+      },
+      "latency_ms": 54660.9,
+      "error": null
+     }
+    ]
+   },
+   "cost_usd": {
+    "pipeline": 0.000171,
+    "judge": 0.0
+   }
+  },
+  {
+   "id": "g061",
+   "type": "paraphrase",
+   "language": "vi",
+   "cross_lingual": true,
+   "follow_up": false,
+   "question": "Theo GDPR, tôi có thể yêu cầu một công ty ngừng dùng dữ liệu của tôi để gửi quảng cáo không?",
+   "contexts": [
+    {
+     "n": 1,
+     "score": 1.0,
+     "chunk_id": "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0036",
+     "doc_id": "vi-luat-bao-ve-du-lieu-ca-nhan-2025",
+     "title": "Luật Bảo vệ dữ liệu cá nhân",
+     "so_hieu": "91/2025/QH15",
+     "language": "vi",
+     "heading_path": "Chương II > Mục 2 > Điều 28 > Khoản 1–6",
+     "article": "Điều 28",
+     "page": 18,
+     "page_end": 19,
+     "amended": false,
+     "amended_by": [],
+     "text": "Điều 28. Bảo vệ dữ liệu cá nhân trong kinh doanh dịch vụ quảng cáo\n1. Tổ chức, cá nhân kinh doanh dịch vụ quảng cáo chỉ được sử dụng dữ liệu cá nhân của khách hàng được bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân chuyển giao theo thỏa thuận hoặc thu thập qua hoạt động kinh doanh của mình để kinh doanh dịch vụ quảng cáo. Việc thu thập, sử dụng, chuyển giao dữ liệu cá nhân phải bảo đảm quyền của chủ thể dữ liệu cá nhân quy định tại Điều 4 của Luật này.\n2. Bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân chỉ được chuyển dữ liệu cá nhân cho tổ chức, cá nhân kinh doanh dịch vụ quảng cáo theo quy định của pháp luật.\n3. Việc xử lý dữ liệu cá nhân của khách hàng để kinh doanh dịch vụ quảng cáo phải được sự đồng ý của khách hàng, trên cơ sở khách hàng biết rõ nội dung, phương thức, hình thức, tần suất giới thiệu sản phẩm; cung cấp phương thức cho khách hàng để có thể từ chối nhận các thông tin quảng cáo.\n4. Việc sử dụng dữ liệu cá nhân để quảng cáo phải phù hợp với quy định của pháp luật về phòng, chống tin nhắn rác, thư điện tử rác, cuộc gọi rác và quy định của pháp luật về quảng cáo.\n5. Chủ thể dữ liệu cá nhân có quyền yêu cầu ngừng nhận thông tin từ dịch vụ quảng cáo. Tổ chức, cá nhân kinh doanh dịch vụ quảng cáo phải cung cấp cơ chế và ngừng quảng cáo theo yêu cầu của chủ thể dữ liệu cá nhân.\n6. Tổ chức, cá nhân kinh doanh dịch vụ quảng cáo không được thuê lại hoặc thỏa thuận để tổ chức, cá nhân khác thay mặt mình thực hiện toàn bộ dịch vụ quảng cáo có sử dụng dữ liệu cá nhân.",
+     "pages": "18–19"
+    },
+    {
+     "n": 2,
+     "score": 1.0,
+     "chunk_id": "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0037",
+     "doc_id": "vi-luat-bao-ve-du-lieu-ca-nhan-2025",
+     "title": "Luật Bảo vệ dữ liệu cá nhân",
+     "so_hieu": "91/2025/QH15",
+     "language": "vi",
+     "heading_path": "Chương II > Mục 2 > Điều 28 > Khoản 7–8",
+     "article": "Điều 28",
+     "page": 19,
+     "page_end": 19,
+     "amended": false,
+     "amended_by": [],
+     "text": "Điều 28. Bảo vệ dữ liệu cá nhân trong kinh doanh dịch vụ quảng cáo\n7. Tổ chức, cá nhân kinh doanh dịch vụ quảng cáo có trách nhiệm chứng minh việc sử dụng dữ liệu cá nhân của khách hàng để quảng cáo; tuân thủ quy định tại các khoản 1, 2, 3, 4 Điều này và quy định của pháp luật về quảng cáo.\n8. Tổ chức, cá nhân khi sử dụng dữ liệu cá nhân để quảng cáo theo hành vi hoặc có mục tiêu cụ thể hoặc cá nhân hóa quảng cáo phải tuân thủ quy định tại Điều này và các quy định sau đây:\na) Chỉ được thu thập dữ liệu cá nhân thông qua việc theo dõi trang thông tin điện tử, cổng thông tin điện tử, ứng dụng khi có sự đồng ý của chủ thể dữ liệu cá nhân;\nb) Phải thiết lập phương thức cho phép chủ thể dữ liệu cá nhân từ chối chia sẻ dữ liệu; xác định thời gian lưu trữ; xóa, hủy dữ liệu khi không còn cần thiết.",
+     "pages": "19"
+    },
+    {
+     "n": 3,
+     "score": 0.4242,
+     "chunk_id": "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+     "doc_id": "vi-luat-bao-ve-du-lieu-ca-nhan-2025",
+     "title": "Luật Bảo vệ dữ liệu cá nhân",
+     "so_hieu": "91/2025/QH15",
+     "language": "vi",
+     "heading_path": "Chương II > Mục 1 > Điều 10",
+     "article": "Điều 10",
+     "page": 7,
+     "page_end": 7,
+     "amended": false,
+     "amended_by": [],
+     "text": "Điều 10. Yêu cầu rút lại sự đồng ý, yêu cầu hạn chế xử lý dữ liệu cá nhân\n1. Chủ thể dữ liệu cá nhân có quyền yêu cầu rút lại sự đồng ý cho phép xử lý dữ liệu cá nhân, yêu cầu hạn chế xử lý dữ liệu cá nhân của mình khi có nghi ngờ phạm vi, mục đích xử lý dữ liệu cá nhân hoặc tính chính xác của dữ liệu cá nhân, trừ trường hợp quy định tại Điều 19 của Luật này hoặc trường hợp pháp luật có quy định khác.\n2. Yêu cầu rút lại sự đồng ý, yêu cầu hạn chế xử lý dữ liệu cá nhân của chủ thể dữ liệu cá nhân phải được thể hiện bằng văn bản, bao gồm cả dạng điện tử hoặc định dạng kiểm chứng được và được gửi cho bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân. Yêu cầu rút lại sự đồng ý, yêu cầu hạn chế xử lý dữ liệu cá nhân của chủ thể dữ liệu cá nhân được thực hiện theo quy định của pháp luật và theo thỏa thuận giữa các bên.\n3. Bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân tiếp nhận, thực hiện và yêu cầu bên xử lý dữ liệu cá nhân thực hiện yêu cầu rút lại sự đồng ý, hạn chế xử lý dữ liệu cá nhân của chủ thể dữ liệu cá nhân trong thời gian theo quy định của pháp luật.\n4. Việc thực hiện yêu cầu rút lại sự đồng ý, yêu cầu hạn chế xử lý dữ liệu cá nhân không áp dụng đối với hoạt động xử lý dữ liệu cá nhân trước thời điểm chủ thể dữ liệu cá nhân yêu cầu rút lại sự đồng ý hoặc yêu cầu hạn chế xử lý dữ liệu cá nhân.",
+     "pages": "7"
+    },
+    {
+     "n": 4,
+     "score": 0.4,
+     "chunk_id": "en-personal-data-protection-law-2025:0028",
+     "doc_id": "en-personal-data-protection-law-2025",
+     "title": "Law on Personal Data Protection",
+     "so_hieu": "91/2025/QH15",
+     "language": "en",
+     "heading_path": "Chapter II > Section 2 > Article 28",
+     "article": "Article 28",
+     "page": 19,
+     "page_end": 20,
+     "amended": false,
+     "amended_by": [],
+     "text": "Article 28. Protection of personal data in advertising service business\n1. Organizations and individuals providing advertising services may only use personal data of customers transferred by the personal data controller, the personal data controller and processor according to the agreement or collected through their business activities to provide advertising services. The collection, use and transfer of personal data must ensure the rights of the personal data subject as prescribed in Article 4 of this Law.\n2. The personal data controller, the personal data controller and processor may only transfer personal data to organizations and individuals providing advertising services in accordance with the provisions of law.\n3. Processing of customers' personal data for advertising services must have the consent of the customer, on the basis that the customer clearly knows the content, method, form, and frequency of product introduction; providing a method for customers to refuse to receive advertising information.\n4. The use of personal data for advertising must comply with the provisions of law on prevention of spam messages, spam emails, spam calls and the provisions of law on advertising.\n5. Personal data subjects have the right to request to stop receiving information from advertising services. Organizations and individuals providing advertising services must provide a mechanism and stop advertising upon request of personal data subjects.\n6. Organizations and individuals providing advertising services are not allowed to sub-lease or agree to let other organizations or individuals perform all advertising services using personal data on their behalf.\n7. Organizations and individuals providing advertising services are responsible for proving the use of customers' personal data for advertising purposes; complying with the provisions in Clauses 1, 2, 3, 4 of this Article and the provisions of law on advertising.\n8. Organizations and individuals using personal data for behavioral or targeted advertising or personalized advertising must comply with the provisions of this Article and the following provisions:\na) Personal data may only be collected through monitoring websites, electronic portals, and applications with the consent of the personal data subject;\nb) Must establish a method to allow personal data subjects to refuse to share data; determine the storage period; delete and destroy data when no longer needed.",
+     "pages": "19–20"
+    },
+    {
+     "n": 5,
+     "score": 0.375,
+     "chunk_id": "vi-nghi-dinh-bao-ve-du-lieu-ca-nhan-2025:0005",
+     "doc_id": "vi-nghi-dinh-bao-ve-du-lieu-ca-nhan-2025",
+     "title": "Nghị định quy định chi tiết một số điều và biện pháp thi hành Luật Bảo vệ dữ liệu cá nhân",
+     "so_hieu": "356/2025/NĐ-CP",
+     "language": "vi",
+     "heading_path": "Chương II > Điều 5 > Khoản 1–2",
+     "article": "Điều 5",
+     "page": 3,
+     "page_end": 4,
+     "amended": false,
+     "amended_by": [
+      "22/2026/NQ-CP"
+     ],
+     "text": "Điều 5. Thực hiện quyền của chủ thể dữ liệu cá nhân\n1. Bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân phải xây dựng quy trình, thủ tục, biểu mẫu rõ ràng để thực hiện các quyền của chủ thể dữ liệu cá nhân phù hợp với hoạt động xử lý dữ liệu cá nhân và trách nhiệm các bộ phận có liên quan; đảm bảo chủ thể dữ liệu cá nhân được biết về thủ tục thực hiện các quyền quy định tại khoản 1 Điều 4 của Luật Bảo vệ dữ liệu cá nhân.\n2. Khi nhận được yêu cầu rút lại sự đồng ý cho phép xử lý dữ liệu cá nhân, hạn chế xử lý dữ liệu cá nhân, phản đối xử lý dữ liệu cá nhân theo đúng thủ tục của chủ thể dữ liệu cá nhân, bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân phải phản hồi trong thời hạn 02 ngày làm việc, cung cấp đầy đủ thông tin cho chủ thể dữ liệu cá nhân về thủ tục ngừng xử lý dữ liệu cá nhân và thực hiện trong thời hạn 15 ngày, trừ trường hợp xử lý dữ liệu cá nhân không cần sự đồng ý của chủ thể dữ liệu cá nhân theo quy định tại Điều 19 Luật Bảo vệ dữ liệu cá nhân.Trường hợp cần yêu cầu bên xử lý dữ liệu cá nhân, bên thứ ba ngừng xử lý dữ liệu cá nhân của chủ thể dữ liệu cá nhân thì thực hiện trong thời hạn 20 ngày.\nTùy theo tính chất, mức độ phức tạp của yêu cầu, trường hợp cần gia hạn thời gian xử lý thì kéo dài thêm tối đa 01 lần gia hạn trong thời hạn không quá 15 ngày, bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân thông báo cho chủ thể dữ liệu cá nhân lý do cần gia hạn và chịu trách nhiệm chứng minh việc gia hạn là cần thiết, hợp lý.",
+     "pages": "3–4"
+    }
+   ],
+   "answer": {
+    "text": "Không tìm thấy trong tài liệu. Tài liệu được cung cấp quy định theo Luật Bảo vệ dữ liệu cá nhân Việt Nam, không nêu quy định của GDPR. Theo Điều 28 khoản 5 của Luật này, chủ thể dữ liệu có quyền yêu cầu ngừng nhận thông tin quảng cáo và đơn vị kinh doanh dịch vụ quảng cáo phải cung cấp cơ chế để ngừng quảng cáo theo yêu cầu. [1]",
+    "status": "completed",
+    "error": null,
+    "model": "gpt-6-luna",
+    "prompt_version": "answer-v1",
+    "abstained": true,
+    "citations": [
+     {
+      "n": 1,
+      "chunk_id": "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0036",
+      "label": "91/2025/QH15, Điều 28, Khoản 1–6, tr. 18–19"
+     }
+    ],
+    "invalid_citations": [],
+    "warnings": [],
+    "usage": {
+     "calls": 1,
+     "input_tokens": 2567,
+     "cached_input_tokens": 0,
+     "cache_write_tokens": 0,
+     "output_tokens": 93,
+     "reasoning_tokens": 0,
+     "cost_usd": 0.0003032
+    }
+   },
+   "timings_ms": {
+    "rewrite": 0.0,
+    "embed": 403.2,
+    "sparse": 0.1,
+    "search": 78.5,
+    "rerank": 0.0,
+    "retrieval": 481.9,
+    "llm_ttft": 1177.6,
+    "generation": 1882.8,
+    "ttft": 1659.5,
+    "total": 2364.7
+   },
+   "retrieval": {
+    "source_ranks": [
+     null
+    ],
+    "hit": 0.0,
+    "recall": 0.0,
+    "context_precision": 0.0
+   },
+   "judge": {
+    "scores": {
+     "faithfulness": 0.6667,
+     "citation_precision": 1.0,
+     "citation_recall": 0.6667,
+     "correctness": 0.0,
+     "relevancy": 1.0
+    },
+    "runs": [
+     {
+      "scores": {
+       "faithfulness": 0.6666666666666666,
+       "citation_precision": 1.0,
+       "citation_recall": 0.6666666666666666,
+       "correctness": 0.0,
+       "relevancy": 1.0
+      },
+      "correctness": "incorrect",
+      "relevancy": "relevant",
+      "explanation": "The answer claims GDPR rules are not in the documents and only cites Vietnamese law, while the reference states that under GDPR a data subject can object to direct marketing (Article 21(3)). Hence the answer does not provide the correct GDPR answer.",
+      "claims": [
+       {
+        "claim": "The provided documents do not contain any GDPR regulation.",
+        "cited": [],
+        "supported": false,
+        "supporting_cited": []
+       },
+       {
+        "claim": "According to Article 28 clause 5 of the Vietnamese Personal Data Protection Law, a data subject has the right to request to stop receiving advertising information.",
+        "cited": [
+         1
+        ],
+        "supported": true,
+        "supporting_cited": [
+         1
+        ]
+       },
+       {
+        "claim": "Organizations providing advertising services must provide a mechanism to stop advertising upon the data subject's request.",
+        "cited": [
+         1
+        ],
+        "supported": true,
+        "supporting_cited": [
+         1
+        ]
+       }
+      ],
+      "model": "openai/gpt-oss-120b",
+      "usage": {
+       "calls": 1,
+       "input_tokens": 3733,
+       "cached_input_tokens": 0,
+       "cache_write_tokens": 0,
+       "output_tokens": 1098,
+       "reasoning_tokens": 904,
+       "cost_usd": 0.0
+      },
+      "latency_ms": 60011.7,
+      "error": null
+     }
+    ]
+   },
+   "cost_usd": {
+    "pipeline": 0.000309,
+    "judge": 0.0
+   }
+  },
+  {
+   "id": "g081",
+   "type": "unanswerable",
+   "language": "vi",
+   "cross_lingual": false,
+   "follow_up": false,
+   "question": "Thuế suất thuế thu nhập doanh nghiệp phổ thông hiện nay là bao nhiêu phần trăm?",
+   "contexts": [
+    {
+     "n": 1,
+     "score": 0.6979,
+     "chunk_id": "vi-luat-doanh-nghiep-2020:0044",
+     "doc_id": "vi-luat-doanh-nghiep-2020",
+     "title": "Luật Doanh nghiệp",
+     "so_hieu": "59/2020/QH14",
+     "language": "vi",
+     "heading_path": "Chương II > Điều 29",
+     "article": "Điều 29",
+     "page": 22,
+     "page_end": 22,
+     "amended": false,
+     "amended_by": [
+      "03/2022/QH15",
+      "76/2025/QH15"
+     ],
+     "text": "Điều 29. Mã số doanh nghiệp\n1. Mã số doanh nghiệp là dãy số được tạo bởi Hệ thống thông tin quốc gia về đăng ký doanh nghiệp, được cấp cho doanh nghiệp khi thành lập và được ghi trên Giấy chứng nhận đăng ký doanh nghiệp. Mỗi doanh nghiệp có một mã số duy nhất và không được sử dụng lại để cấp cho doanh nghiệp khác.\n2. Mã số doanh nghiệp được dùng để thực hiện nghĩa vụ về thuế, thủ tục hành chính và quyền, nghĩa vụ khác.",
+     "pages": "22"
+    },
+    {
+     "n": 2,
+     "score": 0.625,
+     "chunk_id": "vi-luat-doanh-nghiep-2020:0188",
+     "doc_id": "vi-luat-doanh-nghiep-2020",
+     "title": "Luật Doanh nghiệp",
+     "so_hieu": "59/2020/QH14",
+     "language": "vi",
+     "heading_path": "Chương V > Điều 135 > Khoản 1–3",
+     "article": "Điều 135",
+     "page": 100,
+     "page_end": 100,
+     "amended": false,
+     "amended_by": [
+      "03/2022/QH15",
+      "76/2025/QH15"
+     ],
+     "text": "Điều 135. Trả cổ tức\n1. Cổ tức trả cho cổ phần ưu đãi được thực hiện theo điều kiện áp dụng riêng cho mỗi loại cổ phần ưu đãi.\n2. Cổ tức trả cho cổ phần phổ thông được xác định căn cứ vào số lợi nhuận ròng đã thực hiện và khoản chi trả cổ tức được trích từ nguồn lợi nhuận giữ lại của công ty. Công ty cổ phần chỉ được trả cổ tức của cổ phần phổ thông khi có đủ các điều kiện sau đây:\na) Công ty đã hoàn thành nghĩa vụ thuế và các nghĩa vụ tài chính khác theo quy định của pháp luật;\nb) Đã trích lập các quỹ công ty và bù đắp lỗ trước đó theo quy định của pháp luật và Điều lệ công ty;\nc) Ngay sau khi trả hết số cổ tức, công ty vẫn bảo đảm thanh toán đủ các khoản nợ và nghĩa vụ tài sản khác đến hạn.\n3. Cổ tức có thể được chi trả bằng tiền mặt, bằng cổ phần của công ty hoặc bằng tài sản khác quy định tại Điều lệ công ty. Nếu chi trả bằng tiền mặt thì phải được thực hiện bằng Đồng Việt Nam và theo các phương thức thanh toán theo quy định của pháp luật.",
+     "pages": "100"
+    },
+    {
+     "n": 3,
+     "score": 0.5,
+     "chunk_id": "vi-luat-doanh-nghiep-2020:0098",
+     "doc_id": "vi-luat-doanh-nghiep-2020",
+     "title": "Luật Doanh nghiệp",
+     "so_hieu": "59/2020/QH14",
+     "language": "vi",
+     "heading_path": "Chương III > Mục 1 > Điều 66",
+     "article": "Điều 66",
+     "page": 48,
+     "page_end": 49,
+     "amended": false,
+     "amended_by": [
+      "03/2022/QH15",
+      "76/2025/QH15"
+     ],
+     "text": "Điều 66. Tiền lương, thù lao, thưởng và lợi ích khác của Chủ tịch Hội đồng thành viên, Giám đốc, Tổng giám đốc và người quản lý khác\n1. Công ty trả tiền lương, thù lao, thưởng và lợi ích khác cho Chủ tịch Hội đồng thành viên, Giám đốc hoặc Tổng giám đốc và người quản lý khác theo kết quả và hiệu quả kinh doanh.\n2. Tiền lương, thù lao, thưởng và lợi ích khác của Chủ tịch Hội đồng thành viên, Giám đốc hoặc Tổng giám đốc và người quản lý khác được tính vào chi phí kinh doanh theo quy định của pháp luật về thuế thu nhập doanh nghiệp, pháp luật có liên quan và phải được thể hiện thành mục riêng trong báo cáo tài chính hằng năm của công ty.",
+     "pages": "48–49"
+    },
+    {
+     "n": 4,
+     "score": 0.4556,
+     "chunk_id": "vi-luat-doanh-nghiep-2020:0185",
+     "doc_id": "vi-luat-doanh-nghiep-2020",
+     "title": "Luật Doanh nghiệp",
+     "so_hieu": "59/2020/QH14",
+     "language": "vi",
+     "heading_path": "Chương V > Điều 133 > Khoản 1–2",
+     "article": "Điều 133",
+     "page": 98,
+     "page_end": 98,
+     "amended": false,
+     "amended_by": [
+      "03/2022/QH15",
+      "76/2025/QH15"
+     ],
+     "text": "Điều 133. Mua lại cổ phần theo quyết định của công ty\nCông ty có quyền mua lại không quá 30% tổng số cổ phần phổ thông đã bán, một phần hoặc toàn bộ cổ phần ưu đãi cổ tức đã bán theo quy định sau đây:\n1. Hội đồng quản trị có quyền quyết định mua lại không quá 10% tổng số cổ phần của từng loại đã bán trong thời hạn 12 tháng. Trường hợp khác, việc mua lại cổ phần do Đại hội đồng cổ đông quyết định;\n2. Hội đồng quản trị quyết định giá mua lại cổ phần. Đối với cổ phần phổ thông, giá mua lại không được cao hơn giá thị trường tại thời điểm mua lại, trừ trường hợp quy định tại khoản 3 Điều này. Đối với cổ phần loại khác, nếu Điều lệ công ty không quy định hoặc công ty và cổ đông có liên quan không có thỏa thuận khác thì giá mua lại không được thấp hơn giá thị trường;",
+     "pages": "98"
+    },
+    {
+     "n": 5,
+     "score": 0.3485,
+     "chunk_id": "vi-luat-doanh-nghiep-2020:0161",
+     "doc_id": "vi-luat-doanh-nghiep-2020",
+     "title": "Luật Doanh nghiệp",
+     "so_hieu": "59/2020/QH14",
+     "language": "vi",
+     "heading_path": "Chương V > Điều 114",
+     "article": "Điều 114",
+     "page": 83,
+     "page_end": 84,
+     "amended": false,
+     "amended_by": [
+      "03/2022/QH15",
+      "76/2025/QH15"
+     ],
+     "text": "Điều 114. Các loại cổ phần\n1. Công ty cổ phần phải có cổ phần phổ thông. Người sở hữu cổ phần phổ thông là cổ đông phổ thông.\n2. Ngoài cổ phần phổ thông, công ty cổ phần có thể có cổ phần ưu đãi. Người sở hữu cổ phần ưu đãi gọi là cổ đông ưu đãi. Cổ phần ưu đãi gồm các loại sau đây:\na) Cổ phần ưu đãi cổ tức;\nb) Cổ phần ưu đãi hoàn lại;\nc) Cổ phần ưu đãi biểu quyết;\nd) Cổ phần ưu đãi khác theo quy định tại Điều lệ công ty và pháp luật về chứng khoán.\n3. Người được quyền mua cổ phần ưu đãi cổ tức, cổ phần ưu đãi hoàn lại và cổ phần ưu đãi khác do Điều lệ công ty quy định hoặc do Đại hội đồng cổ đông quyết định.\n4. Mỗi cổ phần của cùng một loại đều tạo cho người sở hữu cổ phần đó các quyền, nghĩa vụ và lợi ích ngang nhau.\n5. Cổ phần phổ thông không thể chuyển đổi thành cổ phần ưu đãi. Cổ phần ưu đãi có thể chuyển đổi thành cổ phần phổ thông theo nghị quyết của Đại hội đồng cổ đông.\n6. Cổ phần phổ thông được dùng làm tài sản cơ sở để phát hành chứng chỉ lưu ký không có quyền biểu quyết được gọi là cổ phần phổ thông cơ sở. Chứng chỉ lưu ký không có quyền biểu quyết có lợi ích kinh tế và nghĩa vụ tương ứng với cổ phần phổ thông cơ sở, trừ quyền biểu quyết.\n7. Chính phủ quy định về chứng chỉ lưu ký không có quyền biểu quyết.",
+     "pages": "83–84"
+    }
+   ],
+   "answer": {
+    "text": "Không tìm thấy trong tài liệu.",
+    "status": "completed",
+    "error": null,
+    "model": "gpt-6-luna",
+    "prompt_version": "answer-v1",
+    "abstained": true,
+    "citations": [],
+    "invalid_citations": [],
+    "warnings": [],
+    "usage": {
+     "calls": 1,
+     "input_tokens": 1770,
+     "cached_input_tokens": 0,
+     "cache_write_tokens": 0,
+     "output_tokens": 11,
+     "reasoning_tokens": 0,
+     "cost_usd": 0.0001825
+    }
+   },
+   "timings_ms": {
+    "rewrite": 0.0,
+    "embed": 598.0,
+    "sparse": 0.1,
+    "search": 67.8,
+    "rerank": 0.0,
+    "retrieval": 666.0,
+    "llm_ttft": 998.9,
+    "generation": 1167.9,
+    "ttft": 1664.8,
+    "total": 1833.9
+   },
+   "judge": {
+    "scores": {
+     "faithfulness": null,
+     "citation_precision": null,
+     "citation_recall": null,
+     "correctness": 1.0,
+     "relevancy": 1.0
+    },
+    "runs": [
+     {
+      "scores": {
+       "faithfulness": null,
+       "citation_precision": null,
+       "citation_recall": null,
+       "correctness": 1.0,
+       "relevancy": 1.0
+      },
+      "correctness": "correct",
+      "relevancy": "relevant",
+      "explanation": "The answer states that the information is not found in the documents, matching the reference answer's conclusion.",
+      "claims": [],
+      "model": "openai/gpt-oss-120b",
+      "usage": {
+       "calls": 1,
+       "input_tokens": 2822,
+       "cached_input_tokens": 0,
+       "cache_write_tokens": 0,
+       "output_tokens": 241,
+       "reasoning_tokens": 188,
+       "cost_usd": 0.0
+      },
+      "latency_ms": 55660.5,
+      "error": null
+     }
+    ]
+   },
+   "cost_usd": {
+    "pipeline": 0.000187,
+    "judge": 0.0
+   }
+  }
+ ],
+ "rejudge_log": [
+  {
+   "at": "2026-10-08T00:30:28+07:00",
+   "git": {
+    "commit": "08253e8",
+    "dirty": false
+   },
+   "judged": 1,
+   "missing_after": 0,
+   "stopped_reason": null
+  }
+ ]
+}
