@@ -17,6 +17,7 @@ from app.retrieval.index import (
     embedding_text,
     ensure_collection,
     index_document,
+    indexed_documents,
     point_id,
     user_filter,
 )
@@ -164,6 +165,15 @@ async def test_reindexing_is_idempotent_and_removes_stale_chunks(setup):
     changed = TEXTS[:2] + ["Điều 3. Nghỉ hằng năm 14 ngày"]
     report = await index_document(client, COLLECTION, make_chunks("blld", changed), "system", embedder, encoder)
     assert (report.removed, await count(client)) == (1, 3)
+
+
+@pytest.mark.asyncio
+async def test_indexed_documents_counts_chunks_per_document_of_one_user(setup):
+    client, embedder, encoder, _ = setup
+    await index_document(client, COLLECTION, make_chunks("blld", TEXTS), "system", embedder, encoder)
+    await index_document(client, COLLECTION, make_chunks("ldn", TEXTS[:2]), "system", embedder, encoder)
+    await index_document(client, COLLECTION, make_chunks("rieng", TEXTS[:1]), "user-1", embedder, encoder)
+    assert await indexed_documents(client, COLLECTION, "system") == {"blld": len(TEXTS), "ldn": 2}
 
 
 @pytest.mark.asyncio

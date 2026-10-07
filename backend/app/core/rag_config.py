@@ -11,6 +11,14 @@ RAG_CONFIG_PATH = REPO_ROOT / "config" / "rag.toml"
 
 ReasoningEffort = Literal["none", "low", "medium", "high", "xhigh", "max"]
 RetrievalMode = Literal["dense", "sparse", "hybrid"]
+# Tier xử lý của OpenAI. "flex" rẻ bằng nửa nhưng chậm hơn và có thể trả 429 khi thiếu tài nguyên, nên chỉ dùng
+# cho việc không đo latency (judge), không dùng cho bước trả lời.
+ServiceTier = Literal["default", "flex"]
+
+
+def price_key(model: str, service_tier: str | None = None) -> str:
+    """Khoá trong [prices]: "<model>" cho tier mặc định, "<model>@flex" cho tier flex."""
+    return f"{model}@{service_tier}" if service_tier and service_tier not in ("default", "auto") else model
 
 
 class _Section(BaseModel):
@@ -38,7 +46,8 @@ class QueryConfig(_Section):
     model: str
     reasoning_effort: ReasoningEffort
     prompt_version: str
-    rewrite: bool
+    rewrite: Literal["none", "concat", "llm"]
+    rewrite_timeout_ms: int
     translate: bool
     translation_weight: float
 
@@ -78,6 +87,7 @@ class EvalConfig(_Section):
     judge_reasoning_effort: ReasoningEffort
     judge_prompt_version: str
     judge_max_output_tokens: int
+    judge_service_tier: ServiceTier
 
 
 class ModelPrice(_Section):
@@ -129,10 +139,11 @@ class RagConfig(_Section):
             "embed_title": self.index.embed_title,
         }
 
-    def price(self, model: str) -> ModelPrice:
-        if model not in self.prices:
-            raise KeyError(f"chưa có giá của {model} trong [prices] của config/rag.toml")
-        return self.prices[model]
+    def price(self, model: str, service_tier: str | None = None) -> ModelPrice:
+        key = price_key(model, service_tier)
+        if key not in self.prices:
+            raise KeyError(f"chưa có giá của {key} trong [prices] của config/rag.toml")
+        return self.prices[key]
 
 
 def apply_overrides(data: dict[str, Any], overrides: list[str]) -> None:

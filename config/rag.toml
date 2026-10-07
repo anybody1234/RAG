@@ -22,14 +22,17 @@ b = 0.75
 avg_doc_len = 215
 
 [query]
-# Xử lý câu hỏi trước khi truy xuất, gộp trong một lần gọi `model`:
-# - rewrite: viết lại câu hỏi thành câu độc lập theo lịch sử hội thoại (chỉ gọi khi có lịch sử);
+# Xử lý câu hỏi trước khi truy xuất (backend/app/retrieval/query.py):
+# - rewrite, chỉ ở lượt hỏi tiếp: "none" dùng nguyên câu hiện tại; "concat" ghép câu hỏi trước của user với câu
+#   hiện tại (không gọi LLM); "llm" để `model` viết thành câu độc lập, quá `rewrite_timeout_ms` (0 = không đặt hạn)
+#   hoặc lỗi thì dùng cách ghép;
 # - translate: thêm bản dịch sang ngôn ngữ còn lại (vi <-> en), truy xuất bằng cả hai câu rồi gộp RRF.
-#   Bật translate thì phải gọi model ở mọi lượt.
+#   Gộp chung một lần gọi `model` với bước viết lại. Bật translate thì phải gọi model ở mọi lượt.
 model = "gpt-6-luna"
 reasoning_effort = "none"
 prompt_version = "query-v1"
-rewrite = true
+rewrite = "llm"
+rewrite_timeout_ms = 0
 # Tắt: dịch câu hỏi sửa được câu khác ngôn ngữ nhưng phải gọi model ở mọi lượt (p50 ~2.2 s), vượt SLO.
 translate = false
 translation_weight = 1.0   # trọng số RRF của các nhánh truy xuất bằng câu dịch (câu gốc có trọng số 1)
@@ -69,6 +72,9 @@ judge_model = "gpt-6.1-sol"
 judge_reasoning_effort = "high"
 judge_prompt_version = "judge-v1"   # file eval/judges/<judge_prompt_version>.md
 judge_max_output_tokens = 16000
+# "default" hoặc "flex" (giá bằng nửa, chậm hơn, có thể trả 429 khi thiếu tài nguyên). Bước trả lời luôn dùng tier
+# mặc định vì e2e đo TTFT.
+judge_service_tier = "default"
 
 # Giá USD cho 1M token: `input` là token đầu vào, `output` là token đầu ra (model embedding không có output).
 # `cached_input`: token đầu vào đọc từ prompt cache; `cache_write`: token đầu vào ghi vào prompt cache
@@ -81,6 +87,7 @@ judge_max_output_tokens = 16000
 # Đã đối chiếu với developers.openai.com/api/docs/pricing ngày 2026-10-06 (bảng Standard, cột Input / Cached input /
 # Cache writes / Output, ngữ cảnh ngắn ≤ 272k token). Quy tắc ghi cache tính 1.25 lần giá input từ GPT-5.6 nằm ở
 # developers.openai.com/api/docs/guides/prompt-caching.
+# Khoá "<model>@flex" là giá của tier Flex (bảng Flex trên cùng trang, đối chiếu ngày 2026-10-07).
 [prices."text-embedding-3-small"]
 input = 0.02
 
@@ -98,3 +105,15 @@ input = 2.00
 cached_input = 0.10
 cache_write = 2.50
 output = 10.00
+
+[prices."gpt-6-luna@flex"]
+input = 0.05
+cached_input = 0.005
+cache_write = 0.0625
+output = 0.25
+
+[prices."gpt-6.1-sol@flex"]
+input = 1.00
+cached_input = 0.05
+cache_write = 1.25
+output = 5.00

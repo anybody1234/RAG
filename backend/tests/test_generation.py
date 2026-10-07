@@ -71,6 +71,8 @@ def test_history_drops_old_citations():
 
 def test_cited_numbers_in_order_without_duplicates():
     assert cited_numbers("A [2]. B [1][2]. C [3, 1]. D [10]; năm [2019] và [a] [...]") == [2, 1, 3, 10, 2019]
+    # Khoảng được mở ra; khoảng quá dài chỉ lấy hai đầu (số sai vẫn bị tính là invalid).
+    assert cited_numbers("A [1–3]. B [5-6, 8]. C [1-2000]") == [1, 2, 3, 5, 6, 8, 2000]
 
 
 def test_check_citations_maps_to_law_article_page_and_flags_invalid():

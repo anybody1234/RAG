@@ -36,6 +36,13 @@ def user_filter(user_id: str) -> models.Filter:
     return models.Filter(must=[models.FieldCondition(key="user_id", match=models.MatchValue(value=user_id))])
 
 
+async def indexed_documents(client: AsyncQdrantClient, collection: str, user_id: str) -> dict[str, int]:
+    """Số chunk của từng văn bản trong kho của user, đếm chính xác trên payload index `doc_id`. Ghi vào kết quả
+    eval để biết kết quả đo trên kho nào."""
+    response = await client.facet(collection, key="doc_id", facet_filter=user_filter(user_id), limit=100_000, exact=True)
+    return dict(sorted((str(hit.value), hit.count) for hit in response.hits))
+
+
 class IndexMismatchError(RuntimeError):
     """Collection chưa có, hoặc được index bằng tham số khác config hiện tại."""
 

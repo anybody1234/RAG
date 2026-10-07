@@ -1,17 +1,22 @@
 """Client giả của SDK openai cho test, không gọi mạng."""
 
+import asyncio
 import json
 from types import SimpleNamespace
 
 
 class FakeResponses:
-    """Giả lập `client.responses`: trả JSON cố định (hoặc ném `error`), ghi lại tham số của mỗi lần gọi."""
+    """Giả lập `client.responses`: trả JSON cố định (hoặc ném `error`), ghi lại tham số của mỗi lần gọi.
+    `delay` (giây) giả lập model trả lời chậm."""
 
-    def __init__(self, data: dict | None = None, error: Exception | None = None, raw: str | None = None):
-        self.data, self.error, self.raw, self.calls = data or {}, error, raw, []
+    def __init__(self, data: dict | None = None, error: Exception | None = None, raw: str | None = None,
+                 delay: float = 0.0):
+        self.data, self.error, self.raw, self.delay, self.calls = data or {}, error, raw, delay, []
 
     async def create(self, **kwargs):
         self.calls.append(kwargs)
+        if self.delay:
+            await asyncio.sleep(self.delay)
         if self.error:
             raise self.error
         return SimpleNamespace(

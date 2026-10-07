@@ -10,7 +10,7 @@ Chạy từ thư mục gốc của repo, sau khi đã index (`python scripts/ind
 Kết quả lưu vào eval/results/<YYYY-MM-DD>_<config_version>_retrieval.json.
 
 - Câu unanswerable không có nguồn nên không tính metric, nhưng vẫn được truy vấn để đo latency.
-- Câu multi_turn: khi `query.rewrite = false` thì dùng nguyên câu hỏi cuối; bật thì viết lại theo `history`.
+- Câu multi_turn: viết lại câu hỏi cuối theo `history` bằng cách trong `query.rewrite` (none, concat, llm).
 - Mỗi câu chỉ xử lý câu hỏi (LLM) và embed một lần; các chế độ dùng chung kết quả đó. Latency của một chế độ:
   `retrieval` = embed + sparse + search + rerank (định nghĩa trong CLAUDE.md), `total` = rewrite + retrieval.
   Các câu chạy tuần tự, không có tải đồng thời. Truy vấn không lấy payload; payload chunk (để chấm và để
@@ -43,9 +43,15 @@ from app.evaluation.retrieval_metrics import (
     question_metrics,
     source_ranks,
 )
-from app.ingestion.manifest import load_manifest
+from app.ingestion.manifest import load_manifest, manifest_sha256
 from app.retrieval.embedding import EmbeddingUsage, build_embedder
-from app.retrieval.index import SYSTEM_USER_ID, IndexMismatchError, check_collection, user_filter
+from app.retrieval.index import (
+    SYSTEM_USER_ID,
+    IndexMismatchError,
+    check_collection,
+    indexed_documents,
+    user_filter,
+)
 from app.retrieval.llm import LlmUsage, build_llm_client
 from app.retrieval.query import QueryProcessor
 from app.retrieval.rerank import LlmReranker
@@ -109,6 +115,12 @@ def check_git_clean(allow_dirty: bool) -> dict[str, str | bool | None]:
             "--allow-dirty để vẫn lưu kết quả (kết quả ghi git.dirty = true)."
         )
     return state
+
+
+async def corpus_identity(client: AsyncQdrantClient, collection: str, user_id: str) -> dict[str, Any]:
+    """Kho mà eval chạy trên: sha256 của manifest và số chunk của từng văn bản đang có trong index."""
+    documents = await indexed_documents(client, collection, user_id)
+    return {"manifest_sha256": manifest_sha256(), "documents": documents, "chunks": sum(documents.values())}
 
 
 def groups_of(item: GoldenItem, cross_lingual: bool) -> list[tuple[str, str]]:
@@ -184,6 +196,8 @@ class Evaluator:
             record["standalone"] = plan.standalone
         if plan.translation:
             record["translation"] = plan.translation
+        if plan.method != "none":
+            record["rewrite_method"] = plan.method
         if plan.error:
             record["query_error"] = plan.error
         record["modes"] = {}
@@ -252,6 +266,8 @@ def summarize(modes: list[RetrievalMode], items: list[GoldenItem], questions: li
             "errors": {
                 "query": sum("query_error" in record for record in questions),
                 "rerank": sum("rerank_error" in record["modes"][mode] for record in questions),
+                # Viết lại bằng LLM quá hạn hoặc lỗi nên dùng cách ghép câu.
+                "rewrite_fallback": sum(record.get("rewrite_method") == "concat_fallback" for record in questions),
             },
         }
     return summary
@@ -266,10 +282,11 @@ async def run(golden_path: Path, modes: list[RetrievalMode], overrides: list[str
         await check_collection(client, config.collection_name, config.index_signature())
         evaluator = Evaluator(config, client, modes)
         await evaluator.load()
+        corpus = await corpus_identity(client, config.collection_name, SYSTEM_USER_ID)
         sources = [source for item in items for source in item.gold_sources]
         in_index = sum(any(covers(chunk, source) for chunk in evaluator.chunks.values()) for source in sources)
         print(f"config_version={config.config_version}, collection={config.collection_name}: "
-              f"{len(evaluator.chunks)} chunk của user {SYSTEM_USER_ID}")
+              f"{len(evaluator.chunks)} chunk, {len(corpus['documents'])} văn bản của user {SYSTEM_USER_ID}")
         print(f"{in_index}/{len(sources)} nguồn gold nằm trọn trong một chunk của index")
         await evaluator.warm_up()
         questions = []
@@ -298,6 +315,7 @@ async def run(golden_path: Path, modes: list[RetrievalMode], overrides: list[str
             "chunks": len(evaluator.chunks),
             "gold_sources_in_index": in_index,
         },
+        "corpus": corpus,
         "config": config.model_dump(exclude={"prices"}),
         "usage": {"embedding": vars(evaluator.embedding_usage), "llm": vars(evaluator.llm_usage)},
         "notes": [

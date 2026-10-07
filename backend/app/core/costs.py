@@ -5,8 +5,9 @@ phí tối đa của lời gọi đó: token đầu vào (đếm bằng tokenize
 `max_output_tokens` token đầu ra. Nếu chi phí đã tiêu trong ngày cộng mức tối đa này vượt trần thì ném
 `BudgetExceededError` và không gửi request. Sau lời gọi, chi phí thật (theo `usage`) được ghi vào `CostLedger`.
 
-Ledger là file SQLite, nên chi phí cộng dồn qua mọi lần chạy script trong cùng một ngày (theo giờ máy). Ledger chỉ
-biết các lời gọi đi qua `BudgetedClient`; lời gọi từ nơi khác dùng chung API key thì không tính được.
+Ledger là file SQLite (`COST_LEDGER_PATH`, mặc định ở thư mục của user để mọi checkout và worktree dùng chung), nên
+chi phí cộng dồn qua mọi lần chạy script trong cùng một ngày (theo giờ máy). Ledger chỉ biết các lời gọi đi qua
+`BudgetedClient`; lời gọi từ nơi khác dùng chung API key thì không tính được.
 """
 
 import json
@@ -19,11 +20,10 @@ from typing import Any, cast
 
 from openai import AsyncOpenAI
 
-from app.core.config import REPO_ROOT, get_settings
-from app.core.rag_config import ModelPrice
+from app.core.config import get_settings
+from app.core.rag_config import ModelPrice, price_key
 from app.ingestion.tokens import TokenCounter
 
-COST_LEDGER_PATH = REPO_ROOT / "data" / "cache" / "costs.sqlite"
 # Lời gọi không đặt max_output_tokens (viết lại câu hỏi, rerank: đầu ra JSON ngắn) thì giả định tối đa chừng này.
 DEFAULT_MAX_OUTPUT_TOKENS = 4096
 # Tokenizer cl100k_base (fallback của TokenCounter) đếm tiếng Việt nhiều token hơn tokenizer của GPT mới, nên ước
@@ -37,7 +37,7 @@ class BudgetExceededError(RuntimeError):
 
 
 class CostLedger:
-    def __init__(self, limit_usd: float, path: Path = COST_LEDGER_PATH, today: Callable[[], date] = date.today):
+    def __init__(self, limit_usd: float, path: Path, today: Callable[[], date] = date.today):
         path.parent.mkdir(parents=True, exist_ok=True)
         self.limit_usd, self.path, self._today = limit_usd, path, today
         self._db = sqlite3.connect(path)
@@ -67,10 +67,11 @@ class CostLedger:
             )
 
 
-def _price(prices: dict[str, ModelPrice], model: str) -> ModelPrice:
-    if model not in prices:
-        raise KeyError(f"chưa có giá của {model} trong [prices] của config/rag.toml")
-    return prices[model]
+def _price(prices: dict[str, ModelPrice], model: str, service_tier: str | None = None) -> ModelPrice:
+    key = price_key(model, service_tier)
+    if key not in prices:
+        raise KeyError(f"chưa có giá của {key} trong [prices] của config/rag.toml")
+    return prices[key]
 
 
 def _count_input(model: str, *parts: Any) -> int:
@@ -84,7 +85,7 @@ class _Responses:
 
     async def create(self, **kwargs: Any) -> Any:
         model = kwargs["model"]
-        price = _price(self._prices, model)
+        price = _price(self._prices, model, kwargs.get("service_tier"))
         input_tokens = _count_input(model, kwargs.get("instructions"), kwargs.get("input"))
         worst = price.cost(input_tokens, kwargs.get("max_output_tokens") or DEFAULT_MAX_OUTPUT_TOKENS)
         self._ledger.reserve(worst, model)
@@ -146,7 +147,8 @@ class BudgetedClient:
 
 @lru_cache
 def get_cost_ledger() -> CostLedger:
-    return CostLedger(get_settings().daily_cost_limit_usd)
+    settings = get_settings()
+    return CostLedger(settings.daily_cost_limit_usd, settings.cost_ledger_path)
 
 
 def budgeted(client: AsyncOpenAI, prices: dict[str, ModelPrice]) -> AsyncOpenAI:

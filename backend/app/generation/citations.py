@@ -11,7 +11,11 @@ from app.core.language import Language
 from app.generation.prompts import ABSTENTION, page_range
 
 # [1], [1][3], [1, 3]. Chỉ nhận số, nên "[...]" hay "[a]" trong câu trả lời không bị tính là trích dẫn.
-_CITATION = re.compile(r"\[(\d+(?:\s*[,;]\s*\d+)*)\]")
+_CITATION = re.compile(r"\[(\d+(?:\s*[,;\-–]\s*\d+)*)\]")
+_RANGE = re.compile(r"(\d+)\s*[-–]\s*(\d+)")
+# Khoảng dài hơn thế này (ví dụ [1-2000]) không phải trích dẫn khoảng: chỉ lấy hai đầu, để số sai vẫn bị tính là
+# invalid thay vì nở thành hàng nghìn số.
+MAX_RANGE = 10
 _ARTICLE = re.compile(r"^(Điều|Article)\s+\d+", re.IGNORECASE)
 
 
@@ -41,8 +45,15 @@ class CitationCheck:
 
 
 def cited_numbers(text: str) -> list[int]:
-    """Các số [n] theo thứ tự xuất hiện lần đầu, không lặp."""
-    numbers = (int(n) for group in _CITATION.findall(text) for n in re.split(r"\s*[,;]\s*", group))
+    """Các số [n] theo thứ tự xuất hiện lần đầu, không lặp. Nhận cả [1, 3] và khoảng [1-3], [1–3]."""
+    numbers: list[int] = []
+    for group in _CITATION.findall(text):
+        for part in re.split(r"\s*[,;]\s*", group):
+            if m := _RANGE.fullmatch(part):
+                low, high = int(m.group(1)), int(m.group(2))
+                numbers += range(low, high + 1) if 0 <= high - low <= MAX_RANGE else [low, high]
+            else:
+                numbers.append(int(part))
     return list(dict.fromkeys(numbers))
 
 

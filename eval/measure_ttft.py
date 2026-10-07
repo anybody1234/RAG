@@ -26,7 +26,14 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "backend"))
 
 from qdrant_client import AsyncQdrantClient
-from run_retrieval_eval import RESULTS_DIR, DirtyTreeError, check_git_clean, git_state, latency_stats
+from run_retrieval_eval import (
+    RESULTS_DIR,
+    DirtyTreeError,
+    check_git_clean,
+    corpus_identity,
+    git_state,
+    latency_stats,
+)
 
 from app.core.config import get_settings
 from app.core.rag_config import RagConfig, ReasoningEffort, load_rag_config
@@ -71,9 +78,13 @@ def answer_record(result: AnswerResult) -> dict[str, Any]:
     }
 
 
-async def run(golden: Path, variants: list[str], n: int, overrides: list[str]) -> dict[str, Any]:
+async def run(
+    golden: Path, variants: list[str], n: int, overrides: list[str], follow_up_only: bool = False
+) -> dict[str, Any]:
     config: RagConfig = load_rag_config(overrides=overrides)
     items = sample(load_golden(golden), n)
+    if follow_up_only:
+        items = [item for item in items if item.history]
     parsed = [parse_variant(v) for v in variants]
     llm_client = build_llm_client(timeout=ANSWER_TIMEOUT_SECONDS, max_retries=2)
     generators = {
@@ -103,6 +114,7 @@ async def run(golden: Path, variants: list[str], n: int, overrides: list[str]) -
         record = {
             "id": item.id, "type": item.type, "language": item.language, "follow_up": bool(item.history),
             "standalone": plan.standalone if plan.standalone != plan.question else None,
+            "rewrite_method": plan.method, "rewrite_error": plan.error,
             "rewrite_ms": round(plan.latency_ms, 1), "retrieval_ms": round(retrieval_ms, 1),
             "chunks": [hit.payload.get("chunk_id") for hit in hits],
         }
@@ -114,6 +126,7 @@ async def run(golden: Path, variants: list[str], n: int, overrides: list[str]) -
     total_cost = 0.0
     try:
         await check_collection(qdrant, config.collection_name, config.index_signature())
+        corpus = await corpus_identity(qdrant, config.collection_name, SYSTEM_USER_ID)
         # Mở sẵn kết nối (TLS) tới OpenAI và Qdrant, không tính vào số đo.
         _, payloads, _ = await retrieve(items[0])
         for generator in generators.values():
@@ -165,6 +178,7 @@ async def run(golden: Path, variants: list[str], n: int, overrides: list[str]) -
         "config_version": config.config_version,
         "overrides": overrides,
         "git": git_state(),
+        "corpus": corpus,
         "variants": variants,
         "questions_n": len(questions),
         "steps_ms": {
@@ -210,13 +224,17 @@ def main() -> int:
     parser.add_argument("--variant", action="append", metavar="MODEL:EFFORT",
                         help=f"mặc định: {' '.join(DEFAULT_VARIANTS)}")
     parser.add_argument("--n", type=int, default=20, help="số câu lấy đều theo golden set (cộng mọi câu multi_turn)")
+    parser.add_argument("--follow-up-only", action="store_true",
+                        help="chỉ chạy câu multi_turn, để so các cách viết lại câu hỏi (query.rewrite)")
     parser.add_argument("--set", action="append", default=[], metavar="KHOÁ=GIÁ_TRỊ")
     parser.add_argument("--out", type=Path, default=RESULTS_DIR)
     parser.add_argument("--allow-dirty", action="store_true", help="vẫn chạy và lưu khi code chưa commit")
     args = parser.parse_args()
     try:
         check_git_clean(args.allow_dirty)
-        results = asyncio.run(run(args.golden.resolve(), args.variant or DEFAULT_VARIANTS, args.n, args.set))
+        results = asyncio.run(run(
+            args.golden.resolve(), args.variant or DEFAULT_VARIANTS, args.n, args.set, args.follow_up_only
+        ))
     except (DirtyTreeError, IndexMismatchError, ValueError) as exc:
         print(exc)
         return 1

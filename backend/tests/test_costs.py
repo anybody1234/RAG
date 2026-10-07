@@ -69,6 +69,18 @@ async def test_stream_cost_is_recorded_when_the_stream_ends(tmp_path):
 
 
 @pytest.mark.asyncio
+async def test_flex_tier_uses_its_own_price(tmp_path):
+    prices = PRICES | {"gpt-6.1-sol@flex": ModelPrice(input=1.0, cached_input=0.05, cache_write=1.25, output=5.0)}
+    ledger = CostLedger(1.0, tmp_path / "costs.sqlite", today=lambda: date(2026, 10, 7))
+    client = BudgetedClient(SimpleNamespace(responses=FakeResponses({"ok": True}), embeddings=None), ledger, prices)
+    await client.responses.create(model="gpt-6.1-sol", input="x", max_output_tokens=100, service_tier="flex")
+    assert ledger.spent_today() == pytest.approx(prices["gpt-6.1-sol@flex"].cost(100, 20))
+    # Tier không có giá riêng thì báo lỗi, không lặng lẽ tính theo giá standard.
+    with pytest.raises(KeyError, match="gpt-6.1-sol@priority"):
+        await client.responses.create(model="gpt-6.1-sol", input="x", service_tier="priority")
+
+
+@pytest.mark.asyncio
 async def test_unknown_model_has_no_price(tmp_path):
     client, _, _ = make_client(tmp_path, limit=1.0)
     with pytest.raises(KeyError):
