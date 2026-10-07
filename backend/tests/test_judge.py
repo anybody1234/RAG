@@ -15,6 +15,7 @@ from app.evaluation.judge import (
     JudgeCase,
     ModelReply,
     OpenAICompatJudgeModel,
+    ProviderDownError,
     QuotaExhaustedError,
     QuotaTracker,
     RateLimiter,
@@ -220,6 +221,31 @@ async def test_daily_quota_stops_without_retrying():
     chat = FakeChatCompletions(errors=[rate_limit("wait", headers={"retry-after": "3600"})])
     with pytest.raises(QuotaExhaustedError):
         await Judge(chat_model(chat, sleep=Sleeps()), "judge-v1").judge(CASE)
+
+
+def timeout_error() -> openai.APITimeoutError:
+    return openai.APITimeoutError(request=httpx.Request("POST", "https://example.test/chat/completions"))
+
+
+def server_error(status: int = 503) -> openai.InternalServerError:
+    request = httpx.Request("POST", "https://example.test/chat/completions")
+    return openai.InternalServerError("high demand", response=httpx.Response(status, request=request), body=None)
+
+
+@pytest.mark.asyncio
+async def test_one_timeout_is_retried_once():
+    chat = FakeChatCompletions(json.dumps(JUDGMENT), errors=[timeout_error()])
+    model = chat_model(chat, sleep=Sleeps())
+    judgment = await Judge(model, "judge-v1").judge(CASE)
+    assert judgment.error is None and len(chat.calls) == 2 and model.failures == 0
+
+
+@pytest.mark.asyncio
+async def test_two_failures_in_a_row_mark_the_provider_down():
+    chat = FakeChatCompletions(json.dumps(JUDGMENT), errors=[server_error(), timeout_error(), server_error()])
+    with pytest.raises(ProviderDownError, match="2 lỗi liên tiếp"):
+        await Judge(chat_model(chat, sleep=Sleeps()), "judge-v1").judge(CASE)
+    assert len(chat.calls) == 2  # mỗi lần thử trừ quota ngày: không thử tiếp
 
 
 @pytest.mark.asyncio

@@ -46,9 +46,11 @@ from app.retrieval.llm import (
 JUDGES_DIR = REPO_ROOT / "eval" / "judges"
 # Prompt ngắn hơn chừng này token thì OpenAI không ghi cache, nên không đặt điểm cache.
 MIN_CACHEABLE_TOKENS = 1024
-# Retry khi gặp 429 theo phút hoặc lỗi tạm thời. Provider bảo chờ lâu hơn MAX_RETRY_WAIT_SECONDS thì coi như hết quota.
+# Retry khi gặp 429 theo phút. Provider bảo chờ lâu hơn MAX_RETRY_WAIT_SECONDS thì coi như hết quota.
 MAX_ATTEMPTS = 6
 MAX_RETRY_WAIT_SECONDS = 180
+# Timeout/5xx/mất kết nối liên tiếp chừng này lần thì coi provider đang hỏng (07/10: Gemini 3.8 treo khi quá tải).
+MAX_CONSECUTIVE_FAILURES = 2
 
 Role = Literal["user", "assistant"]
 LABEL_SCORES = {
@@ -81,8 +83,17 @@ JUDGMENT_SCHEMA = {
 }
 
 
-class QuotaExhaustedError(RuntimeError):
-    """Hết quota theo ngày của provider judge. Không kế thừa OpenAIError, để không bị ghi như lỗi chấm một câu."""
+class JudgeUnavailableError(RuntimeError):
+    """Không chấm tiếp được trong lần chạy này; nơi gọi dừng chấm, chấm nốt sau bằng --rejudge-missing. Không kế
+    thừa OpenAIError, để không bị ghi như lỗi chấm một câu."""
+
+
+class QuotaExhaustedError(JudgeUnavailableError):
+    """Hết quota theo ngày của provider judge."""
+
+
+class ProviderDownError(JudgeUnavailableError):
+    """Provider judge lỗi (timeout, 5xx, mất kết nối) nhiều lần liên tiếp, ví dụ khi model quá tải."""
 
 
 @dataclass
@@ -290,6 +301,8 @@ class OpenAICompatJudgeModel:
         self.limiter = limiter or RateLimiter(profile.rpm, profile.tpm, sleep=sleep)
         self.name = f"{profile.provider}/{profile.model}"
         self._count = TokenCounter(profile.model)
+        # Số lời gọi liên tiếp bị timeout/5xx/mất kết nối, đếm qua các câu; về 0 khi có một lời gọi thành công.
+        self.failures = 0
 
     def build_input(self, instructions: str, case_text: str, cache_case: bool) -> list[dict[str, Any]]:
         fixed: dict[str, Any] = {"type": "input_text", "text": instructions}
@@ -351,8 +364,11 @@ class OpenAICompatJudgeModel:
             await self.limiter.acquire(tokens)
             try:
                 if self.profile.api == "responses":
-                    return await self._responses(instructions, case_text, schema, cache_case)
-                return await self._chat(instructions, case_text, schema)
+                    reply = await self._responses(instructions, case_text, schema, cache_case)
+                else:
+                    reply = await self._chat(instructions, case_text, schema)
+                self.failures = 0
+                return reply
             except openai.RateLimitError as exc:
                 if is_daily_quota(exc):
                     raise QuotaExhaustedError(f"{self.name}: hết quota theo ngày ({exc.message[:200]})") from exc
@@ -361,7 +377,14 @@ class OpenAICompatJudgeModel:
                     raise QuotaExhaustedError(f"{self.name}: provider bảo chờ {delay:.0f} s") from exc
                 last = exc
             except (openai.APIConnectionError, openai.InternalServerError) as exc:
-                delay, last = min(60.0, 5.0 * 2**attempt), exc
+                # Timeout, mất kết nối, 5xx: mỗi lần thử đều trừ quota ngày, nên chỉ retry 1 lần; lỗi liên tiếp (tính
+                # cả qua các câu) tới MAX_CONSECUTIVE_FAILURES thì coi provider đang hỏng và dừng chấm.
+                self.failures += 1
+                if self.failures >= MAX_CONSECUTIVE_FAILURES:
+                    raise ProviderDownError(
+                        f"{self.name}: {self.failures} lỗi liên tiếp, lần cuối {type(exc).__name__}"
+                    ) from exc
+                delay, last = 5.0, exc
             await self._sleep(delay + 0.5)
         assert last is not None
         raise last

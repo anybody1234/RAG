@@ -55,7 +55,7 @@ from app.evaluation.judge import (
     METRICS,
     Judge,
     JudgeCase,
-    QuotaExhaustedError,
+    JudgeUnavailableError,
     QuotaTracker,
     build_judge,
     judge_identity,
@@ -169,7 +169,7 @@ class JudgeRunner:
             for _ in range(self.repeats):
                 runs.append(await self.judge.judge(case, cache_case=self.repeats > 1))
                 usage += runs[-1].usage
-        except (QuotaExhaustedError, BudgetExceededError) as exc:
+        except (JudgeUnavailableError, BudgetExceededError) as exc:
             self.stopped = f"{type(exc).__name__}: {exc}"
             print(f"\nNgừng chấm: {self.stopped}")
             if not runs:

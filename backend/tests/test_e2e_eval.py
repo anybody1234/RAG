@@ -8,7 +8,7 @@ from run_e2e_eval import JudgeRunner, check_estimate, estimate_cost, needs_judge
 from app.core.costs import BudgetExceededError
 from app.core.rag_config import load_rag_config
 from app.evaluation.golden import GoldenItem
-from app.evaluation.judge import Judge, JudgeCase, ModelReply, QuotaExhaustedError
+from app.evaluation.judge import Judge, JudgeCase, ModelReply, ProviderDownError, QuotaExhaustedError
 from app.retrieval.llm import LlmUsage
 
 CONFIG = load_rag_config()
@@ -79,6 +79,19 @@ async def test_runner_stops_cleanly_when_quota_runs_out():
     assert first is not None and first["scores"]["correctness"] == 1.0
     assert (await runner.run(case))[0] is None and runner.stopped and "hết quota" in runner.stopped
     assert (await runner.run(case))[0] is None and model.calls == 2  # đã dừng thì không gọi nữa
+
+
+@pytest.mark.asyncio
+async def test_runner_stops_when_the_provider_is_down():
+    class DownModel:
+        name = "down"
+
+        async def complete(self, instructions, case_text, schema, cache_case):
+            raise ProviderDownError("2 lỗi liên tiếp")
+
+    runner = JudgeRunner(Judge(DownModel(), "judge-v1"), repeats=1)
+    assert (await runner.run(JudgeCase("Câu hỏi?", "x", [], "Trả lời.")))[0] is None
+    assert runner.stopped and "ProviderDownError" in runner.stopped
 
 
 @pytest.mark.asyncio

@@ -240,6 +240,7 @@ Thứ tự từ 07/10: Boss duyệt từng commit. Chỉ tinh chỉnh prompt/con
   - Judge tách câu trả lời thành các ý. Faithfulness và citation precision/recall được tính trong code từ nhãn của từng ý; correctness và relevancy là nhãn 3 mức.
   - Từ chối đếm trực tiếp, không qua judge.
   - Judge theo hồ sơ `[judges.<tên>]`, chạy với mọi endpoint tương thích OpenAI (Responses API hoặc Chat Completions). Giới hạn rpm/tpm/rpd/tpd; retry 429 theo Retry-After hoặc `retryDelay`; hết quota ngày thì dừng gọn. Kết quả ghi provider và model id do API trả về.
+  - Timeout/5xx/mất kết nối chỉ retry 1 lần; 2 lỗi liên tiếp thì coi provider đang hỏng và dừng chấm (08/10, sau khi Gemini 3.8 quá tải treo tới timeout). Timeout của hồ sơ miễn phí: 120 s.
   - Judge chính: Gemini `gemini-3.8-flash` free tier (100 request/ngày); judge thứ hai: Groq `openai/gpt-oss-120b`. Sol bị cấm vì ngân sách (Boss chốt 07/10).
 - [x] `eval/run_e2e_eval.py`:
   - Ghi latency từng bước cho mọi câu, TTFT tách lượt đầu và lượt hỏi tiếp.
