@@ -79,17 +79,20 @@ Các metric sau luôn được ghi để chẩn đoán, nhưng không đặt ng�
 Latency đo riêng cho từng bước: rewrite, embed, search, rerank, TTFT, tổng.
 
 ## Golden set và eval
-- **File:** `eval/datasets/golden_v1.jsonl`. Mỗi dòng có dạng `{id, question, language, type, reference_answer, gold_sources: [{doc_id, page, quote}], history, reviewed}`. Schema nằm ở `backend/app/evaluation/golden.py`.
+- **File:** `eval/datasets/golden_v1.jsonl`; bản nháp v2 (bộ test giữ riêng, chưa duyệt) là `eval/datasets/golden_v2_draft.jsonl`. Mỗi dòng có dạng `{id, question, language, type, reference_answer, gold_sources: [{doc_id, page, quote}], history, tags, reviewed}`. Schema nằm ở `backend/app/evaluation/golden.py`.
   - `type` là một trong: `single_article`, `numeric`, `multi_hop`, `paraphrase`, `unanswerable`, `multi_turn`.
   - `history` chỉ có ở câu `multi_turn`: các lượt hỏi đáp trước đó, câu hỏi hiện tại nằm ở `question`.
   - Câu `unanswerable` không có `gold_sources`. Câu `multi_hop` phải có ít nhất 2 nguồn.
   - `page` là số trang PDF bắt đầu từ 1, **đánh liên tục qua các file** của cùng một `doc_id`. Ví dụ Luật Doanh nghiệp 2020: phần 1 là trang 1–94, phần 2 là trang 95–168. Đọc trang bằng `read_pdf_pages()` trong `backend/app/ingestion/manifest.py`.
   - `quote` được so khớp sau khi chuẩn hoá NFKC và gộp khoảng trắng (`normalize_for_match`).
-- **Câu khác ngôn ngữ:** một câu được tính là khác ngôn ngữ khi không nguồn nào cùng ngôn ngữ với câu hỏi. Hiện các câu loại này đều là câu hỏi tiếng Việt về GDPR.
+  - `tags` (từ v2, không bắt buộc) dùng để cắt kết quả eval: `explicit_ref` (câu nêu thẳng Điều/khoản hoặc số hiệu), `colloquial` (lời lẽ đời thường), `no_doc_name` (không nêu tên văn bản, kể cả "GDPR"), `comparison` (so sánh hai văn bản).
+- **Câu khác ngôn ngữ:** một câu được tính là khác ngôn ngữ khi không nguồn nào cùng ngôn ngữ với câu hỏi.
+  - Ở v1, các câu loại này đều là câu hỏi tiếng Việt về GDPR. Từ v2 có thêm chiều ngược lại: câu tiếng Anh về Nghị định 356, văn bản chỉ có tiếng Việt.
+  - Câu khác ngôn ngữ chỉ hợp lệ khi văn bản cùng ngôn ngữ với câu hỏi không trả lời được câu đó. Ví dụ, Luật 91/2025 bản dịch tiếng Anh không được trả lời được câu tiếng Anh chỉ có nguồn Nghị định 356. Nếu không, phải thêm nguồn đó và câu hết là khác ngôn ngữ.
 - **Không hỏi vào Điều đã bị sửa đổi** (danh sách ở `amended_articles` trong manifest), vì bản Công báo gốc đã lỗi thời ở các Điều đó. Ngoại lệ: câu `multi_hop` có kèm nguồn là chính luật sửa đổi. `validate_golden.py` tự kiểm tra quy tắc này bằng cách xác định Điều chứa đoạn trích qua tiêu đề "Điều N." / "Article N." gần nhất.
 - **Công cụ:**
   - `python eval/validate_golden.py [--fix-pages]`: kiểm tra schema, đoạn trích có thật ở đúng trang, và phân bố.
-  - `python eval/review_golden.py export|apply`: xuất file duyệt dạng Markdown (`golden_v1_review.md`) và áp kết quả duyệt ngược vào JSONL.
+  - `python eval/review_golden.py export|apply [FILE]`: xuất file duyệt dạng Markdown (`<tên file>_review.md`, mặc định `golden_v1_review.md`) và áp kết quả duyệt ngược vào JSONL.
 - **Quy mô:** 100 câu (v1), sau đó tăng lên 200.
 - **Phân bố câu hỏi:**
 
@@ -162,9 +165,10 @@ RAG/
     query.py                # viết lại câu hỏi theo lịch sử + dịch vi<->en trong một lần gọi (prompt query-v1)
     rerank.py               # rerank listwise bằng LLM trên top-N (prompt rerank-v1)
   backend/app/evaluation/golden.py               # schema + kiểm tra golden set
+  backend/app/evaluation/golden_review.py        # xuất/đọc file duyệt golden set dạng Markdown
   backend/app/evaluation/retrieval_metrics.py    # so khớp chunk với nguồn gold, Hit/Recall/MRR/nDCG@k
   backend/tests/
-  eval/datasets/golden_v1.jsonl, golden_v1_review.md
+  eval/datasets/golden_v1.jsonl, golden_v1_review.md, golden_v2_draft.jsonl
   eval/validate_golden.py, eval/review_golden.py
   eval/run_retrieval_eval.py   # eval retrieval 3 chế độ, chia theo loại câu/ngôn ngữ/khác ngôn ngữ, latency p50/p95
   eval/results/             # kết quả eval (commit vào repo)
