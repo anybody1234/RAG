@@ -24,6 +24,7 @@ EXPECTED_ARTICLES = {
     "vi-luat-bao-ve-du-lieu-ca-nhan-2025": 39,
     "en-personal-data-protection-law-2025": 39,
     "en-gdpr-2016": 99,
+    "vi-nghi-dinh-bao-ve-du-lieu-ca-nhan-2025": 42,
 }
 
 pytestmark = pytest.mark.skipif(
@@ -56,9 +57,31 @@ def test_no_chunk_exceeds_max_tokens(results):
 
 def test_no_page_furniture_or_broken_characters(results):
     junk = re.compile(
-        r"CÔNG BÁO/Số|Ký bởi:|Translated Version by|Tiếp theo Công báo|Xem tiếp Công báo|�|[ﬀ-ﬆ]"
+        r"CÔNG BÁO/Số|Ký bởi:|Ngày ký:|Translated Version by|Tiếp theo Công báo|Xem tiếp Công báo|�|[ﬀ-ﬆ]"
     )
     assert [c.chunk_id for r in results.values() for c in r.chunks if junk.search(c.text)] == []
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "Lỗi đã biết (07/10/2026): khối chữ ký số trang 1 còn sót ở Luật Doanh nghiệp 2020 (dòng 'Ký bởi' bị ngắt "
+    "sang dòng 'phủ'), Luật BVDLCN 2025 và luật 76/2025 (không trích ra dòng 'Ký bởi'). Sửa sẽ đổi chunk đang "
+    "index, phải đo lại eval"
+))
+def test_no_leftover_signature_lines(results):
+    leftover = re.compile(r"Thời gian ký:|Email: thongtinchinhphu")
+    assert [c.chunk_id for r in results.values() for c in r.chunks if leftover.search(c.text)] == []
+
+
+def test_decree_appendix_forms_are_not_part_of_the_last_article(results):
+    """Phụ lục 13 mẫu biểu của Nghị định 356/2025 (trang 38–70) nằm ngoài Điều 42."""
+    chunks = results["vi-nghi-dinh-bao-ve-du-lieu-ca-nhan-2025"].chunks
+    article_42 = [c for c in chunks if c.article == "Điều 42"]
+    assert len(article_42) == 1 and article_42[0].page_end == 37
+    appendix = [c for c in chunks if c.heading_path.startswith("Phụ lục")]
+    assert all(c.article is None and c.page >= 38 for c in appendix)
+    forms = list(dict.fromkeys(c.heading_path.removeprefix("Phụ lục > ") for c in appendix[1:]))
+    expected = ["01a", "01b", "02a", "02b", "03a", "03b", "04", "05", "06", "07", "08", "09", "10"]
+    assert [form.split()[-1] for form in forms] == expected
 
 
 def test_gdpr_words_broken_at_line_end_are_rejoined(results):

@@ -8,6 +8,9 @@ thì tách theo Điểm, cuối cùng mới tách theo đoạn/câu. Mọi chunk
 Một dòng chỉ được nhận là tiêu đề khi đúng định dạng và đúng thứ tự đánh số, để không nhầm với dẫn chiếu bị
 ngắt dòng ("Điều 209 của Bộ luật này", "Article 42 may be used") hay nội dung luật được sửa đổi nằm trong
 ngoặc kép (“Điều 12. ...” trong luật sửa đổi).
+
+Phụ lục sau Điều cuối (mẫu biểu kèm nghị định) không thuộc Điều nào: mỗi Phụ lục, mỗi mẫu biểu là một mục
+riêng, chunk theo độ dài, `article` là None.
 """
 
 import re
@@ -52,6 +55,10 @@ _ARTICLE_VI = re.compile(r"^Điều\s+(\d+)([a-zđ]?)\.(?:\s*(.*))?$")
 _ARTICLE_EN = re.compile(r"^(?:Article|ARTICLE)\s+(\d+)([a-z]?)(?:\.?\s+[A-Z“\"‘].*|\.?)$")
 _CLAUSE = re.compile(r"^(\d+)\.\s+\S")
 _POINT = re.compile(r"^\(?([a-zđ])\)\s+\S")
+# Tiêu đề Phụ lục và mẫu biểu đứng riêng một dòng: "Phụ lục", "PHỤ LỤC II", "Mẫu số 01a", "Mẫu 09".
+_APPENDIX = re.compile(r"^(?P<kind>Phụ lục|PHỤ LỤC|Appendix|APPENDIX|Annex|ANNEX)(?:\s+(?P<num>[IVXLC]+|\d+[a-z]?))?\.?$")
+_APPENDIX_WORDS = {"phụ lục": "Phụ lục", "appendix": "Appendix", "annex": "Annex"}
+_FORM = re.compile(r"^(?:Mẫu(?: số)?|Form(?: No\.)?)\s+\d+[a-z]?$")
 
 
 def _roman_or_int(numeral: str) -> int | None:
@@ -83,9 +90,15 @@ def _article(text: str) -> tuple[str, int, str] | None:
     return None
 
 
+def _appendix_label(text: str) -> str | None:
+    if match := _APPENDIX.match(text):
+        return " ".join(filter(None, [_APPENDIX_WORDS[match["kind"].lower()], match["num"]]))
+    return None
+
+
 def _is_heading(text: str) -> bool:
     text = _MARKUP.sub("", text)
-    return _article(text) is not None or _division(text) is not None
+    return any([_article(text), _division(text), _APPENDIX.match(text), _FORM.match(text)])
 
 
 def _is_start(text: str) -> bool:
@@ -107,9 +120,16 @@ class Article:
 
 
 @dataclass
+class Appendix:
+    path: list[str]  # ["Phụ lục"], ["Phụ lục", "Mẫu số 01a"]
+    blocks: list[Block]  # blocks[0] là dòng tiêu đề
+
+
+@dataclass
 class LegalStructure:
     preamble: list[Block]
     articles: list[Article]
+    appendices: list[Appendix] = field(default_factory=list)
 
 
 def _article_chain(candidates: list[tuple[int, tuple[str, int, str]]]) -> dict[int, str]:
@@ -155,6 +175,8 @@ def parse_legal_structure(lines: list[Block]) -> LegalStructure:
 
     preamble: list[Block] = []
     articles: list[Article] = []
+    appendices: list[Appendix] = []
+    in_appendix = False
     divisions: dict[int, tuple[str, int | None]] = {}  # cấp -> (nhãn, số)
     after_division = False
     bare_heading = False
@@ -166,11 +188,24 @@ def parse_legal_structure(lines: list[Block]) -> LegalStructure:
             articles.append(Article(chain[index], path, [block], [False]))
             # Bản dịch có thể thiếu dấu đóng ngoặc; không để lỗi đó lan sang Điều sau.
             quote_depth = max(0, text.count("“") - text.count("”"))
-            after_division = False
+            after_division = in_appendix = False
+            continue
+        if in_appendix:
+            if label := _appendix_label(text):
+                appendices.append(Appendix([label], [block]))
+            elif _FORM.match(text) and _starts_page(block, paragraphs[index - 1]):
+                # Mẫu biểu mới bắt đầu ở đầu trang; dòng "Mẫu số 01b" trong bảng danh mục mẫu thì không.
+                appendices.append(Appendix([appendices[-1].path[0], " ".join(text.split())], [block]))
+            else:
+                appendices[-1].blocks.append(block)
             continue
         quoted = quote_depth > 0 or text.startswith("“")
         quote_depth = max(0, quote_depth + text.count("“") - text.count("”"))
         if not quoted:
+            if articles and (label := _appendix_label(text)):
+                appendices.append(Appendix([label], [block]))
+                in_appendix = True
+                continue
             if (division := _division(text)) and _accept_division(division, divisions):
                 after_division, bare_heading = True, not division["rest"]
                 continue
@@ -183,7 +218,12 @@ def parse_legal_structure(lines: list[Block]) -> LegalStructure:
             articles[-1].quoted.append(quoted)
         else:
             preamble.append(block)
-    return LegalStructure(preamble, articles)
+    return LegalStructure(preamble, articles, appendices)
+
+
+def _starts_page(block: Block, previous: Block) -> bool:
+    """Đoạn đầu tiên của trang. Định dạng không có trang (DOCX, HTML) thì luôn đúng."""
+    return block.page is None or previous.last_page != block.page
 
 
 def _accept_division(match: re.Match, divisions: dict[int, tuple[str, int | None]]) -> bool:
@@ -314,4 +354,14 @@ def chunk_legal(
         else:
             # Tiêu đề bị dính với nội dung (lỗi nối dòng): giữ cả đoạn trong nội dung, prefix chỉ là "Điều N".
             pieces += splitter.split(items, article.label, path, level=0)
+
+    for appendix in structure.appendices:
+        if size_of(appendix.blocks, count) <= max_tokens:
+            pieces.append(Piece(appendix.blocks, appendix.path))
+            continue
+        # Mẫu biểu dài: chunk theo độ dài, mỗi chunk lặp lại dòng tiêu đề ("Mẫu số 09").
+        title = appendix.blocks[0].text
+        budget = max_tokens - count(title) - 1
+        groups = pack_blocks(split_long_blocks(appendix.blocks[1:], budget, count), budget, overlap, count)
+        pieces += [Piece(group, appendix.path, title) for group in groups]
     return pieces

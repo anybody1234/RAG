@@ -34,9 +34,10 @@ MIN_TEXT_CHARS = 50
 _CONG_BAO_HEADER = re.compile(r"^CÔNG BÁO/Số [\d +]+/Ngày \d{1,2}-\d{1,2}-\d{4}(?: \d+)?$")
 _CONTINUED_FROM = re.compile(r"^\(Tiếp theo Công báo số [\d +]+\)$")
 _CONTINUED_IN = re.compile(r"^\(Xem tiếp Công báo số [\d +]+\)$")
-# Khối chữ ký số của Cổng Thông tin điện tử Chính phủ ở trang đầu bản Công báo.
+# Khối chữ ký số của Cổng Thông tin điện tử Chính phủ ở trang đầu bản Công báo. Bản năm 2026 ghi "Ngày ký"
+# thay cho "Thời gian ký".
 _SIGNATURE_START = re.compile(r"^Ký bởi: ")
-_SIGNATURE_REST = re.compile(r"^(Email|Cơ quan|Thời gian ký): ")
+_SIGNATURE_REST = re.compile(r"^(Email|Cơ quan|Thời gian ký|Ngày ký): ")
 
 # Header/footer lặp: dòng nằm trong _EDGE_LINES dòng đầu hoặc cuối trang, xuất hiện (sau khi thay chữ số
 # bằng #) ở ít nhất _RUNNING_MIN_RATIO số trang và ít nhất _RUNNING_MIN_PAGES trang. Bắt được số trang,

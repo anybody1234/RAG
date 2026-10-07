@@ -155,6 +155,48 @@ def test_unstructured_long_article_is_split_by_sentence():
     assert sum(p.text().count(sentence) for p in pieces) == 12
 
 
+def test_appendix_forms_are_separate_from_last_article():
+    """Phụ lục mẫu biểu sau Điều cuối (Nghị định 356/2025) không bị gộp vào Điều cuối. Mẫu biểu mới bắt đầu ở
+    đầu trang; dòng "Mẫu số 01b" trong bảng danh mục giữa trang không mở mẫu mới, "Điều 1." trong mẫu quyết
+    định không phải Điều của nghị định."""
+    lines = blocks(VI_LAW) + [
+        Block("TM. CHÍNH PHỦ", 1),
+        Block("Phụ lục", 2),
+        Block("DANH MỤC HỒ SƠ VÀ BIỂU MẪU", 2),
+        Block("Mẫu số 01a Thông báo gửi hồ sơ đánh giá tác động", 2),
+        Block("Mẫu số 01b", 2),
+        Block("Quyết định cấp Giấy chứng nhận", 2),
+        Block("Mẫu số 01a", 3),
+        Block("THÔNG BÁO GỬI HỒ SƠ", 3),
+        Block("Mẫu số 01b", 4),
+        Block("QUYẾT ĐỊNH", 4),
+        Block("Điều 1. Cấp Giấy chứng nhận cho tổ chức.", 4),
+    ]
+    structure = parse_legal_structure(lines)
+    assert [a.label for a in structure.articles] == ["Điều 1", "Điều 2", "Điều 3"]
+    assert structure.articles[-1].blocks[-1].text == "TM. CHÍNH PHỦ"
+    assert [a.path for a in structure.appendices] == [
+        ["Phụ lục"], ["Phụ lục", "Mẫu số 01a"], ["Phụ lục", "Mẫu số 01b"],
+    ]
+    assert [b.text for b in structure.appendices[0].blocks][-2:] == ["Mẫu số 01b", "Quyết định cấp Giấy chứng nhận"]
+
+    pieces = chunk_legal(lines, "vi", max_tokens=100, overlap_ratio=0.1, count=words)
+    assert [(" > ".join(p.path), p.article) for p in pieces[-3:]] == [
+        ("Phụ lục", None), ("Phụ lục > Mẫu số 01a", None), ("Phụ lục > Mẫu số 01b", None),
+    ]
+    assert pieces[-1].text() == "Mẫu số 01b\nQUYẾT ĐỊNH\nĐiều 1. Cấp Giấy chứng nhận cho tổ chức."
+
+
+def test_long_appendix_form_is_split_with_title_repeated():
+    row = "Họ và tên người đại diện theo pháp luật của tổ chức đề nghị cấp giấy chứng nhận"
+    lines = blocks(VI_LAW) + [Block("Phụ lục", 2), Block("Mẫu số 09", 3)]
+    lines += [Block(f"{n}. {row}", 3) for n in range(1, 9)]
+    pieces = chunk_legal(lines, "vi", max_tokens=40, overlap_ratio=0.0, count=words)
+    forms = [p for p in pieces if p.path == ["Phụ lục", "Mẫu số 09"]]
+    assert len(forms) > 1
+    assert all(p.text().startswith("Mẫu số 09\n") and words(p.text()) <= 40 for p in forms)
+
+
 def test_needs_at_least_three_articles_to_be_legal():
     assert looks_like_legal(blocks(VI_LAW))
     assert not looks_like_legal(blocks("Điều 1. Tiêu đề\nNội dung.\nĐiều 2. Tiêu đề\nNội dung."))

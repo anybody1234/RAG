@@ -30,7 +30,7 @@ Dự án portfolio (xin việc AI Engineer). Người dùng upload PDF/DOCX/TXT/
 **Quy ước gọi OpenAI:** dùng SDK chính thức `openai` (Responses API). Model ID và giá đã kiểm tra trên trang giá OpenAI ngày 2026-10-06; tra lại trước khi đổi model.
 
 ## Dữ liệu
-- **Bộ phát triển (đã chốt):** Bộ luật Lao động 2019, Luật Doanh nghiệp 2020 cùng luật sửa đổi 76/2025, và Luật Bảo vệ dữ liệu cá nhân 2025. Mỗi luật có bản gốc tiếng Việt và bản dịch tiếng Anh. Thêm GDPR (tiếng Anh) để có câu hỏi so sánh. Danh sách và các lưu ý về nguồn nằm trong `data/SOURCES.md`.
+- **Bộ phát triển (đã chốt):** Bộ luật Lao động 2019, Luật Doanh nghiệp 2020 cùng luật sửa đổi 76/2025, và Luật Bảo vệ dữ liệu cá nhân 2025. Mỗi luật có bản gốc tiếng Việt và bản dịch tiếng Anh. Thêm GDPR (chỉ có tiếng Anh) để có câu hỏi so sánh, và Nghị định 356/2025/NĐ-CP hướng dẫn Luật Bảo vệ dữ liệu cá nhân (chỉ có tiếng Việt, thêm 07/10/2026) để có câu hỏi tiếng Anh mà nguồn chỉ có tiếng Việt. Danh sách và các lưu ý về nguồn nằm trong `data/SOURCES.md`.
 - **Nguồn sự thật cho dữ liệu:** `data/manifest.json` chứa URL, sha256, ngày hiệu lực và `pair_id` để ghép cặp song ngữ. Lệnh `python scripts/download_data.py` tải file về `data/raw/` (gitignore). Không commit PDF.
 - **PDF Công báo:**
   - Bản tiếng Việt lấy từ Công báo. Không dùng PDF trên `datafiles.chinhphu.vn` vì đó là bản scan.
@@ -42,10 +42,12 @@ Dự án portfolio (xin việc AI Engineer). Người dùng upload PDF/DOCX/TXT/
 - **Hiệu lực (đối chiếu 06/10/2026):**
   - Bộ luật Lao động đã bị sửa bởi 71/2025, 113/2025 và 124/2025 ở Điều 60, 62, 139 khoản 1 và Điều 154.
   - Luật Doanh nghiệp đã bị sửa bởi 03/2022 và 76/2025, tổng cộng 33 Điều. Danh sách nằm ở `amended_articles`, nguồn xác minh ở `amended_articles_source`.
+  - Nghị định 356/2025 bị Nghị quyết 22/2026/NQ-CP thay đổi thủ tục ở Điều 18, 19, 20, 25, 26. Nghị quyết áp dụng từ 29/04/2026 đến hết 01/03/2027. Văn bản này không có trong bộ dữ liệu.
   - Khi lập danh sách Điều bị sửa, phải đọc phần mô tả từng khoản sửa đổi trong chính luật sửa đổi. Đừng dò theo trang chú thích của văn bản hợp nhất: cách đó đã từng cho kết quả sai.
   - Văn bản hợp nhất mới nhất là 18/VBHN-VPQH (Bộ luật Lao động) và 67/VBHN-VPQH (Luật Doanh nghiệp), có ghi trong manifest. Bộ dữ liệu hiện dùng bản gốc nên **chưa phản ánh** các sửa đổi này, trừ luật 76/2025 có trong bộ dữ liệu.
 - **Đặc thù văn bản luật:**
   - Chunk theo cấu trúc Phần/Chương/Mục/**Điều**/Khoản/Điểm (dùng regex). Đơn vị chính là Điều. Điều quá dài thì tách theo Khoản, và giữ tiêu đề Điều ở đầu mỗi chunk.
+  - Phụ lục mẫu biểu sau Điều cuối (Nghị định 356) là mục riêng, `heading_path` dạng "Phụ lục > Mẫu số 01a", không thuộc Điều nào.
   - Metadata bắt buộc: `doc_id, so_hieu, title, language, page, heading_path` (ví dụ `"Chương III > Điều 35 > Khoản 2"`), `effective_date, status` (còn hay hết hiệu lực).
   - Trích dẫn phải nêu số hiệu văn bản, Điều/Khoản và trang.
   - Hybrid search là bắt buộc, vì dense search hay trượt các cụm như "Điều 35", "khoản 2", "45/2019/QH14".
