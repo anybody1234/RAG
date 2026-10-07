@@ -393,3 +393,51 @@ Không bật dịch câu hỏi và rerank, vì cả hai vượt SLO (thí nghi�
    - **Dịch chunk lúc index** (lưu thêm vector của bản dịch). Chưa thử. Không tốn latency lúc hỏi nhưng tốn chi phí index, và sẽ gặp lại vấn đề bản song ngữ chen vào.
 2. **Hybrid hay chỉ dense.** Hai cách ngang nhau trên golden set (0.864 so với 0.875). Hybrid tốt hơn ở nhóm cùng ngôn ngữ, dense tốt hơn ở nhóm khác ngôn ngữ. BM25 hiện tại yếu với câu hỏi nêu số Điều. Đề xuất: sửa BM25 bằng term "Điều N" riêng cho chunk của chính Điều đó, rồi đo lại trước khi quyết.
 3. **Latency của lượt hỏi tiếp.** Viết lại câu hỏi cộng retrieval mất 1.6–3.3 s, chưa tính TTFT của Sol, nên lượt hỏi tiếp có nguy cơ vượt TTFT p95 ≤ 3 s. Phải đo ở P5.
+
+---
+
+## 7. Kho 10 văn bản (thêm Nghị định 356/2025) và sửa lỗi chữ ký số (07/10/2026)
+
+**Không phải thí nghiệm chọn config.** Config giữ nguyên `v0.2`; chỉ kho dữ liệu đổi. Đây là baseline mới cho mọi so sánh sau này.
+
+**Thiết lập:** golden set v1 (88 câu có nguồn), 3 lần chạy, mỗi lần trên một commit sạch.
+- **9 văn bản:** `v0.2` ở `b4c1364` (lần chạy lại của thí nghiệm 6), 1282 chunk.
+- **kho10:** `v0.2-kho10` ở `cefbb3a`. Thêm Nghị định 356/2025 (chỉ có tiếng Việt, 100 chunk), 1382 chunk.
+- **kho10-chuky:** `v0.2-kho10-chuky` ở `dd9590d`. Như kho10, cộng bản sửa chữ ký số: chữ ký số trang 1 không còn lọt vào chunk ở 3 văn bản, mỗi văn bản đổi 1 chunk. 1381 chunk.
+
+Từ lần chạy này, kết quả ghi `corpus` (sha256 của manifest và số chunk của từng văn bản trong index).
+
+| | 9 văn bản | kho10 | kho10-chuky |
+|---|---|---|---|
+| Hit@5 hybrid | 0.864 | 0.841 | **0.830** |
+| MRR@5 hybrid | 0.735 | 0.728 | 0.717 |
+| Recall@50 hybrid | 0.960 | 0.938 | 0.938 |
+| Hit@5 chỉ dense | 0.875 | 0.830 | 0.818 |
+| Hit@5 cùng ngôn ngữ (69) | 0.986 | 0.986 | 0.971 |
+| Hit@5 khác ngôn ngữ (19) | 0.421 | 0.316 | 0.316 |
+| Retrieval p95 hybrid | 300 ms | 318 ms | 370 ms |
+
+Theo văn bản chứa nguồn gold (hybrid, Hit@5 / MRR@5):
+
+| Nhóm | n | 9 văn bản | kho10 | kho10-chuky |
+|---|---|---|---|---|
+| GDPR | 23 | 0.522 / 0.323 | 0.435 / 0.273 | 0.435 / 0.295 |
+| Luật BVDLCN 2025 (vi + en) | 11 | 0.909 / 0.864 | 0.909 / 0.864 | 0.909 / 0.818 |
+| Văn bản còn lại | 54 | 1.000 / 0.885 | 1.000 / 0.894 | 0.981 / 0.876 |
+
+**Nhận xét:**
+1. **Nghị định 356 cạnh tranh trực tiếp với GDPR.**
+   - Chunk của Nghị định có mặt trong top-5 hybrid ở 17/23 câu GDPR và 9/11 câu BVDLCN. Không câu nào thuộc nhóm văn bản còn lại bị ảnh hưởng.
+   - GDPR mất 2 câu ở top-5: g025 (hạng 3 → 8) và g060 (5 → 10). g031 và g061 rơi khỏi top-50.
+   - Câu GDPR hầu hết hỏi bằng tiếng Việt, nên thêm một văn bản tiếng Việt cùng chủ đề càng đẩy GDPR xuống. Đây là cùng một lỗ hổng khác ngôn ngữ đã ghi ở thí nghiệm 6, nay nặng hơn (0.421 → 0.316). P4b (chia nhánh dense theo ngôn ngữ, dịch chunk lúc index) cần đo lại trên kho này.
+   - Nhóm BVDLCN giữ nguyên Hit@5: câu hỏi tiếng Việt và văn bản tiếng Việt, Nghị định chỉ chen vào các vị trí sau.
+2. **Sửa lỗi chữ ký số làm mất 1 câu (g017, hạng 1 → 6), do ranh giới chunk đổi.**
+   - Trước khi sửa, 4 dòng chữ ký số (~40 token) ở trang 1 luật 76/2025 làm Khoản 1 Điều 1 vượt 800 token, nên bị tách theo điểm. Định nghĩa "chủ sở hữu hưởng lợi" nhờ vậy nằm trong một chunk nhỏ, tập trung, và đứng hạng 1.
+   - Sau khi sửa, Khoản 1 vừa một chunk (771 token, gồm cả loạt định nghĩa sửa đổi của Điều 4), nên định nghĩa đó bị loãng.
+   - Bản sửa là đúng (bỏ rác). Kết quả hạng 1 trước đây là may mắn của ranh giới chunk, và chỉ chênh 1/88 câu, ở mức nhiễu. Nó cho thấy chunk dài nhiều định nghĩa là điểm yếu của chunker: Khoản liệt kê nhiều định nghĩa nên được tách theo điểm sớm hơn. Ghi lại để xem xét, chưa sửa.
+3. **Retrieval p95 vẫn đạt SLO** (370 ms ≤ 800 ms). Phần tăng nằm ở bước embed câu hỏi (p95 276 → 357 ms, là latency API của OpenAI); search của Qdrant vẫn khoảng 14 ms dù kho lớn hơn 8%.
+4. **Hit@5 hybrid 0.830 < 0.85** trên kho mới. Mức hụt nằm hết ở nhóm khác ngôn ngữ, đúng chỗ P4b nhắm tới.
+
+**Chi phí:** index Nghị định 356 $0.0083; index lại sau khi sửa chữ ký $0.0005 (1376/1381 chunk lấy từ cache); hai lần eval $0.0016. Ledger ghi tổng $0.0103 cho ngày 07/10.
+
+**Kết quả:** `eval/results/2026-10-07_v0.2-kho10_retrieval.json`, `eval/results/2026-10-07_v0.2-kho10-chuky_retrieval.json`.
