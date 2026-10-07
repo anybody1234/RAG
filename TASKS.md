@@ -241,6 +241,10 @@ Thứ tự từ 07/10: Boss duyệt từng commit. Chỉ tinh chỉnh prompt/con
   - Từ chối đếm trực tiếp, không qua judge.
   - Judge theo hồ sơ `[judges.<tên>]`, chạy với mọi endpoint tương thích OpenAI (Responses API hoặc Chat Completions). Giới hạn rpm/tpm/rpd/tpd; retry 429 theo Retry-After hoặc `retryDelay`; hết quota ngày thì dừng gọn. Kết quả ghi provider và model id do API trả về.
   - Timeout/5xx/mất kết nối chỉ retry 1 lần; 2 lỗi liên tiếp thì coi provider đang hỏng và dừng chấm (08/10, sau khi Gemini 3.8 quá tải treo tới timeout). Timeout của hồ sơ miễn phí: 120 s.
+  - `judge-v2` (08/10): câu "tài liệu không nói về Y" trong câu trả lời từ chối không phải claim. Với v1, Groq tính câu này là claim không được ủng hộ, nên faithfulness của câu từ chối có giải thích bị kéo xuống (g061: 0.667 → 1.0 với v2; g081 không đổi).
+  - Ví dụ trong prompt judge dùng luật hư cấu. `judge-v1` lấy ví dụ từ g034 (rò rỉ golden set), nên số chấm bằng v1 chỉ dùng để thử quy trình. Test `test_judge_prompts.py` chặn prompt judge chứa câu hỏi, đoạn trích hay đáp án của mọi golden set (docs/experiments.md mục 8).
+  - Kết quả judge ghi riêng thời gian gọi API (`latency_ms`) và thời gian chờ giới hạn rpm/tpm (`wait_ms`); giới hạn tpm ước tính token ra bằng `output_tokens_estimate` (1000), không bằng `max_output_tokens`.
+- [x] Trích dẫn sai định dạng (`[1, khoản 2 Điều 9]`, Luna ở g021) vẫn được map sang [1] và ghi vào `malformed_citations`.
   - Judge chính: Gemini `gemini-3.8-flash` free tier (100 request/ngày); judge thứ hai: Groq `openai/gpt-oss-120b`. Sol bị cấm vì ngân sách (Boss chốt 07/10).
 - [x] `eval/run_e2e_eval.py`:
   - Ghi latency từng bước cho mọi câu, TTFT tách lượt đầu và lượt hỏi tiếp.

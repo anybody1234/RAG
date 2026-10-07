@@ -69,7 +69,7 @@ max_output_tokens = 2000       # gồm cả token suy luận; chặn trên chi p
 
 [eval]
 judge = "gemini"                    # hồ sơ judge mặc định, trong [judges.<tên>]; chọn hồ sơ khác bằng --judge
-judge_prompt_version = "judge-v1"   # file eval/judges/<judge_prompt_version>.md
+judge_prompt_version = "judge-v2"   # file eval/judges/<judge_prompt_version>.md; v2 (08/10): câu "tài liệu không nói về Y" không phải claim
 
 # Hồ sơ judge (backend/app/evaluation/judge.py). Đổi judge không đổi kết quả RAG nên không cần tăng config_version;
 # kết quả eval ghi provider, model id do API trả về và prompt version của judge.

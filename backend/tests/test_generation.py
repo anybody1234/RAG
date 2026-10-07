@@ -75,6 +75,17 @@ def test_cited_numbers_in_order_without_duplicates():
     assert cited_numbers("A [1–3]. B [5-6, 8]. C [1-2000]") == [1, 2, 3, 5, 6, 8, 2000]
 
 
+def test_citation_with_text_inside_brackets_is_kept_and_flagged():
+    # Luna viết vậy ở g021 (08/10/2026).
+    answer = "Sự đồng ý chỉ có hiệu lực khi tự nguyện [1, khoản 2 Điều 9]. Xem thêm [2]; [3; Điều 10]."
+    assert cited_numbers(answer) == [1, 2, 3]
+    check = check_citations(answer, [chunk(9), chunk(10), chunk(11)], "vi")
+    assert [c.n for c in check.citations] == [1, 2, 3] and check.invalid == []
+    assert check.malformed == ["[1, khoản 2 Điều 9]", "[3; Điều 10]"]
+    assert check_citations("A [1].", [chunk(1)], "vi").malformed == []
+    assert strip_citations("12 ngày [1, khoản 2 Điều 9].") == "12 ngày."
+
+
 def test_check_citations_maps_to_law_article_page_and_flags_invalid():
     payloads = [chunk(1), chunk(25, heading_path="Chương III > Mục 1 > Điều 25 > Khoản 2", page=11, page_end=12)]
     check = check_citations("Tối đa 60 ngày [2]. Xem thêm [1][3][0].", payloads, "vi")

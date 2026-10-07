@@ -103,6 +103,9 @@ class JudgeProfile(_Section):
     tpm: int = 0  # token mỗi phút (ước tính: token vào + max_output_tokens)
     rpd: int = 0  # request mỗi ngày
     tpd: int = 0  # token mỗi ngày
+    # Token ra ước tính mỗi lời gọi, dùng cho giới hạn tpm và quota token ngày (request vẫn gửi max_output_tokens).
+    # 1000 ≈ p95 đo trên Groq 08/10/2026 (5 lời gọi: 241–1098 token ra).
+    output_tokens_estimate: int = 1000
     # Mốc tính "ngày" của quota phía provider: Gemini reset lúc nửa đêm giờ Pacific.
     quota_reset: Literal["utc", "local", "pacific"] = "utc"
 

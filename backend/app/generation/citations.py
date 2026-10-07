@@ -11,7 +11,12 @@ from app.core.language import Language
 from app.generation.prompts import ABSTENTION, page_range
 
 # [1], [1][3], [1, 3]. Chỉ nhận số, nên "[...]" hay "[a]" trong câu trả lời không bị tính là trích dẫn.
-_CITATION = re.compile(r"\[(\d+(?:\s*[,;\-–]\s*\d+)*)\]")
+# Nhánh thứ hai: số rồi tới chữ, ví dụ "[1, khoản 2 Điều 9]" (Luna viết vậy ở g021, 08/10/2026). Vẫn lấy số, và ghi
+# lại nguyên văn làm trích dẫn sai định dạng để eval đếm được.
+_CITATION = re.compile(
+    r"\[(\d+(?:\s*[,;\-–]\s*\d+)*)\]"
+    r"|\[(\d+(?:\s*[,;]\s*\d+)*)\s*[,;:]\s*([^\]\d\s][^\]]*)\]"
+)
 _RANGE = re.compile(r"(\d+)\s*[-–]\s*(\d+)")
 # Khoảng dài hơn thế này (ví dụ [1-2000]) không phải trích dẫn khoảng: chỉ lấy hai đầu, để số sai vẫn bị tính là
 # invalid thay vì nở thành hàng nghìn số.
@@ -41,20 +46,31 @@ class CitationCheck:
     citations: list[Citation] = field(default_factory=list)
     # Số [n] không trỏ tới chunk nào trong context.
     invalid: list[int] = field(default_factory=list)
+    # Trích dẫn có chữ trong ngoặc, ví dụ "[1, khoản 2 Điều 9]": số vẫn được tính, nguyên văn ghi ở đây.
+    malformed: list[str] = field(default_factory=list)
     warnings: list[str] = field(default_factory=list)
 
 
-def cited_numbers(text: str) -> list[int]:
-    """Các số [n] theo thứ tự xuất hiện lần đầu, không lặp. Nhận cả [1, 3] và khoảng [1-3], [1–3]."""
+def parse_citations(text: str) -> tuple[list[int], list[str]]:
+    """(các số [n] theo thứ tự xuất hiện lần đầu, không lặp; nguyên văn các trích dẫn sai định dạng).
+    Nhận cả [1, 3] và khoảng [1-3], [1–3]."""
     numbers: list[int] = []
-    for group in _CITATION.findall(text):
+    malformed: list[str] = []
+    for match in _CITATION.finditer(text):
+        group = match.group(1) or match.group(2)
+        if match.group(2):
+            malformed.append(match.group(0))
         for part in re.split(r"\s*[,;]\s*", group):
             if m := _RANGE.fullmatch(part):
                 low, high = int(m.group(1)), int(m.group(2))
                 numbers += range(low, high + 1) if 0 <= high - low <= MAX_RANGE else [low, high]
             else:
                 numbers.append(int(part))
-    return list(dict.fromkeys(numbers))
+    return list(dict.fromkeys(numbers)), malformed
+
+
+def cited_numbers(text: str) -> list[int]:
+    return parse_citations(text)[0]
 
 
 def section_label(heading_path: str) -> str:
@@ -103,7 +119,8 @@ def amendment_warnings(citations: Sequence[Citation], language: Language) -> lis
 def check_citations(answer: str, payloads: Sequence[dict[str, Any]], language: Language) -> CitationCheck:
     """`payloads` là chunk trong context theo đúng thứ tự đã đánh số (bắt đầu từ 1)."""
     check = CitationCheck()
-    for n in cited_numbers(answer):
+    numbers, check.malformed = parse_citations(answer)
+    for n in numbers:
         if not 1 <= n <= len(payloads):
             check.invalid.append(n)
             continue

@@ -123,7 +123,9 @@ class Judgment:
     # Model id do API trả về (có thể cụ thể hơn tên trong config).
     model: str | None = None
     usage: LlmUsage = field(default_factory=LlmUsage)
+    # Thời gian gọi API (gồm các lần retry), không gồm thời gian chờ giới hạn rpm/tpm và chờ trước khi retry (wait_ms).
     latency_ms: float = 0.0
+    wait_ms: float = 0.0
     error: str | None = None
 
     def scores(self) -> dict[str, float | None]:
@@ -142,6 +144,7 @@ class Judgment:
             "model": self.model,
             "usage": vars(self.usage),
             "latency_ms": round(self.latency_ms, 1),
+            "wait_ms": round(self.wait_ms, 1),
             "error": self.error,
         }
 
@@ -303,6 +306,8 @@ class OpenAICompatJudgeModel:
         self._count = TokenCounter(profile.model)
         # Số lời gọi liên tiếp bị timeout/5xx/mất kết nối, đếm qua các câu; về 0 khi có một lời gọi thành công.
         self.failures = 0
+        # Thời gian (ms) lần `complete` gần nhất phải chờ giới hạn rpm/tpm và chờ trước khi retry, không tính gọi API.
+        self.last_wait_ms = 0.0
 
     def build_input(self, instructions: str, case_text: str, cache_case: bool) -> list[dict[str, Any]]:
         fixed: dict[str, Any] = {"type": "input_text", "text": instructions}
@@ -355,13 +360,21 @@ class OpenAICompatJudgeModel:
         incomplete = finish if finish in ("length", "content_filter") or choice is None else None
         return ModelReply(text, usage, incomplete=incomplete, model=getattr(response, "model", None))
 
+    async def _wait(self, awaitable: Awaitable[Any]) -> None:
+        start = time.perf_counter()
+        await awaitable
+        self.last_wait_ms += (time.perf_counter() - start) * 1000
+
     async def complete(self, instructions: str, case_text: str, schema: dict[str, Any], cache_case: bool) -> ModelReply:
-        tokens = self._count(instructions) + self._count(case_text) + self.profile.max_output_tokens
+        # Ước tính cho giới hạn tpm và quota token ngày: token vào đếm bằng tokenizer, cộng token ra thường gặp (không
+        # phải max_output_tokens, vì gần như không lời gọi nào dùng hết).
+        tokens = self._count(instructions) + self._count(case_text) + self.profile.output_tokens_estimate
         last: Exception | None = None
+        self.last_wait_ms = 0.0
         for attempt in range(MAX_ATTEMPTS):
             if self.quota:
                 self.quota.check(tokens)
-            await self.limiter.acquire(tokens)
+            await self._wait(self.limiter.acquire(tokens))
             try:
                 if self.profile.api == "responses":
                     reply = await self._responses(instructions, case_text, schema, cache_case)
@@ -385,7 +398,7 @@ class OpenAICompatJudgeModel:
                         f"{self.name}: {self.failures} lỗi liên tiếp, lần cuối {type(exc).__name__}"
                     ) from exc
                 delay, last = 5.0, exc
-            await self._sleep(delay + 0.5)
+            await self._wait(self._sleep(delay + 0.5))
         assert last is not None
         raise last
 
@@ -416,7 +429,8 @@ class Judge:
         except (openai.OpenAIError, json.JSONDecodeError) as exc:
             judgment.error = type(exc).__name__
             judgment.usage.calls = judgment.usage.calls or 1
-        judgment.latency_ms = (time.perf_counter() - start) * 1000
+        judgment.wait_ms = getattr(self.model, "last_wait_ms", 0.0)
+        judgment.latency_ms = (time.perf_counter() - start) * 1000 - judgment.wait_ms
         return judgment
 
 

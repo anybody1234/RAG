@@ -268,6 +268,7 @@ class E2EEvaluator:
             "abstained": answer.abstained,
             "citations": [{"n": c.n, "chunk_id": c.chunk_id, "label": c.label} for c in answer.citations.citations],
             "invalid_citations": answer.citations.invalid,
+            "malformed_citations": answer.citations.malformed,
             "warnings": answer.citations.warnings,
             "usage": vars(answer.usage),
         }
@@ -330,6 +331,9 @@ def quality(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "recall": mean([r["retrieval"]["recall"] for r in answerable]),
         "context_precision": mean([r["retrieval"]["context_precision"] for r in answerable]),
         "invalid_citation_rate": rate(sum(bool(r["answer"]["invalid_citations"]) for r in rows), len(rows)),
+        # Trích dẫn có chữ trong ngoặc ("[1, khoản 2 Điều 9]"): số vẫn được map, nhưng UI phải hiện được nguyên văn.
+        "malformed_citation_rate": rate(sum(bool(r["answer"].get("malformed_citations")) for r in rows), len(rows)),
+        "malformed_citations": sum(len(r["answer"].get("malformed_citations", [])) for r in rows),
         "answers_with_amendment_warning": sum(bool(r["answer"]["warnings"]) for r in rows),
         "failed_answers": sum(r["answer"]["status"] == "failed" for r in rows),
     }
@@ -382,9 +386,11 @@ def summarize(questions: list[dict[str, Any]], judge_repeats: int) -> dict[str, 
         "answer": {key: usage_mean("answer", key) for key in keys},
         "judge_call": {key: usage_mean("judge", key) for key in keys},
     }
-    judge_latency = [run["latency_ms"] for q in questions for run in q.get("judge", {}).get("runs", [])]
-    if judge_latency:
-        summary["judge_latency_ms"] = latency_stats(judge_latency)
+    runs = [run for q in questions for run in q.get("judge", {}).get("runs", [])]
+    if runs:
+        # latency_ms: thời gian gọi API; wait_ms: thời gian chờ giới hạn rpm/tpm và chờ trước khi retry.
+        summary["judge_latency_ms"] = latency_stats([run["latency_ms"] for run in runs])
+        summary["judge_wait_ms"] = latency_stats([run.get("wait_ms", 0.0) for run in runs])
     if judge_repeats > 1:
         labels = [
             {run["correctness"] for run in q["judge"]["runs"] if not run["error"]} for q in questions if "judge" in q
@@ -569,7 +575,8 @@ def print_report(results: dict[str, Any]) -> None:
     overall = quality_rows["all"]["all"]
     print(f"Từ chối sai dù context có nguồn gold: {fmt(overall['false_refusal_gold_in_context'], 0)}; "
           f"câu trả lời có [n] sai: {fmt(overall['invalid_citation_rate'], 0)}; "
-          f"lỗi trả lời: {overall['failed_answers']}")
+          f"có trích dẫn sai định dạng: {fmt(overall['malformed_citation_rate'], 0)} "
+          f"({overall['malformed_citations']} lần); lỗi trả lời: {overall['failed_answers']}")
     lat = summary["latency_ms"]
     print("\nLatency (ms, p50 / p95, tuần tự): " + ", ".join(
         f"{step} {lat[step]['p50']:.0f} / {lat[step]['p95']:.0f}" for step in STEPS
@@ -577,8 +584,9 @@ def print_report(results: dict[str, Any]) -> None:
     for turn, stats in summary["ttft_ms"].items():
         print(f"TTFT user {turn} (n={stats['n']}): p50 {stats['p50']:.0f} / p95 {stats['p95']:.0f} ms")
     if "judge_latency_ms" in summary:
-        stats = summary["judge_latency_ms"]
-        print(f"Latency judge mỗi lời gọi: p50 {stats['p50']:.0f} / p95 {stats['p95']:.0f} ms")
+        stats, wait = summary["judge_latency_ms"], summary["judge_wait_ms"]
+        print(f"Latency judge mỗi lời gọi (gọi API): p50 {stats['p50']:.0f} / p95 {stats['p95']:.0f} ms; chờ giới hạn "
+              f"rpm/tpm và retry: p50 {wait['p50']:.0f} / p95 {wait['p95']:.0f} ms")
     cost, tokens = summary["cost_usd"], summary["tokens_mean"]
     print(f"\nChi phí: trả lời ${cost['pipeline_per_question']:.5f}/câu (tổng ${cost['pipeline_total']:.4f}), "
           f"judge ${cost['judge_per_question']:.5f}/câu (tổng ${cost['judge_total']:.4f})")

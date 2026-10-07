@@ -46,7 +46,7 @@ ANSWER_PROMPTS = {
 }
 
 _DOCUMENT_TAG = re.compile(r"<(/?)(documents?)\b", re.IGNORECASE)
-_CITATION = re.compile(r"\s*\[\d+(?:\s*[,;]\s*\d+)*\]")
+_CITATION = re.compile(r"\s*\[\d+(?:\s*[,;\-–]\s*\d+)*(?:\s*[,;:]\s*[^\]\d\s][^\]]*)?\]")
 
 
 def answer_instructions(prompt_version: str, language: Language) -> str:

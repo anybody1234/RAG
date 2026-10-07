@@ -1,3 +1,4 @@
+import asyncio
 import json
 from datetime import UTC, datetime
 from types import SimpleNamespace
@@ -25,6 +26,7 @@ from app.evaluation.judge import (
     parse_claims,
     retry_delay,
 )
+from app.ingestion.tokens import TokenCounter
 from app.retrieval.llm import LlmUsage
 
 SOL = ModelPrice(input=2.0, cached_input=0.1, cache_write=2.5, output=10.0)
@@ -246,6 +248,35 @@ async def test_two_failures_in_a_row_mark_the_provider_down():
     with pytest.raises(ProviderDownError, match="2 lỗi liên tiếp"):
         await Judge(chat_model(chat, sleep=Sleeps()), "judge-v1").judge(CASE)
     assert len(chat.calls) == 2  # mỗi lần thử trừ quota ngày: không thử tiếp
+
+
+@pytest.mark.asyncio
+async def test_wait_time_is_reported_apart_from_api_time():
+    async def short_sleep(seconds: float) -> None:
+        await asyncio.sleep(0.05)
+
+    chat = FakeChatCompletions(json.dumps(JUDGMENT), errors=[timeout_error()])
+    judgment = await Judge(chat_model(chat, sleep=short_sleep), "judge-v1").judge(CASE)
+    assert judgment.error is None and judgment.wait_ms >= 50 and judgment.latency_ms < judgment.wait_ms
+    assert judgment.record()["wait_ms"] >= 50
+
+
+@pytest.mark.asyncio
+async def test_token_estimate_uses_typical_output_not_max_output():
+    class SpyLimiter:
+        def __init__(self):
+            self.tokens: list[int] = []
+
+        async def acquire(self, tokens: int) -> None:
+            self.tokens.append(tokens)
+
+    limiter = SpyLimiter()
+    model = chat_model(FakeChatCompletions(json.dumps(JUDGMENT)), limiter=limiter)
+    judge = Judge(model, "judge-v1")
+    await judge.judge(CASE)
+    count = TokenCounter(GEMINI.model)
+    assert limiter.tokens == [count(judge.instructions) + count(format_case(CASE)) + GEMINI.output_tokens_estimate]
+    assert GEMINI.output_tokens_estimate < GEMINI.max_output_tokens
 
 
 @pytest.mark.asyncio

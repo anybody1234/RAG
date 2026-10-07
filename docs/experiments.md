@@ -441,3 +441,22 @@ Theo văn bản chứa nguồn gold (hybrid, Hit@5 / MRR@5):
 **Chi phí:** index Nghị định 356 $0.0083; index lại sau khi sửa chữ ký $0.0005 (1376/1381 chunk lấy từ cache); hai lần eval $0.0016. Ledger ghi tổng $0.0103 cho ngày 07/10.
 
 **Kết quả:** `eval/results/2026-10-07_v0.2-kho10_retrieval.json`, `eval/results/2026-10-07_v0.2-kho10-chuky_retrieval.json`.
+
+---
+
+## 8. Prompt judge: rò rỉ ví dụ từ golden set, và `judge-v2` (08/10/2026)
+
+**Không phải thí nghiệm chọn config.** Ghi lại để biết số chấm bằng judge nào thì tin được tới đâu.
+
+**Lỗi rò rỉ ở `judge-v1`.**
+- Ví dụ few-shot trong `eval/judges/judge-v1.md` gần như là câu g034 của golden v1 (thời gian thử việc tối đa với trình độ cao đẳng), kể cả nguyên văn đoạn trích khoản 2 Điều 25.
+- Khi chấm g034, judge đã thấy sẵn "expected output". Nếu g034 lọt vào bộ mẫu hiệu chỉnh, mức đồng thuận bị đẩy lên giả tạo.
+- `judge-v1` được giữ nguyên, vì đã dùng để chấm `2026-10-08_v0.2-luna_e2e-n5.json`. **Mọi số chấm bằng `judge-v1` chỉ dùng để thử quy trình**, không dùng làm số liệu.
+
+**`judge-v2`** (config dùng từ 08/10):
+- Ví dụ thay bằng luật hư cấu ("Luật Cây xanh đô thị", "Ruritania Tree Protection Act"), không trùng câu hỏi hay Điều nguồn nào của golden v1, v2 và bản nháp v2.
+- Test `backend/tests/test_judge_prompts.py` so mọi chuỗi 7 từ liên tiếp (sau `normalize_for_match`) của prompt judge với câu hỏi, lịch sử, đoạn trích và đáp án chuẩn của mọi file `golden_*.jsonl`. Test bắt được lỗi của v1 (25 chuỗi trùng g034). `judge-v1` được bỏ qua có chủ đích.
+- Thêm quy tắc cho câu trả lời từ chối: câu "tài liệu không nói về Y" là nói về tài liệu, không phải claim.
+  - Groq (`openai/gpt-oss-120b`) chấm bằng v1 đã tính câu này là claim không được ủng hộ, kéo faithfulness của câu từ chối có giải thích xuống (g061: 0.667).
+  - Lỗi này lặp lại ở mọi câu từ chối có kèm giải thích, nên làm lệch faithfulness một cách hệ thống.
+- Kiểm chứng bằng Groq trên g061 và g081: xem phần kết quả trong TASKS.md P5.
