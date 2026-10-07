@@ -1,0 +1,2446 @@
+{
+ "kind": "ttft",
+ "run_at": "2026-10-06T22:13:04+07:00",
+ "config_version": "v0.2",
+ "overrides": [],
+ "git": {
+  "commit": "111c683",
+  "dirty": true
+ },
+ "variants": [
+  "gpt-6.1-sol:low",
+  "gpt-6-luna:none",
+  "gpt-6-luna:low"
+ ],
+ "questions_n": 28,
+ "steps_ms": {
+  "rewrite_follow_up": {
+   "p50": 1702.2,
+   "p95": 2503.8,
+   "mean": 1834.7,
+   "max": 2747.2
+  },
+  "retrieval": {
+   "p50": 407.4,
+   "p95": 810.1,
+   "mean": 466.8,
+   "max": 1392.9
+  }
+ },
+ "total_cost_usd": 0.1838,
+ "notes": [
+  "llm_ttft: từ lúc gửi request tới token câu trả lời đầu tiên, gồm thời gian suy luận.",
+  "user_ttft = rewrite + retrieval + llm_ttft; chưa tính backend và mạng tới trình duyệt.",
+  "Chạy tuần tự, không tải đồng thời; câu đầu tiên chạy thêm một lần để mở kết nối, không tính."
+ ],
+ "summary": {
+  "gpt-6.1-sol:low": {
+   "n": 28,
+   "failed": 0,
+   "llm_ttft_ms": {
+    "p50": 1713.3,
+    "p95": 2469.9,
+    "mean": 1730.0,
+    "max": 2752.2
+   },
+   "llm_total_ms": {
+    "p50": 4074.2,
+    "p95": 7225.1,
+    "mean": 4115.2,
+    "max": 8879.2
+   },
+   "user_ttft_ms": {
+    "first_turn": {
+     "p50": 2274.9,
+     "p95": 3004.5,
+     "mean": 2206.7,
+     "max": 3673.3,
+     "n": 19
+    },
+    "follow_up": {
+     "p50": 3949.2,
+     "p95": 4865.5,
+     "mean": 4010.7,
+     "max": 4894.8,
+     "n": 9
+    }
+   },
+   "output_tokens_mean": 150.7,
+   "reasoning_tokens_mean": 0.0,
+   "input_tokens_mean": 2160.1,
+   "cost_usd_mean": 0.005827,
+   "abstained": 7,
+   "invalid_citations": 0
+  },
+  "gpt-6-luna:none": {
+   "n": 28,
+   "failed": 0,
+   "llm_ttft_ms": {
+    "p50": 966.5,
+    "p95": 1431.1,
+    "mean": 1102.1,
+    "max": 2748.2
+   },
+   "llm_total_ms": {
+    "p50": 1862.2,
+    "p95": 3323.7,
+    "mean": 2068.0,
+    "max": 5242.8
+   },
+   "user_ttft_ms": {
+    "first_turn": {
+     "p50": 1412.3,
+     "p95": 2043.0,
+     "mean": 1497.0,
+     "max": 2355.0,
+     "n": 19
+    },
+    "follow_up": {
+     "p50": 3184.4,
+     "p95": 5026.8,
+     "mean": 3555.6,
+     "max": 5409.4,
+     "n": 9
+    }
+   },
+   "output_tokens_mean": 95.1,
+   "reasoning_tokens_mean": 0.0,
+   "input_tokens_mean": 2160.1,
+   "cost_usd_mean": 0.000264,
+   "abstained": 8,
+   "invalid_citations": 0
+  },
+  "gpt-6-luna:low": {
+   "n": 28,
+   "failed": 0,
+   "llm_ttft_ms": {
+    "p50": 2513.2,
+    "p95": 4541.7,
+    "mean": 2694.8,
+    "max": 6801.9
+   },
+   "llm_total_ms": {
+    "p50": 3217.6,
+    "p95": 6183.5,
+    "mean": 3550.5,
+    "max": 7368.0
+   },
+   "user_ttft_ms": {
+    "first_turn": {
+     "p50": 2479.2,
+     "p95": 4270.5,
+     "mean": 2756.8,
+     "max": 4869.2,
+     "n": 19
+    },
+    "follow_up": {
+     "p50": 5082.1,
+     "p95": 8346.0,
+     "mean": 5851.0,
+     "max": 8868.0,
+     "n": 9
+    }
+   },
+   "output_tokens_mean": 93.6,
+   "reasoning_tokens_mean": 0.0,
+   "input_tokens_mean": 2160.1,
+   "cost_usd_mean": 0.000263,
+   "abstained": 7,
+   "invalid_citations": 0
+  }
+ },
+ "questions": [
+  {
+   "id": "g001",
+   "type": "single_article",
+   "language": "vi",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 434.0,
+   "chunks": [
+    "vi-bo-luat-lao-dong-2019:0004",
+    "vi-bo-luat-lao-dong-2019:0133",
+    "vi-bo-luat-lao-dong-2019:0011",
+    "vi-bo-luat-lao-dong-2019:0181",
+    "vi-bo-luat-lao-dong-2019:0009"
+   ],
+   "answers": {
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1487.6,
+     "latency_ms": 2947.7,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1988,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 98,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.004956
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Theo khoản 9 Điều 3 Bộ luật Lao động, **quấy rối tình dục tại nơi làm việc** là hành vi có tính chất tình dục của bất kỳ người nào đối với người khác tại nơi làm việc mà không được người đó mong muốn hoặc chấp nhận.[1]\n\n**Nơi làm việc** là bất kỳ nơi nào mà người lao động thực tế làm việc theo thỏa thuận hoặc phân công của người sử dụng lao động.[1]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1222.9,
+     "latency_ms": 1888.5,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1988,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 84,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0002408
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Quấy rối tình dục tại nơi làm việc là hành vi có tính chất tình dục của bất kỳ người nào đối với người khác tại nơi làm việc mà người đó không mong muốn hoặc không chấp nhận. [1]\n\n“Nơi làm việc” là bất kỳ nơi nào người lao động thực tế làm việc theo thỏa thuận hoặc phân công của người sử dụng lao động. [1]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1845.6,
+     "latency_ms": 2581.1,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1988,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 92,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0002448
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Quấy rối tình dục tại nơi làm việc là hành vi có tính chất tình dục của bất kỳ người nào đối với người khác tại nơi làm việc mà người đó không mong muốn hoặc chấp nhận. Nơi làm việc là bất kỳ nơi nào người lao động thực tế làm việc theo thỏa thuận hoặc phân công của người sử dụng lao động (khoản 9 Điều 3 Bộ luật Lao động). [1]"
+    }
+   }
+  },
+  {
+   "id": "g006",
+   "type": "single_article",
+   "language": "vi",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 390.4,
+   "chunks": [
+    "vi-bo-luat-lao-dong-2019:0133",
+    "vi-bo-luat-lao-dong-2019:0025",
+    "vi-bo-luat-lao-dong-2019:0135",
+    "vi-bo-luat-lao-dong-2019:0190",
+    "vi-bo-luat-lao-dong-2019:0134"
+   ],
+   "answers": {
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1342.0,
+     "latency_ms": 3050.0,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2261,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 198,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00032510000000000004
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Theo khoản 2 Điều 118 Bộ luật Lao động, nội quy lao động phải có những nội dung chủ yếu sau đây [1]:\n\n- Thời giờ làm việc, thời giờ nghỉ ngơi; trật tự tại nơi làm việc; an toàn, vệ sinh lao động [1].\n- Phòng, chống quấy rối tình dục tại nơi làm việc; trình tự, thủ tục xử lý hành vi quấy rối tình dục tại nơi làm việc [1].\n- Bảo vệ tài sản, bí mật kinh doanh, bí mật công nghệ và sở hữu trí tuệ của người sử dụng lao động [1].\n- Trường hợp được tạm thời chuyển người lao động làm việc khác so với hợp đồng lao động [1].\n- Các hành vi vi phạm kỷ luật lao động và hình thức xử lý kỷ luật lao động; trách nhiệm vật chất; người có thẩm quyền xử lý kỷ luật lao động [1]."
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1770.6,
+     "latency_ms": 3327.5,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2261,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 218,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0003351
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Nội quy lao động phải có các nội dung chủ yếu sau đây theo khoản 2 Điều 118 Bộ luật Lao động: [1]\n\n- Thời giờ làm việc, thời giờ nghỉ ngơi; [1]\n- Trật tự tại nơi làm việc; an toàn, vệ sinh lao động; [1]\n- Phòng, chống quấy rối tình dục tại nơi làm việc và trình tự, thủ tục xử lý hành vi quấy rối tình dục tại nơi làm việc; [1]\n- Bảo vệ tài sản, bí mật kinh doanh, bí mật công nghệ và sở hữu trí tuệ của người sử dụng lao động; [1]\n- Trường hợp được tạm thời chuyển người lao động làm việc khác so với hợp đồng lao động; [1]\n- Hành vi vi phạm kỷ luật lao động và các hình thức xử lý kỷ luật lao động; [1]\n- Trách nhiệm vật chất; [1]\n- Người có thẩm quyền xử lý kỷ luật lao động. [1]"
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2266.7,
+     "latency_ms": 5638.3,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2261,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 261,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.007132
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Theo khoản 2 Điều 118 Bộ luật Lao động, **nội quy lao động phải có 9 nội dung chủ yếu** sau đây:[1]\n\n1. Thời giờ làm việc, thời giờ nghỉ ngơi.[1]\n2. Trật tự tại nơi làm việc.[1]\n3. An toàn, vệ sinh lao động.[1]\n4. Phòng, chống quấy rối tình dục tại nơi làm việc; trình tự, thủ tục xử lý hành vi quấy rối tình dục tại nơi làm việc.[1]\n5. Việc bảo vệ tài sản và bí mật kinh doanh, bí mật công nghệ, sở hữu trí tuệ của người sử dụng lao động.[1]\n6. Trường hợp được tạm thời chuyển người lao động làm việc khác so với hợp đồng lao động.[1]\n7. Các hành vi vi phạm kỷ luật lao động của người lao động và các hình thức xử lý kỷ luật lao động.[1]\n8. Trách nhiệm vật chất.[1]\n9. Người có thẩm quyền xử lý kỷ luật lao động.[1]\n\nNội dung nội quy lao động **không được trái với pháp luật về lao động và quy định của pháp luật có liên quan**.[1]"
+    }
+   }
+  },
+  {
+   "id": "g011",
+   "type": "single_article",
+   "language": "en",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 358.3,
+   "chunks": [
+    "en-labour-code-2019:0035",
+    "en-labour-code-2019:0036",
+    "en-labour-code-2019:0034",
+    "en-labour-code-2019:0027",
+    "en-labour-code-2019:0041"
+   ],
+   "answers": {
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1217.8,
+     "latency_ms": 2876.9,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2348,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 204,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0003368
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "An employee may unilaterally terminate an employment contract without prior notice if any of these situations applies under Article 35(2) of the Labour Code [1]:\n\n- The employee is not assigned the agreed work or workplace, or is not given the agreed working conditions, except as provided in Article 29 [1].\n- The employee is not paid adequately or on schedule, except as provided in Article 97(4) [1].\n- The employee is maltreated, assaulted, or insulted in a way that affects their health, dignity, or honor, or is forced to work against their will [1].\n- The employee is sexually harassed in the workplace [1].\n- The employee is pregnant and must stop working under Article 138(1) [1].\n- The employee reaches retirement age, unless the parties agree otherwise [1].\n- The employer fails to provide truthful information under Article 16(1), in a way that affects performance of the employment contract [1]."
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2571.9,
+     "latency_ms": 6251.1,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2348,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 253,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.007226
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      4
+     ],
+     "invalid_citations": [],
+     "answer": "An employee may unilaterally terminate an employment contract **without prior notice** in the following situations under Article 35(2) of the Labour Code: [1]\n\n- The employee is not assigned the agreed work or workplace, or is not provided the agreed working conditions, except in the cases specified in Article 29. [1]\n- The employee is not paid adequately or on schedule, except in the case specified in Article 97(4). [1]\n- The employer maltreats, assaults, or physically or verbally insults the employee in a manner affecting their health, dignity or honor, or forces them to work against their will. [1]\n- The employee is sexually harassed in the workplace. [1]\n- The employee is pregnant and must stop working in accordance with Article 138(1). [1]\n- The employee reaches the retirement age specified in Article 169, unless the parties agree otherwise. [1]\n- The employer provides untruthful information contrary to Article 16(1), affecting performance of the employment contract. [1]\n\n**During probation**, an employee may also terminate the probation contract or employment contract without prior notice or any compensation obligation under Article 27(2). [4]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1063.5,
+     "latency_ms": 2951.0,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2348,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 215,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0003423
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "An employee may unilaterally terminate an employment contract without prior notice if any of these situations applies under Article 35(2):\n\n- The employee is not assigned the agreed work or workplace, or is not provided the agreed working conditions, except as provided in Article 29. [1]\n- The employee is not paid adequately or on schedule, except as provided in Article 97(4). [1]\n- The employee is maltreated, assaulted, or physically or verbally insulted by the employer in a way that affects the employee’s health, dignity, or honor, or is forced to work against their will. [1]\n- The employee is sexually harassed in the workplace. [1]\n- The employee is pregnant and has to stop working under Article 138(1). [1]\n- The employee reaches retirement age under Article 169, unless the parties agree otherwise. [1]\n- The employer fails to provide truthful information under Article 16(1) in a way that affects performance of the employment contract. [1]"
+    }
+   }
+  },
+  {
+   "id": "g016",
+   "type": "single_article",
+   "language": "en",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 1392.9,
+   "chunks": [
+    "en-law-on-enterprises-2020:0123",
+    "en-law-on-enterprises-2020:0116",
+    "en-law-on-enterprises-2020:0026",
+    "en-law-on-enterprises-2020:0130",
+    "en-law-on-enterprises-2020:0117"
+   ],
+   "answers": {
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2280.4,
+     "latency_ms": 5237.0,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2427,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 176,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.006614
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      4
+     ],
+     "invalid_citations": [],
+     "answer": "Yes. Under Article 120(3), **for three years from the issuance date of the Certificate of Enterprise Registration**, a founding shareholder’s ordinary shares may be transferred to another founding shareholder, but a transfer to a person who is not a founding shareholder requires approval by the General Meeting of Shareholders (GMS); the transferor cannot vote on that transfer.[1]\n\nThe three-year restriction does **not** apply to:\n- Additional shares acquired by founding shareholders after enterprise registration.[1]\n- Shares that have already been transferred to persons who are not founding shareholders.[1]\n\nAfter the three-year period, the Article 120(3) restriction no longer applies, but restrictions in the company’s charter may still apply; under Article 127(1), charter restrictions are effective only if written in the certificates of the shares subject to restriction.[1][4]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 962.1,
+     "latency_ms": 2324.2,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2427,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 127,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00030620000000000007
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      4
+     ],
+     "invalid_citations": [],
+     "answer": "Yes. For three years from the date the Certificate of Enterprise Registration is issued, a founding shareholder may transfer founding ordinary shares to another founding shareholder, but may transfer them to a non-founding shareholder only with the General Meeting of Shareholders’ approval; the transferring shareholder cannot vote on that approval. [1]\n\nThese restrictions do not apply to additional shares acquired by founding shareholders after registration or to shares already transferred to non-founding shareholders. [1] Outside that restriction, shares may generally be transferred freely, subject to restrictions in the company’s charter and other applicable cases stated in the Law on Enterprises. [4]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 3476.3,
+     "latency_ms": 4799.8,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2427,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 131,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00030820000000000006
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      4
+     ],
+     "invalid_citations": [],
+     "answer": "Yes. For three years from the date the Certificate of Enterprise Registration is issued, a founding shareholder may transfer founding ordinary shares to another founding shareholder; transfer to a non-founding shareholder requires acceptance by the General Meeting of Shareholders (GMS), and the transferring shareholder cannot vote on that approval. [1]\n\nThese restrictions do not apply to additional shares the founder acquired after registration, or to shares already transferred to a non-founding shareholder. [1] More generally, shares may be transferred freely except for this rule and other restrictions in the company’s charter; charter restrictions apply only if written in the relevant share certificates. [4]"
+    }
+   }
+  },
+  {
+   "id": "g021",
+   "type": "single_article",
+   "language": "vi",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 704.0,
+   "chunks": [
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005",
+    "en-personal-data-protection-law-2025:0009",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0023"
+   ],
+   "answers": {
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 834.8,
+     "latency_ms": 1695.5,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2268,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 84,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00026880000000000003
+     },
+     "abstained": false,
+     "citations": [],
+     "invalid_citations": [],
+     "answer": "Sự đồng ý chỉ có hiệu lực khi dựa trên sự tự nguyện và chủ thể dữ liệu cá nhân biết rõ loại dữ liệu được xử lý, mục đích xử lý, bên kiểm soát dữ liệu cá nhân (hoặc bên kiểm soát và xử lý dữ liệu cá nhân), cùng các quyền và nghĩa vụ của mình. [1, khoản 2 Điều 9]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1741.1,
+     "latency_ms": 2562.3,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2268,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 83,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0002683
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Sự đồng ý chỉ có hiệu lực khi dựa trên sự tự nguyện và chủ thể dữ liệu biết rõ: loại dữ liệu được xử lý, mục đích xử lý; bên kiểm soát dữ liệu cá nhân hoặc bên kiểm soát và xử lý dữ liệu cá nhân; và các quyền, nghĩa vụ của mình (khoản 2 Điều 9). [1]"
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1604.2,
+     "latency_ms": 4921.0,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2268,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 220,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.006736
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Theo khoản 2 Điều 9 Luật Bảo vệ dữ liệu cá nhân, sự đồng ý của chủ thể dữ liệu cá nhân **chỉ có hiệu lực khi dựa trên sự tự nguyện và biết rõ** các thông tin sau đây:[1]\n- Loại dữ liệu cá nhân được xử lý và mục đích xử lý dữ liệu cá nhân.[1]\n- Bên kiểm soát dữ liệu cá nhân hoặc bên kiểm soát và xử lý dữ liệu cá nhân.[1]\n- Các quyền, nghĩa vụ của chủ thể dữ liệu cá nhân.[1]\n\nSự đồng ý phải được thể hiện bằng phương thức rõ ràng, cụ thể, có thể in, sao chép bằng văn bản, bao gồm cả dạng điện tử hoặc định dạng kiểm chứng được; phải thể hiện sự đồng ý đối với từng mục đích và không được bắt buộc đồng ý với các mục đích khác với nội dung thỏa thuận.[1] **Sự im lặng hoặc không phản hồi không được coi là sự đồng ý.**[1]"
+    }
+   }
+  },
+  {
+   "id": "g026",
+   "type": "single_article",
+   "language": "vi",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 497.7,
+   "chunks": [
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0017",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0018",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0038",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005"
+   ],
+   "answers": {
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1695.3,
+     "latency_ms": 2316.5,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2495,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 55,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.000277
+     },
+     "abstained": true,
+     "citations": [
+      1,
+      5
+     ],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu. Các tài liệu được cung cấp quy định về quyền yêu cầu xóa dữ liệu cá nhân theo Luật Bảo vệ dữ liệu cá nhân Việt Nam, không nêu các trường hợp theo GDPR.[1][5]"
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2049.3,
+     "latency_ms": 3103.1,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2495,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 66,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00565
+     },
+     "abstained": true,
+     "citations": [
+      1,
+      3
+     ],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu. Các tài liệu được cung cấp quy định về quyền yêu cầu xóa, hủy dữ liệu cá nhân theo Điều 14 Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 của Việt Nam, không phải GDPR.[1][3]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 870.8,
+     "latency_ms": 1343.4,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2495,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 43,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.000271
+     },
+     "abstained": true,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu. Tài liệu được cung cấp trích Luật Bảo vệ dữ liệu cá nhân Việt Nam, không nêu các trường hợp theo GDPR. [1]"
+    }
+   }
+  },
+  {
+   "id": "g031",
+   "type": "single_article",
+   "language": "vi",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 339.6,
+   "chunks": [
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012",
+    "en-personal-data-protection-law-2025:0010",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0023",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0031"
+   ],
+   "answers": {
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1307.5,
+     "latency_ms": 2664.1,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2408,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 83,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.005646
+     },
+     "abstained": true,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu.\n\nCác tài liệu chỉ quy định theo Luật Bảo vệ dữ liệu cá nhân Việt Nam: khoản 4 Điều 10 nêu rằng việc thực hiện yêu cầu rút lại sự đồng ý không áp dụng đối với hoạt động xử lý dữ liệu cá nhân trước thời điểm chủ thể dữ liệu cá nhân yêu cầu rút lại sự đồng ý.[1]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 798.5,
+     "latency_ms": 1568.3,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2408,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 70,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00027580000000000004
+     },
+     "abstained": true,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu. Tài liệu được cung cấp nêu rằng theo Luật Bảo vệ dữ liệu cá nhân Việt Nam, việc rút lại sự đồng ý không áp dụng đối với hoạt động xử lý đã diễn ra trước thời điểm yêu cầu rút lại; tài liệu không đề cập GDPR.[1]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1927.1,
+     "latency_ms": 2557.4,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2408,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 62,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0002718
+     },
+     "abstained": true,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu. Các tài liệu chỉ quy định theo Luật Bảo vệ dữ liệu cá nhân Việt Nam rằng việc rút lại sự đồng ý không áp dụng đối với hoạt động xử lý dữ liệu đã diễn ra trước thời điểm yêu cầu rút lại.[1]"
+    }
+   }
+  },
+  {
+   "id": "g036",
+   "type": "numeric",
+   "language": "en",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 462.8,
+   "chunks": [
+    "en-labour-code-2019:0035",
+    "en-labour-code-2019:0020",
+    "en-labour-code-2019:0036",
+    "vi-bo-luat-lao-dong-2019:0042",
+    "en-labour-code-2019:0038"
+   ],
+   "answers": {
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 883.1,
+     "latency_ms": 1865.6,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2046,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 56,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00023260000000000002
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      4
+     ],
+     "invalid_citations": [],
+     "answer": "An employee with an indefinite-term employment contract must give at least 45 days’ notice before quitting. [1][4] This notice is not required if one of the no-prior-notice circumstances in Article 35(2) applies. [1]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2483.8,
+     "latency_ms": 2846.2,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2046,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 34,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00022160000000000002
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      4
+     ],
+     "invalid_citations": [],
+     "answer": "An employee with an indefinite-term employment contract must give at least **45 days’ notice** before unilaterally terminating it.[1][4]"
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1300.2,
+     "latency_ms": 3289.4,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2046,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 112,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.005212
+     },
+     "abstained": false,
+     "citations": [
+      4,
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "An employee with an indefinite-term employment contract must give the employer **at least 45 days’ notice** before quitting, under Article 35(1)(a) of the Labour Code.[4]\n\nExceptions:\n- Certain special fields and jobs have notice periods prescribed by the Government; the documents do not specify those periods.[4]\n- No prior notice is required in the circumstances listed in Article 35(2), including workplace sexual harassment, maltreatment or forced labour, and inadequate or late payment (subject to the stated exception).[1]"
+    }
+   }
+  },
+  {
+   "id": "g041",
+   "type": "numeric",
+   "language": "en",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 335.2,
+   "chunks": [
+    "en-law-on-enterprises-2020:0047",
+    "en-law-on-enterprises-2020:0055",
+    "en-law-on-enterprises-2020:0209",
+    "en-law-on-enterprises-2020:0075",
+    "en-law-on-enterprises-2020:0053"
+   ],
+   "answers": {
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2440.6,
+     "latency_ms": 2692.1,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1577,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 23,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00016920000000000002
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "A multiple-member limited liability company must have **2 to 50 members**. [1]"
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1514.5,
+     "latency_ms": 2237.6,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1577,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 43,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.003584
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "A multiple-member limited liability company in Vietnam can have **2 to 50 members**, who may be organizations or individuals, under Article 46(1) of the Law on Enterprises.[1]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 743.3,
+     "latency_ms": 1082.4,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1577,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 29,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0001722
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "A multiple-member limited liability company must have **2 to 50 members**, who may be organizations or individuals. [1]"
+    }
+   }
+  },
+  {
+   "id": "g046",
+   "type": "numeric",
+   "language": "vi",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 330.9,
+   "chunks": [
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0006",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0017",
+    "en-personal-data-protection-law-2025:0010"
+   ],
+   "answers": {
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1213.7,
+     "latency_ms": 2304.8,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2400,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 81,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00561
+     },
+     "abstained": true,
+     "citations": [
+      2
+     ],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu. Các tài liệu chỉ quy định theo Luật Bảo vệ dữ liệu cá nhân Việt Nam rằng bên kiểm soát dữ liệu cá nhân, bên kiểm soát và xử lý dữ liệu cá nhân phải kịp thời thực hiện yêu cầu trong thời hạn theo quy định của pháp luật, không nêu thời hạn phản hồi theo GDPR.[2]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1237.4,
+     "latency_ms": 1858.9,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2400,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 58,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.000269
+     },
+     "abstained": true,
+     "citations": [
+      2
+     ],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu. Tài liệu chỉ nêu rằng bên kiểm soát dữ liệu cá nhân phải thực hiện yêu cầu trong thời hạn theo quy định của pháp luật, nhưng không xác định thời hạn theo GDPR hay thời hạn cụ thể. [2]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 3873.1,
+     "latency_ms": 4038.5,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2400,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 11,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0002455
+     },
+     "abstained": true,
+     "citations": [],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu."
+    }
+   }
+  },
+  {
+   "id": "g051",
+   "type": "paraphrase",
+   "language": "vi",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 430.9,
+   "chunks": [
+    "vi-bo-luat-lao-dong-2019:0113",
+    "vi-bo-luat-lao-dong-2019:0155",
+    "vi-bo-luat-lao-dong-2019:0115",
+    "vi-bo-luat-lao-dong-2019:0043",
+    "vi-bo-luat-lao-dong-2019:0051"
+   ],
+   "answers": {
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 824.9,
+     "latency_ms": 2006.9,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2107,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 115,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00026820000000000007
+     },
+     "abstained": false,
+     "citations": [
+      4,
+      5
+     ],
+     "invalid_citations": [],
+     "answer": "Có. Nếu công ty không trả đủ lương hoặc trả lương không đúng thời hạn, bạn có quyền đơn phương chấm dứt hợp đồng lao động không cần báo trước theo điểm b khoản 2 Điều 35 Bộ luật Lao động. [4]\n\nNếu công ty đơn phương chấm dứt hợp đồng trái pháp luật thì áp dụng các nghĩa vụ tại Điều 41; tuy nhiên, tài liệu không nêu đủ các dữ kiện để xác định trường hợp của bạn có thuộc tình huống đó hay không. [5]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2048.3,
+     "latency_ms": 3324.9,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2107,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 130,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00027570000000000003
+     },
+     "abstained": false,
+     "citations": [
+      4,
+      5
+     ],
+     "invalid_citations": [],
+     "answer": "Có. Nếu công ty không trả đủ lương hoặc trả lương không đúng thời hạn, bạn có quyền đơn phương chấm dứt hợp đồng lao động mà không cần báo trước theo điểm b khoản 2 Điều 35 Bộ luật Lao động. [4]\n\nNếu việc chấm dứt hợp đồng bị xác định là trái pháp luật, bạn có thể phải chịu hậu quả theo quy định; tài liệu nêu nghĩa vụ của người sử dụng lao động khi đơn phương chấm dứt trái pháp luật, nhưng không nêu hậu quả đối với người lao động trong trường hợp này. [5]"
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1109.0,
+     "latency_ms": 3237.2,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2107,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 116,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.005374
+     },
+     "abstained": false,
+     "citations": [
+      4
+     ],
+     "invalid_citations": [],
+     "answer": "**Có.** Theo điểm b khoản 2 Điều 35 Bộ luật Lao động, bạn có quyền đơn phương chấm dứt hợp đồng lao động **không cần báo trước** nếu công ty không trả đủ lương hoặc trả lương không đúng thời hạn, trừ trường hợp quy định tại khoản 4 Điều 97.[4]\n\nTài liệu được cung cấp không có nội dung khoản 4 Điều 97, nên chưa thể xác định việc công ty nợ lương bạn hai tháng có thuộc ngoại lệ này hay không."
+    }
+   }
+  },
+  {
+   "id": "g056",
+   "type": "paraphrase",
+   "language": "vi",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 332.7,
+   "chunks": [
+    "vi-luat-doanh-nghiep-2020:0068",
+    "vi-luat-doanh-nghiep-2020:0069",
+    "vi-luat-doanh-nghiep-2020:0109",
+    "vi-luat-doanh-nghiep-2020:0008",
+    "vi-luat-doanh-nghiep-2020:0033"
+   ],
+   "answers": {
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2969.8,
+     "latency_ms": 3820.6,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2258,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 77,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00026430000000000003
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Không thể cùng lập **một công ty trách nhiệm hữu hạn hai thành viên trở lên** nếu cả 60 người đều là thành viên, vì loại công ty này chỉ có từ 02 đến 50 thành viên.[1] Tài liệu không nêu cách thức để cả 60 người cùng góp vốn thành lập một công ty trách nhiệm hữu hạn."
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1987.5,
+     "latency_ms": 4335.9,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2258,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 111,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.005626
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "**Không, nếu cả 60 người đều là thành viên góp vốn của cùng một công ty trách nhiệm hữu hạn.** Khoản 1 Điều 46 Luật Doanh nghiệp quy định công ty trách nhiệm hữu hạn hai thành viên trở lên chỉ có từ **02 đến 50 thành viên** là tổ chức, cá nhân.[1]\n\nVì vậy, để thành lập công ty theo loại hình này, nhóm phải giới hạn số người trực tiếp là thành viên công ty ở mức tối đa 50 người.[1]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 958.8,
+     "latency_ms": 1849.2,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2258,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 77,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00026430000000000003
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      3
+     ],
+     "invalid_citations": [],
+     "answer": "Không thể cả 60 người cùng làm thành viên của một công ty trách nhiệm hữu hạn hai thành viên trở lên, vì loại hình này chỉ có từ 02 đến 50 thành viên. [1] Tài liệu không nêu giới hạn số người góp vốn hoặc chủ sở hữu đối với công ty trách nhiệm hữu hạn một thành viên. [3]"
+    }
+   }
+  },
+  {
+   "id": "g061",
+   "type": "paraphrase",
+   "language": "vi",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 577.7,
+   "chunks": [
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0036",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0037",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+    "en-personal-data-protection-law-2025:0028",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005"
+   ],
+   "answers": {
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1244.7,
+     "latency_ms": 3041.7,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2451,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 96,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.005862
+     },
+     "abstained": true,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu.\n\nCác tài liệu chỉ quy định theo Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15 của Việt Nam: khoản 5 Điều 28 cho phép chủ thể dữ liệu cá nhân yêu cầu ngừng nhận thông tin từ dịch vụ quảng cáo và buộc tổ chức, cá nhân kinh doanh dịch vụ quảng cáo cung cấp cơ chế, ngừng quảng cáo theo yêu cầu đó.[1]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1430.6,
+     "latency_ms": 2418.1,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2451,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 88,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00028910000000000003
+     },
+     "abstained": true,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu. Các tài liệu chỉ nêu quy định của Luật Bảo vệ dữ liệu cá nhân Việt Nam, không đề cập GDPR. Theo Điều 28 khoản 5, chủ thể dữ liệu có quyền yêu cầu ngừng nhận thông tin từ dịch vụ quảng cáo và bên cung cấp dịch vụ phải có cơ chế tiếp nhận yêu cầu, đồng thời ngừng quảng cáo. [1]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1416.1,
+     "latency_ms": 2437.1,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2451,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 107,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00029860000000000005
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      3,
+      5
+     ],
+     "invalid_citations": [],
+     "answer": "Các tài liệu không đề cập đến GDPR; theo Luật Bảo vệ dữ liệu cá nhân Việt Nam, bạn có quyền yêu cầu ngừng nhận thông tin từ dịch vụ quảng cáo, và đơn vị kinh doanh dịch vụ quảng cáo phải cung cấp cơ chế để bạn yêu cầu và ngừng quảng cáo theo yêu cầu đó.[1] Ngoài ra, bạn có quyền yêu cầu rút lại sự đồng ý cho phép xử lý dữ liệu cá nhân theo quy định tại Điều 10.[3][5]"
+    }
+   }
+  },
+  {
+   "id": "g066",
+   "type": "multi_hop",
+   "language": "vi",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 364.9,
+   "chunks": [
+    "vi-bo-luat-lao-dong-2019:0059",
+    "vi-bo-luat-lao-dong-2019:0058",
+    "vi-bo-luat-lao-dong-2019:0157",
+    "vi-bo-luat-lao-dong-2019:0052",
+    "vi-bo-luat-lao-dong-2019:0051"
+   ],
+   "answers": {
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 830.9,
+     "latency_ms": 2193.8,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1723,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 150,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0002473
+     },
+     "abstained": false,
+     "citations": [
+      2,
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "**Trợ cấp thôi việc** được tính bằng **mỗi năm làm việc được hưởng ½ tháng tiền lương**; **trợ cấp mất việc làm** được tính bằng **mỗi năm làm việc được hưởng 01 tháng tiền lương, nhưng tối thiểu bằng 02 tháng tiền lương**.[2][1]\n\nCả hai khoản đều tính theo thời gian làm việc thực tế sau khi trừ thời gian đã tham gia bảo hiểm thất nghiệp và thời gian đã được chi trả trợ cấp thôi việc hoặc trợ cấp mất việc làm; tiền lương làm căn cứ là bình quân 06 tháng liền kề theo hợp đồng lao động trước khi thôi việc hoặc mất việc.[2][1]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2823.5,
+     "latency_ms": 4138.4,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1723,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 154,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0002493
+     },
+     "abstained": false,
+     "citations": [
+      2,
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "- **Trợ cấp thôi việc:** Mỗi năm làm việc được trợ cấp **bằng ½ tháng tiền lương**. [2]\n- **Trợ cấp mất việc làm:** Mỗi năm làm việc được trợ cấp **bằng 01 tháng tiền lương**, nhưng tổng mức hưởng **ít nhất bằng 02 tháng tiền lương**. [1]\n\nCả hai đều tính theo thời gian làm việc sau khi trừ thời gian tham gia bảo hiểm thất nghiệp và thời gian đã được chi trả trợ cấp thôi việc hoặc trợ cấp mất việc làm; tiền lương tính trợ cấp là bình quân 06 tháng liền kề theo hợp đồng lao động trước khi thôi việc hoặc mất việc. [1][2]"
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1910.0,
+     "latency_ms": 5726.7,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1723,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 240,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.005846
+     },
+     "abstained": false,
+     "citations": [
+      2,
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "**Trợ cấp thôi việc: mỗi năm làm việc được ½ tháng tiền lương; trợ cấp mất việc làm: mỗi năm làm việc được 01 tháng tiền lương nhưng ít nhất bằng 02 tháng tiền lương.** (Khoản 1 Điều 46 và khoản 1 Điều 47 Bộ luật Lao động). [2][1]\n\nCách tính của hai khoản có cùng căn cứ:\n- **Thời gian tính trợ cấp:** tổng thời gian làm việc thực tế trừ thời gian đã tham gia bảo hiểm thất nghiệp và thời gian làm việc đã được chi trả trợ cấp thôi việc, trợ cấp mất việc làm. [2][1]\n- **Tiền lương tính trợ cấp:** tiền lương bình quân của 06 tháng liền kề theo hợp đồng lao động trước khi thôi việc hoặc mất việc làm. [2][1]\n\nCả hai đều yêu cầu người lao động đã làm việc thường xuyên từ đủ 12 tháng trở lên, nhưng áp dụng cho các trường hợp chấm dứt hợp đồng khác nhau theo khoản 1 Điều 46 và khoản 1 Điều 47. [2][1]"
+    }
+   }
+  },
+  {
+   "id": "g071",
+   "type": "multi_hop",
+   "language": "vi",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 522.1,
+   "chunks": [
+    "vi-luat-doanh-nghiep-2020:0068",
+    "vi-luat-doanh-nghiep-2020:0294",
+    "vi-luat-doanh-nghiep-2020:0039",
+    "vi-luat-doanh-nghiep-2020:0256",
+    "vi-luat-doanh-nghiep-2020:0038"
+   ],
+   "answers": {
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2439.0,
+     "latency_ms": 2921.7,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2157,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 57,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0002442
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Công ty TNHH hai thành viên trở lên có từ 02 đến 50 thành viên.[1] Tài liệu không nêu số cổ đông của công ty cổ phần, nên không đủ căn cứ để so sánh số lượng giữa hai loại hình."
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1970.2,
+     "latency_ms": 3903.0,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2157,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 124,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.005554
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      2
+     ],
+     "invalid_citations": [],
+     "answer": "- **Công ty TNHH hai thành viên trở lên:** có từ **02 đến 50 thành viên**, là tổ chức, cá nhân, theo khoản 1 Điều 46 Luật Doanh nghiệp.[1]\n- **Công ty cổ phần:** Không tìm thấy trong tài liệu quy định về số cổ đông tối thiểu và tối đa. Tài liệu chỉ nêu trường hợp công ty cổ phần còn lại **02 cổ đông** là một phương thức chuyển đổi thành công ty TNHH hai thành viên trở lên, theo điểm d khoản 1 Điều 204.[2]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1359.9,
+     "latency_ms": 2133.3,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2157,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 65,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0002482
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Công ty TNHH hai thành viên trở lên có từ 02 đến 50 thành viên.[1] Tài liệu không nêu số cổ đông tối thiểu hoặc tối đa của công ty cổ phần, nên chưa đủ căn cứ để so sánh giới hạn số lượng giữa hai loại hình."
+    }
+   }
+  },
+  {
+   "id": "g076",
+   "type": "multi_hop",
+   "language": "vi",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 358.1,
+   "chunks": [
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0011",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0010",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0008",
+    "en-personal-data-protection-law-2025:0008",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0007"
+   ],
+   "answers": {
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1972.1,
+     "latency_ms": 7749.5,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2143,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 404,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.008326
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      2,
+      4
+     ],
+     "invalid_citations": [],
+     "answer": "**Tài liệu chỉ cung cấp mức phạt của Luật Bảo vệ dữ liệu cá nhân 2025 của Việt Nam, không có quy định về GDPR nên chưa thể so sánh mức phạt giữa hai hệ thống.** [1][2][4]\n\nTheo Điều 8 Luật Bảo vệ dữ liệu cá nhân số 91/2025/QH15, **mức phạt tiền tối đa đối với tổ chức** được quy định như sau: [1][2]\n\n| Hành vi vi phạm | Mức phạt tiền tối đa |\n|---|---|\n| Mua, bán dữ liệu cá nhân | **10 lần khoản thu có được từ hành vi vi phạm**; nếu không có khoản thu hoặc mức tính theo khoản thu thấp hơn 3 tỷ đồng thì áp dụng mức phạt theo khoản 5 Điều 8 là **3 tỷ đồng**. [2] |\n| Vi phạm quy định chuyển dữ liệu cá nhân xuyên biên giới | **5% doanh thu của năm trước liền kề**; nếu không có doanh thu năm trước liền kề hoặc mức tính theo doanh thu thấp hơn 3 tỷ đồng thì áp dụng mức phạt theo khoản 5 Điều 8 là **3 tỷ đồng**. [2] |\n| Các hành vi vi phạm khác trong lĩnh vực bảo vệ dữ liệu cá nhân | **3 tỷ đồng**. [2] |\n\n**Cá nhân thực hiện cùng hành vi vi phạm:** mức phạt tiền tối đa bằng **một phần hai mức phạt đối với tổ chức**, theo khoản 6 Điều 8. [1]\n\nĐây là các mức phạt tiền tối đa trong xử phạt vi phạm hành chính; tùy tính chất, mức độ, hậu quả, hành vi vi phạm còn có thể bị truy cứu trách nhiệm hình sự và phải bồi thường nếu gây thiệt hại, theo khoản 1 Điều 8. [2]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1270.9,
+     "latency_ms": 3047.3,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2143,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 195,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0003118
+     },
+     "abstained": true,
+     "citations": [
+      2,
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu. Các tài liệu chỉ nêu mức phạt tối đa theo Luật Bảo vệ dữ liệu cá nhân 2025 của Việt Nam: 10 lần khoản thu từ hành vi mua, bán dữ liệu cá nhân (hoặc mức tại khoản 5 nếu không có khoản thu hay mức tính theo khoản thu thấp hơn); 5% doanh thu năm trước liền kề đối với tổ chức vi phạm quy định về chuyển dữ liệu cá nhân xuyên biên giới (hoặc mức tại khoản 5 nếu không có doanh thu hay mức tính theo doanh thu thấp hơn); và 3 tỷ đồng đối với các vi phạm khác. [2] Các mức này áp dụng cho tổ chức; cá nhân thực hiện cùng hành vi có mức phạt tối đa bằng một nửa mức phạt đối với tổ chức. [1] Không có tài liệu nêu mức phạt theo GDPR để đối chiếu."
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1946.3,
+     "latency_ms": 3056.4,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2143,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 136,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00028230000000000003
+     },
+     "abstained": true,
+     "citations": [
+      2,
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu. Tài liệu chỉ nêu mức phạt tối đa theo Luật Bảo vệ dữ liệu cá nhân 2025 của Việt Nam: mua, bán dữ liệu cá nhân là 10 lần khoản thu từ vi phạm; vi phạm quy định về chuyển dữ liệu cá nhân xuyên biên giới của tổ chức là 5% doanh thu năm trước liền kề; các vi phạm khác là 3 tỷ đồng. [2] Các mức tại khoản 3–5 áp dụng cho tổ chức; cá nhân có mức phạt tối đa bằng một nửa mức phạt đối với tổ chức. [1]"
+    }
+   }
+  },
+  {
+   "id": "g081",
+   "type": "unanswerable",
+   "language": "vi",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 441.5,
+   "chunks": [
+    "vi-luat-doanh-nghiep-2020:0044",
+    "vi-luat-doanh-nghiep-2020:0188",
+    "vi-luat-doanh-nghiep-2020:0098",
+    "vi-luat-doanh-nghiep-2020:0185",
+    "vi-luat-doanh-nghiep-2020:0167"
+   ],
+   "answers": {
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 970.8,
+     "latency_ms": 1154.0,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1725,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 11,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.000178
+     },
+     "abstained": true,
+     "citations": [],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu."
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1479.3,
+     "latency_ms": 1632.9,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1725,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 11,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.000178
+     },
+     "abstained": true,
+     "citations": [],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu."
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2165.9,
+     "latency_ms": 2416.9,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1725,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 11,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00356
+     },
+     "abstained": true,
+     "citations": [],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu."
+    }
+   }
+  },
+  {
+   "id": "g086",
+   "type": "unanswerable",
+   "language": "vi",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 448.7,
+   "chunks": [
+    "vi-luat-doanh-nghiep-2020:0069",
+    "vi-luat-doanh-nghiep-2020:0109",
+    "vi-luat-doanh-nghiep-2020:0156",
+    "vi-luat-doanh-nghiep-2020:0070",
+    "vi-luat-doanh-nghiep-2020:0071"
+   ],
+   "answers": {
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2439.2,
+     "latency_ms": 2939.7,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2058,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 56,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00023380000000000002
+     },
+     "abstained": true,
+     "citations": [
+      1,
+      2,
+      3
+     ],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu. Các tài liệu chỉ nêu quy định về vốn góp khi thành lập một số loại hình doanh nghiệp, không nêu mức vốn tối thiểu để thành lập công ty chứng khoán. [1][2][3]"
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1654.4,
+     "latency_ms": 1906.6,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2058,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 11,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.004226
+     },
+     "abstained": true,
+     "citations": [],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu."
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 938.4,
+     "latency_ms": 1624.5,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2058,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 58,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00023480000000000002
+     },
+     "abstained": true,
+     "citations": [
+      1,
+      2,
+      3
+     ],
+     "invalid_citations": [],
+     "answer": "Không tìm thấy trong tài liệu. Các tài liệu chỉ quy định về vốn góp khi thành lập công ty trách nhiệm hữu hạn và công ty cổ phần, không nêu mức vốn tối thiểu để thành lập công ty chứng khoán.[1][2][3]"
+    }
+   }
+  },
+  {
+   "id": "g091",
+   "type": "unanswerable",
+   "language": "en",
+   "follow_up": false,
+   "standalone": null,
+   "rewrite_ms": 0.0,
+   "retrieval_ms": 364.9,
+   "chunks": [
+    "en-personal-data-protection-law-2025:0008",
+    "en-gdpr-2016:0140",
+    "en-gdpr-2016:0139",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0011",
+    "en-personal-data-protection-law-2025:0036"
+   ],
+   "answers": {
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1230.5,
+     "latency_ms": 1521.5,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2401,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 10,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.004902
+     },
+     "abstained": true,
+     "citations": [],
+     "invalid_citations": [],
+     "answer": "Not found in the documents."
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 811.3,
+     "latency_ms": 1317.9,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2401,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 47,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0002636
+     },
+     "abstained": true,
+     "citations": [
+      1,
+      2,
+      3
+     ],
+     "invalid_citations": [],
+     "answer": "Not found in the documents. They state maximum fines under Vietnam’s Law on Personal Data Protection and the EU GDPR, but do not cover the UK Data Protection Act 2018. [1][2][3]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 3259.5,
+     "latency_ms": 3639.9,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2401,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 45,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00026260000000000004
+     },
+     "abstained": true,
+     "citations": [
+      1,
+      2,
+      3
+     ],
+     "invalid_citations": [],
+     "answer": "Not found in the documents. They specify maximum fines under Vietnam’s Law on Personal Data Protection and the EU GDPR, but not the UK Data Protection Act 2018. [1][2][3]"
+    }
+   }
+  },
+  {
+   "id": "g092",
+   "type": "multi_turn",
+   "language": "vi",
+   "follow_up": true,
+   "standalone": "Người lao động làm công việc nặng nhọc, độc hại được nghỉ phép năm bao nhiêu ngày?",
+   "rewrite_ms": 2138.6,
+   "retrieval_ms": 361.9,
+   "chunks": [
+    "vi-bo-luat-lao-dong-2019:0128",
+    "vi-bo-luat-lao-dong-2019:0129",
+    "vi-bo-luat-lao-dong-2019:0126",
+    "vi-bo-luat-lao-dong-2019:0124",
+    "vi-bo-luat-lao-dong-2019:0185"
+   ],
+   "answers": {
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 950.0,
+     "latency_ms": 1623.3,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1881,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 60,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00021810000000000002
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Người làm nghề, công việc nặng nhọc, độc hại, nguy hiểm được nghỉ hằng năm 14 ngày làm việc nếu đã làm đủ 12 tháng cho một người sử dụng lao động, hưởng nguyên lương theo hợp đồng lao động. [1]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 3354.0,
+     "latency_ms": 4604.6,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1881,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 90,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00023310000000000003
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      2
+     ],
+     "invalid_citations": [],
+     "answer": "Người làm nghề, công việc nặng nhọc, độc hại, nguy hiểm được nghỉ hằng năm 14 ngày làm việc nếu đã làm đủ 12 tháng cho một người sử dụng lao động, hưởng nguyên lương theo hợp đồng lao động. [1] Cứ đủ 5 năm làm việc cho người sử dụng lao động đó, được tăng thêm 1 ngày nghỉ hằng năm. [2]"
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1614.7,
+     "latency_ms": 4306.0,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1881,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 188,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.005642
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      2
+     ],
+     "invalid_citations": [],
+     "answer": "Người làm nghề, công việc **nặng nhọc, độc hại, nguy hiểm** được nghỉ hằng năm **14 ngày làm việc**, hưởng nguyên lương theo hợp đồng lao động, nếu làm đủ 12 tháng cho một người sử dụng lao động (điểm b khoản 1 Điều 113).[1]\n\n- Nếu công việc thuộc loại **đặc biệt nặng nhọc, độc hại, nguy hiểm** thì được nghỉ **16 ngày làm việc** (điểm c khoản 1 Điều 113).[1]\n- Nếu làm chưa đủ 12 tháng, số ngày nghỉ tính theo tỷ lệ tương ứng với số tháng làm việc (khoản 2 Điều 113).[1]\n- Cứ đủ 05 năm làm việc cho cùng một người sử dụng lao động thì được tăng thêm 01 ngày nghỉ hằng năm (Điều 114).[2]"
+    }
+   }
+  },
+  {
+   "id": "g093",
+   "type": "multi_turn",
+   "language": "vi",
+   "follow_up": true,
+   "standalone": "Trong thời gian thử việc 2 tháng đối với công việc cần trình độ từ cao đẳng trở lên, tôi được trả lương thế nào?",
+   "rewrite_ms": 1633.9,
+   "retrieval_ms": 448.1,
+   "chunks": [
+    "vi-bo-luat-lao-dong-2019:0030",
+    "vi-bo-luat-lao-dong-2019:0031",
+    "vi-bo-luat-lao-dong-2019:0032",
+    "vi-bo-luat-lao-dong-2019:0029",
+    "vi-bo-luat-lao-dong-2019:0104"
+   ],
+   "answers": {
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2542.6,
+     "latency_ms": 2980.4,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1361,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 47,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0001596
+     },
+     "abstained": false,
+     "citations": [
+      2
+     ],
+     "invalid_citations": [],
+     "answer": "Tiền lương thử việc do bạn và công ty thỏa thuận, nhưng phải ít nhất bằng 85% mức lương của công việc đó (Điều 26 Bộ luật Lao động). [2]"
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1188.0,
+     "latency_ms": 2145.6,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1361,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 51,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.003232
+     },
+     "abstained": false,
+     "citations": [
+      2
+     ],
+     "invalid_citations": [],
+     "answer": "Trong thời gian thử việc, bạn được trả lương theo thỏa thuận với công ty, nhưng **ít nhất phải bằng 85% mức lương của công việc đó**, theo Điều 26 Bộ luật Lao động.[2]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 737.4,
+     "latency_ms": 1226.3,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1361,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 47,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0001596
+     },
+     "abstained": false,
+     "citations": [
+      2
+     ],
+     "invalid_citations": [],
+     "answer": "Trong thời gian thử việc, tiền lương do hai bên thỏa thuận nhưng không được thấp hơn 85% mức lương của công việc đó (Điều 26 Bộ luật Lao động). [2]"
+    }
+   }
+  },
+  {
+   "id": "g094",
+   "type": "multi_turn",
+   "language": "en",
+   "follow_up": true,
+   "standalone": "How long do members of a multiple-member limited liability company in Vietnam have to contribute their capital?",
+   "rewrite_ms": 1629.0,
+   "retrieval_ms": 408.6,
+   "chunks": [
+    "en-law-on-enterprises-2020:0047",
+    "en-law-on-enterprises-2020:0076",
+    "en-law-on-enterprises-2020:0048",
+    "en-law-on-enterprises-2020:0088",
+    "en-law-on-enterprises-2020:0183"
+   ],
+   "answers": {
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1887.8,
+     "latency_ms": 4842.7,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2195,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 149,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00588
+     },
+     "abstained": false,
+     "citations": [
+      3
+     ],
+     "invalid_citations": [],
+     "answer": "Members must contribute their capital in full, using the assets promised, **within 90 days from the issuance date of the Certificate of Enterprise Registration**, under Article 47(2). Time needed to transport or import the assets and complete ownership-transfer procedures is excluded from that period.[3]\n\nIf a member misses the deadline:\n- A member who contributes nothing ceases to be a member; a member who contributes only part has rights proportional to the amount actually contributed.[3]\n- The company must register changes to its charter capital and members’ holdings within 30 days after the contribution deadline.[3]\n- Defaulting members remain responsible, in proportion to their promised contributions, for financial obligations incurred before those changes are registered.[3]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 996.8,
+     "latency_ms": 1514.6,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2195,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 47,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.000243
+     },
+     "abstained": false,
+     "citations": [
+      3
+     ],
+     "invalid_citations": [],
+     "answer": "Members must contribute the promised capital within 90 days from the date the Certificate of Enterprise Registration is issued. Time needed to transport or import the assets and complete ownership-transfer procedures is excluded from that period. [3]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2989.3,
+     "latency_ms": 3475.9,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2195,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 48,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0002435
+     },
+     "abstained": false,
+     "citations": [
+      3
+     ],
+     "invalid_citations": [],
+     "answer": "Members must contribute their promised capital within 90 days from the date the Certificate of Enterprise Registration is issued. The time needed to transport or import contributed assets and complete ownership-transfer procedures is excluded from that period. [3]"
+    }
+   }
+  },
+  {
+   "id": "g095",
+   "type": "multi_turn",
+   "language": "vi",
+   "follow_up": true,
+   "standalone": "Doanh nghiệp tư nhân có được phát hành cổ phiếu để huy động vốn không?",
+   "rewrite_ms": 1715.5,
+   "retrieval_ms": 353.8,
+   "chunks": [
+    "vi-luat-doanh-nghiep-2020:0272",
+    "vi-luat-doanh-nghiep-2020:0173",
+    "vi-luat-doanh-nghiep-2020:0176",
+    "vi-luat-doanh-nghiep-2020:0029",
+    "vi-luat-doanh-nghiep-2020:0171"
+   ],
+   "answers": {
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1064.9,
+     "latency_ms": 1546.5,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2079,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 53,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0002344
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Không. Doanh nghiệp tư nhân không được phát hành bất kỳ loại chứng khoán nào, nên không được phát hành cổ phiếu để huy động vốn (khoản 2 Điều 188 Luật Doanh nghiệp). [1]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2635.3,
+     "latency_ms": 3110.3,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2079,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 53,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0002344
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Không. Doanh nghiệp tư nhân không được phát hành bất kỳ loại chứng khoán nào, nên không được phát hành cổ phiếu để huy động vốn (khoản 2 Điều 188 Luật Doanh nghiệp). [1]"
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2752.2,
+     "latency_ms": 4245.3,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2079,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 102,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.005178
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      5
+     ],
+     "invalid_citations": [],
+     "answer": "Không. Doanh nghiệp tư nhân không được phát hành bất kỳ loại chứng khoán nào theo khoản 2 Điều 188 Luật Doanh nghiệp, nên không được phát hành cổ phiếu để huy động vốn.[1] Cổ phiếu là chứng chỉ, bút toán ghi sổ hoặc dữ liệu điện tử do công ty cổ phần phát hành để xác nhận quyền sở hữu một hoặc một số cổ phần của công ty đó theo khoản 1 Điều 121.[5]"
+    }
+   }
+  },
+  {
+   "id": "g096",
+   "type": "multi_turn",
+   "language": "vi",
+   "follow_up": true,
+   "standalone": "Những trường hợp nào thì bị áp dụng hình thức sa thải?",
+   "rewrite_ms": 1479.4,
+   "retrieval_ms": 422.5,
+   "chunks": [
+    "vi-bo-luat-lao-dong-2019:0140",
+    "vi-bo-luat-lao-dong-2019:0139",
+    "vi-bo-luat-lao-dong-2019:0137",
+    "vi-bo-luat-lao-dong-2019:0142",
+    "vi-luat-doanh-nghiep-2020:0306"
+   ],
+   "answers": {
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2971.6,
+     "latency_ms": 5169.0,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1918,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 287,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0003353
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Hình thức nặng nhất là **sa thải**. Người sử dụng lao động có thể áp dụng hình thức này khi người lao động:\n\n1. Trộm cắp, tham ô, đánh bạc, cố ý gây thương tích hoặc sử dụng ma túy tại nơi làm việc;\n2. Tiết lộ bí mật kinh doanh, bí mật công nghệ, xâm phạm quyền sở hữu trí tuệ của người sử dụng lao động; gây thiệt hại nghiêm trọng hoặc đe dọa gây thiệt hại đặc biệt nghiêm trọng đến tài sản, lợi ích của người sử dụng lao động; hoặc quấy rối tình dục tại nơi làm việc theo quy định trong nội quy lao động;\n3. Đang bị kỷ luật kéo dài thời hạn nâng lương hoặc cách chức mà tái phạm trong thời gian chưa được xóa kỷ luật;\n4. Tự ý bỏ việc 5 ngày cộng dồn trong 30 ngày hoặc 20 ngày cộng dồn trong 365 ngày, tính từ ngày đầu tiên tự ý bỏ việc, không có lý do chính đáng. Lý do chính đáng gồm thiên tai, hỏa hoạn, bản thân hoặc thân nhân bị ốm có xác nhận của cơ sở khám bệnh, chữa bệnh có thẩm quyền, hoặc lý do khác được quy định trong nội quy lao động. [1]"
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1772.2,
+     "latency_ms": 8879.2,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1918,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 489,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.008726
+     },
+     "abstained": false,
+     "citations": [
+      2,
+      3,
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "**Hình thức kỷ luật nặng nhất là sa thải**, được áp dụng trong các trường hợp tại Điều 125 Bộ luật Lao động sau đây: [2][3][1]\n\n1. **Trộm cắp, tham ô, đánh bạc, cố ý gây thương tích hoặc sử dụng ma túy tại nơi làm việc.** [1]\n2. **Tiết lộ bí mật kinh doanh, bí mật công nghệ; xâm phạm quyền sở hữu trí tuệ của người sử dụng lao động; gây thiệt hại nghiêm trọng hoặc đe dọa gây thiệt hại đặc biệt nghiêm trọng về tài sản, lợi ích của người sử dụng lao động; hoặc quấy rối tình dục tại nơi làm việc được quy định trong nội quy lao động.** [1]\n3. **Đã bị kỷ luật kéo dài thời hạn nâng lương hoặc cách chức mà tái phạm khi chưa được xóa kỷ luật.** Tái phạm là lặp lại hành vi vi phạm đã bị xử lý kỷ luật mà chưa được xóa kỷ luật. [1]\n4. **Tự ý bỏ việc 05 ngày cộng dồn trong 30 ngày hoặc 20 ngày cộng dồn trong 365 ngày**, tính từ ngày đầu tiên tự ý bỏ việc, mà không có lý do chính đáng. [1] Lý do chính đáng gồm thiên tai, hỏa hoạn, bản thân hoặc thân nhân bị ốm có xác nhận của cơ sở khám bệnh, chữa bệnh có thẩm quyền và trường hợp khác được quy định trong nội quy lao động. [1]\n\n**Không phải cứ thuộc các trường hợp trên là công ty được sa thải ngay:** công ty phải chứng minh lỗi và tuân thủ nguyên tắc, trình tự, thủ tục tại Điều 122, gồm sự tham gia của tổ chức đại diện người lao động tại cơ sở mà người lao động là thành viên, bảo đảm quyền bào chữa và lập biên bản. [3] Không được xử lý kỷ luật trong các thời gian được bảo vệ như nghỉ ốm, nghỉ được đồng ý, mang thai, nghỉ thai sản hoặc nuôi con dưới 12 tháng tuổi; cũng không xử lý người vi phạm trong khi mắc bệnh làm mất khả năng nhận thức hoặc điều khiển hành vi. [3]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1282.5,
+     "latency_ms": 3471.1,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1918,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 287,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0003353
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "Hình thức kỷ luật nặng nhất là **sa thải**; người sử dụng lao động có thể áp dụng khi người lao động:\n\n1. Trộm cắp, tham ô, đánh bạc, cố ý gây thương tích hoặc sử dụng ma túy tại nơi làm việc.\n2. Tiết lộ bí mật kinh doanh, bí mật công nghệ, xâm phạm quyền sở hữu trí tuệ của người sử dụng lao động; gây thiệt hại nghiêm trọng hoặc đe dọa gây thiệt hại đặc biệt nghiêm trọng đến tài sản, lợi ích của người sử dụng lao động; hoặc quấy rối tình dục tại nơi làm việc theo quy định trong nội quy lao động.\n3. Đang bị kỷ luật kéo dài thời hạn nâng lương hoặc cách chức mà tái phạm trong thời gian chưa được xóa kỷ luật.\n4. Tự ý bỏ việc 5 ngày cộng dồn trong 30 ngày hoặc 20 ngày cộng dồn trong 365 ngày, tính từ ngày đầu tiên tự ý bỏ việc, mà không có lý do chính đáng. Lý do chính đáng gồm thiên tai, hỏa hoạn, bản thân hoặc thân nhân bị ốm có xác nhận của cơ sở khám bệnh, chữa bệnh có thẩm quyền, và trường hợp khác quy định trong nội quy lao động. [1]"
+    }
+   }
+  },
+  {
+   "id": "g097",
+   "type": "multi_turn",
+   "language": "vi",
+   "follow_up": true,
+   "standalone": "Nếu là dữ liệu cá nhân của con tôi 10 tuổi thì ai thực hiện các quyền của chủ thể dữ liệu cá nhân?",
+   "rewrite_ms": 2747.2,
+   "retrieval_ms": 352.0,
+   "chunks": [
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0005",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0031",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0006",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0012"
+   ],
+   "answers": {
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1795.6,
+     "latency_ms": 5128.1,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2532,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 199,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.007054
+     },
+     "abstained": false,
+     "citations": [
+      3
+     ],
+     "invalid_citations": [],
+     "answer": "**Người đại diện theo pháp luật của con bạn sẽ thay mặt con thực hiện các quyền của chủ thể dữ liệu cá nhân**, trừ các trường hợp quy định tại khoản 1 Điều 19 của Luật Bảo vệ dữ liệu cá nhân (khoản 2 Điều 24).[3] Vì vậy, nếu bạn là người đại diện theo pháp luật của con thì bạn thực hiện các quyền đó thay con.[3]\n\nRiêng việc xử lý dữ liệu nhằm **công bố, tiết lộ thông tin về đời sống riêng tư, bí mật cá nhân** của con bạn 10 tuổi phải có sự đồng ý của **cả con và người đại diện theo pháp luật**, vì quy định này áp dụng với trẻ em từ đủ 07 tuổi trở lên.[3]\n\nTài liệu được cung cấp chưa có nội dung khoản 1 Điều 19 nên chưa xác định được cụ thể các trường hợp ngoại lệ nêu trên.[3]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1353.7,
+     "latency_ms": 2208.6,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2532,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 83,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00029470000000000006
+     },
+     "abstained": false,
+     "citations": [
+      3
+     ],
+     "invalid_citations": [],
+     "answer": "Người đại diện theo pháp luật thực hiện thay con bạn các quyền của chủ thể dữ liệu cá nhân. [3] Tuy nhiên, nếu việc xử lý dữ liệu nhằm công bố hoặc tiết lộ thông tin về đời sống riêng tư, bí mật cá nhân của trẻ 10 tuổi, thì phải có sự đồng ý của cả trẻ và người đại diện theo pháp luật. [3]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2962.5,
+     "latency_ms": 3940.0,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2532,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 111,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0003087
+     },
+     "abstained": false,
+     "citations": [
+      3
+     ],
+     "invalid_citations": [],
+     "answer": "Với dữ liệu cá nhân của con bạn 10 tuổi, người đại diện theo pháp luật thực hiện thay con các quyền của chủ thể dữ liệu cá nhân, trừ trường hợp quy định tại khoản 1 Điều 19. [3]\n\nRiêng việc xử lý dữ liệu nhằm công bố hoặc tiết lộ thông tin về đời sống riêng tư, bí mật cá nhân của trẻ em từ đủ 07 tuổi trở lên thì phải có sự đồng ý của cả trẻ em và người đại diện theo pháp luật. [3]"
+    }
+   }
+  },
+  {
+   "id": "g098",
+   "type": "multi_turn",
+   "language": "en",
+   "follow_up": true,
+   "standalone": "What's the maximum overtime per year in Vietnam?",
+   "rewrite_ms": 1672.9,
+   "retrieval_ms": 406.1,
+   "chunks": [
+    "en-labour-code-2019:0107",
+    "en-labour-code-2019:0105",
+    "en-personal-data-protection-law-2025:0008",
+    "en-labour-code-2019:0146",
+    "en-labour-code-2019:0108"
+   ],
+   "answers": {
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1431.3,
+     "latency_ms": 1984.6,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1750,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 50,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0002
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      5
+     ],
+     "invalid_citations": [],
+     "answer": "The general maximum is 200 overtime hours per year. In specified fields and cases, the limit is 300 hours per year; in special cases under Article 108, there is no overtime-hour limit. [1][5]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 3003.1,
+     "latency_ms": 3527.1,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1750,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 58,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.000204
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      5
+     ],
+     "invalid_citations": [],
+     "answer": "Generally, overtime is limited to 200 hours per year. In specified fields and cases, it may be up to 300 hours per year; in the special cases listed in Article 108, the limits in Article 107 do not apply. [1][5]"
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1870.2,
+     "latency_ms": 4716.7,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 1750,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 157,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.00507
+     },
+     "abstained": false,
+     "citations": [
+      1,
+      5
+     ],
+     "invalid_citations": [],
+     "answer": "The general limit is **200 overtime hours per year**, under Article 107(2)(c) of the Labour Code.[1]\n\n- **Up to 300 hours per year** is permitted for the sectors, jobs and cases listed in Article 107(3), including specified manufacturing industries, essential utilities, work requiring unavailable highly skilled workers, and urgent work arising from seasonal or unexpected circumstances; the employer must notify the provincial labor authority in writing.[1]\n- **No Article 107 overtime-hour limit applies** in the special cases under Article 108: execution of a national security or defense conscription order, or necessary tasks to protect life or property in disaster, fire or epidemic prevention and recovery, subject to the stated employee health and safety exception.[5]"
+    }
+   }
+  },
+  {
+   "id": "g099",
+   "type": "multi_turn",
+   "language": "en",
+   "follow_up": true,
+   "standalone": "What if a company cannot notify a personal data breach within 72 hours under the GDPR?",
+   "rewrite_ms": 1702.2,
+   "retrieval_ms": 363.9,
+   "chunks": [
+    "en-gdpr-2016:0078",
+    "en-gdpr-2016:0079",
+    "en-gdpr-2016:0021",
+    "en-personal-data-protection-law-2025:0023",
+    "en-gdpr-2016:0120"
+   ],
+   "answers": {
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 6801.9,
+     "latency_ms": 7368.0,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2818,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 61,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0003123
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "If the controller cannot notify the supervisory authority within 72 hours, it must still notify without undue delay and give reasons for the delay with the notification. [1] Where it cannot provide all required information at once, it may provide it in phases without undue further delay. [1]"
+    },
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1326.6,
+     "latency_ms": 2682.5,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2818,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 83,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.006466
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "If the controller cannot notify the supervisory authority within 72 hours, it must accompany the notification with **reasons for the delay** under Article 33(1); the obligation to notify without undue delay still applies.[1]\n\nIf it cannot provide all required information at once, Article 33(4) allows it to provide the information **in phases, without undue further delay**.[1]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 938.9,
+     "latency_ms": 1713.1,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2818,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 61,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0003123
+     },
+     "abstained": false,
+     "citations": [
+      1
+     ],
+     "invalid_citations": [],
+     "answer": "If the controller cannot notify within 72 hours, it must give reasons for the delay with the notification; any information that cannot be provided at the same time may be supplied in phases, without undue further delay. (GDPR Article 33(1), (4)) [1]"
+    }
+   }
+  },
+  {
+   "id": "g100",
+   "type": "multi_turn",
+   "language": "vi",
+   "follow_up": true,
+   "standalone": "Theo Article 17 GDPR, có trường hợp nào công ty được từ chối yêu cầu xóa dữ liệu cá nhân của người dùng không?",
+   "rewrite_ms": 1794.0,
+   "retrieval_ms": 867.2,
+   "chunks": [
+    "en-personal-data-protection-law-2025:0010",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0017",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0013",
+    "vi-luat-bao-ve-du-lieu-ca-nhan-2025:0038",
+    "en-gdpr-2016:0061"
+   ],
+   "answers": {
+    "gpt-6.1-sol:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 1392.5,
+     "latency_ms": 5845.4,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2707,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 285,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.008264
+     },
+     "abstained": false,
+     "citations": [
+      5
+     ],
+     "invalid_citations": [],
+     "answer": "**Có.** Theo khoản 3 Điều 17 GDPR, công ty có thể không thực hiện yêu cầu xóa **trong phạm vi việc xử lý dữ liệu là cần thiết** cho các mục đích sau: [5]\n\n- Thực hiện quyền tự do biểu đạt và thông tin. [5]\n- Tuân thủ nghĩa vụ pháp lý theo pháp luật Liên minh châu Âu hoặc quốc gia thành viên; thực hiện nhiệm vụ vì lợi ích công cộng hoặc thực thi quyền lực công được giao. [5]\n- Vì lợi ích công cộng trong lĩnh vực y tế công cộng, theo các quy định được dẫn chiếu tại Điều 9 GDPR. [5]\n- Lưu trữ vì lợi ích công cộng, nghiên cứu khoa học hoặc lịch sử, hoặc thống kê theo khoản 1 Điều 89, nếu việc xóa có khả năng khiến mục tiêu xử lý không thể đạt được hoặc bị ảnh hưởng nghiêm trọng. [5]\n- Xác lập, thực hiện hoặc bảo vệ các yêu cầu pháp lý. [5]\n\nNgoài ra, nghĩa vụ xóa theo khoản 1 Điều 17 chỉ phát sinh khi có một trong các căn cứ được quy định; chẳng hạn, việc rút lại sự đồng ý là căn cứ yêu cầu xóa khi **không còn căn cứ pháp lý khác cho việc xử lý**. [5]"
+    },
+    "gpt-6-luna:none": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 2748.2,
+     "latency_ms": 5242.8,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2707,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 206,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0003737
+     },
+     "abstained": false,
+     "citations": [
+      5
+     ],
+     "invalid_citations": [],
+     "answer": "Có. Theo Điều 17(3) GDPR, công ty có thể không xóa dữ liệu trong phạm vi việc tiếp tục xử lý là cần thiết để:\n\n- bảo đảm quyền tự do biểu đạt và thông tin;\n- tuân thủ nghĩa vụ pháp lý, thực hiện nhiệm vụ vì lợi ích công cộng hoặc quyền lực chính thức;\n- phục vụ một số mục đích y tế công cộng;\n- lưu trữ vì lợi ích công cộng, nghiên cứu khoa học hoặc lịch sử, hoặc thống kê, nếu việc xóa có thể làm mất hoặc ảnh hưởng nghiêm trọng đến mục tiêu đó;\n- xác lập, thực hiện hoặc bảo vệ khiếu nại pháp lý. [5]\n\nNgoài ra, quyền yêu cầu xóa theo Điều 17(1) chỉ phát sinh khi có ít nhất một căn cứ được liệt kê tại điều này; nếu không có căn cứ đó thì Điều 17 không buộc công ty xóa dữ liệu theo quyền này. [5]"
+    },
+    "gpt-6-luna:low": {
+     "status": "completed",
+     "error": null,
+     "ttft_ms": 4901.7,
+     "latency_ms": 6729.7,
+     "usage": {
+      "calls": 1,
+      "input_tokens": 2707,
+      "cached_input_tokens": 0,
+      "cache_write_tokens": 0,
+      "output_tokens": 180,
+      "reasoning_tokens": 0,
+      "cost_usd": 0.0003607
+     },
+     "abstained": false,
+     "citations": [
+      5
+     ],
+     "invalid_citations": [],
+     "answer": "Có. Theo Điều 17 khoản 3 GDPR, công ty có thể không xóa dữ liệu trong phạm vi việc tiếp tục xử lý là cần thiết cho một trong các mục đích sau:[5]\n\n- Thực hiện quyền tự do biểu đạt và thông tin;[5]\n- Tuân thủ nghĩa vụ pháp lý hoặc thực hiện nhiệm vụ vì lợi ích công cộng/thẩm quyền chính thức;[5]\n- Lý do lợi ích công cộng trong lĩnh vực y tế công cộng;[5]\n- Lưu trữ vì lợi ích công cộng, nghiên cứu khoa học hoặc lịch sử, hoặc mục đích thống kê, nếu việc xóa có khả năng khiến mục tiêu đó không thể đạt được hoặc bị ảnh hưởng nghiêm trọng;[5]\n- Xác lập, thực hiện hoặc bảo vệ các khiếu nại pháp lý.[5]"
+    }
+   }
+  }
+ ]
+}

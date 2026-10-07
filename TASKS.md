@@ -211,13 +211,27 @@ Thứ tự xếp theo chỗ đang hụt (Long chốt 06/10). Số trước/sau v
 - Chi phí API của cả ngày thí nghiệm khoảng $0.46.
 
 ## P5. Sinh câu trả lời + eval end-to-end (tuần 5–6)
-- [ ] Prompt trả lời (version hoá):
-  - Bọc tài liệu trong tag `<document>`.
-  - Trích dẫn `[n]`.
-  - Trả "Không tìm thấy trong tài liệu" khi thiếu thông tin.
-- [ ] Gọi `gpt-6.1-sol` qua Responses API (streaming); kiểm tra mọi `[n]` hợp lệ; map `[n]` sang văn bản, Điều và trang
-- [x] Viết lại câu hỏi multi-turn bằng `gpt-6-luna` (làm ở P4: `backend/app/retrieval/query.py`, `query.rewrite`). Còn phải đo TTFT của lượt hỏi tiếp.
-- [ ] Trần chi phí theo ngày (`DAILY_COST_LIMIT_USD`)
+Thứ tự từ 07/10: Boss duyệt từng commit. Chỉ tinh chỉnh prompt/config trên golden v1, vì golden v2 là bộ test giữ riêng.
+- [x] Prompt trả lời `answer-v1` (`backend/app/generation/prompts.py`):
+  - Mỗi chunk nằm trong `<document index="n" ...>`; text chunk không đóng được tag.
+  - Mỗi ý gắn trích dẫn `[n]`.
+  - Thiếu thông tin thì trả "Không tìm thấy trong tài liệu." (câu hỏi tiếng Anh: "Not found in the documents.").
+  - Hai bản lệch nhau thì bản tiếng Việt là căn cứ.
+- [x] Gọi LLM qua Responses API có streaming và đo TTFT (`answer.py`). Kiểm tra mọi `[n]`, map sang số hiệu, Điều/Khoản và trang (`citations.py`).
+- [x] Cảnh báo Điều bị sửa đổi, 2 lớp:
+  - Chunk có `amended` mang thuộc tính `amended_by` trong prompt; model dùng luật sửa đổi nếu có trong context.
+  - Backend sinh cảnh báo tất định cho mỗi Điều bị sửa được trích dẫn, nằm trong `AnswerResult`.
+  - Golden v1 không hỏi vào Điều bị sửa, nên đường này chỉ được kiểm tra bằng unit test.
+- [x] Giá có cache: `cached_input` và `cache_write` trong `[prices]`.
+  - Từ GPT-5.6, mặc định OpenAI tự ghi cache (1.25 lần giá input) cho prompt ≥ 1024 token. Context RAG không bao giờ dùng lại, nên mọi lời gọi LLM dùng mode `explicit`.
+- [x] Đo TTFT của Sol (`eval/measure_ttft.py`, 06/10, code chưa commit, 28 câu):
+  - TTFT của LLM: p50 1.71 s, p95 2.47 s.
+  - TTFT user lượt đầu: p95 3.00 s. Lượt hỏi tiếp: p95 4.87 s, vượt SLO, vì riêng bước viết lại câu hỏi đã mất p95 2.50 s.
+  - Sol chỉ nhận effort từ `low` trở lên; ở `low` model dùng 0 token suy luận.
+- [x] Viết lại câu hỏi multi-turn bằng `gpt-6-luna` (làm ở P4: `backend/app/retrieval/query.py`, `query.rewrite`).
+- [ ] Đặt hạn ~1.5 s cho bước viết lại câu hỏi, quá hạn thì ghép câu hỏi trước với câu hiện tại. So 3 cách (chỉ ghép, LLM, LLM có hạn) cả về chất lượng lẫn TTFT, với Sol và Luna.
+- [x] Trần chi phí theo ngày (`DAILY_COST_LIMIT_USD`, `backend/app/core/costs.py`): chặn trước khi gọi API, dựa trên ước tính chi phí tối đa của lời gọi; chi phí thật cộng dồn trong ngày ở `data/cache/costs.sqlite`.
+- [x] Eval từ chối lưu kết quả khi code chưa commit, trừ khi chạy với `--allow-dirty`.
 - [ ] LLM-judge chấm faithfulness, correctness, relevancy, citation precision/recall; abstention đếm trực tiếp
 - [ ] **[L]** Chấm tay 50 mẫu để hiệu chỉnh judge (cần đồng thuận ≥ 80%)
 - [ ] `eval/run_e2e_eval.py`; so sánh Sol và Luna cho bước trả lời

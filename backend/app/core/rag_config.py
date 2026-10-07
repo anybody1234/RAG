@@ -70,18 +70,34 @@ class GenerationConfig(_Section):
     answer_model: str
     answer_reasoning_effort: ReasoningEffort
     prompt_version: str
+    max_output_tokens: int
 
 
 class EvalConfig(_Section):
     judge_model: str
     judge_reasoning_effort: ReasoningEffort
+    judge_prompt_version: str
+    judge_max_output_tokens: int
 
 
 class ModelPrice(_Section):
-    """USD cho 1M token."""
+    """USD cho 1M token. Token đầu vào chia 3 loại: thường (`input`), đọc từ prompt cache (`cached_input`) và
+    ghi vào prompt cache (`cache_write`). Thiếu giá của loại nào thì tính bằng giá `input`."""
 
     input: float
     output: float = 0.0
+    cached_input: float | None = None
+    cache_write: float | None = None
+
+    def cost(self, input_tokens: int, output_tokens: int, cached_tokens: int = 0, cache_write_tokens: int = 0) -> float:
+        """`input_tokens` là tổng token đầu vào, đã gồm token đọc và ghi cache (giống `usage` của API)."""
+        ordinary = input_tokens - cached_tokens - cache_write_tokens
+        cached_price = self.input if self.cached_input is None else self.cached_input
+        write_price = self.input if self.cache_write is None else self.cache_write
+        return (
+            ordinary * self.input + cached_tokens * cached_price + cache_write_tokens * write_price
+            + output_tokens * self.output
+        ) / 1e6
 
 
 class RagConfig(_Section):

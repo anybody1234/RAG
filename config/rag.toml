@@ -61,18 +61,26 @@ embed_title = true
 [generation]
 answer_model = "gpt-6.1-sol"
 answer_reasoning_effort = "low"
-prompt_version = "answer-v1"
+prompt_version = "answer-v1"   # prompt trong backend/app/generation/prompts.py
+max_output_tokens = 2000       # gồm cả token suy luận; chặn trên chi phí và thời gian của một câu trả lời
 
 [eval]
 judge_model = "gpt-6.1-sol"
 judge_reasoning_effort = "high"
+judge_prompt_version = "judge-v1"   # file eval/judges/<judge_prompt_version>.md
+judge_max_output_tokens = 16000
 
 # Giá USD cho 1M token: `input` là token đầu vào, `output` là token đầu ra (model embedding không có output).
+# `cached_input`: token đầu vào đọc từ prompt cache; `cache_write`: token đầu vào ghi vào prompt cache
+# (xem EXPLICIT_CACHE trong backend/app/retrieval/llm.py). Prompt trên 272k token có giá gấp đôi; pipeline không
+# gửi prompt dài như vậy nên không khai báo.
 # Chỉ dùng để tính chi phí ($) ghi vào trace và kết quả eval, không ảnh hưởng kết quả RAG, nên đổi giá
 # không cần tăng config_version. Mọi model gọi trong pipeline (embedding, viết lại câu hỏi, rerank, trả lời,
 # judge) phải có giá ở đây; thiếu thì RagConfig.price() báo lỗi thay vì tính chi phí bằng 0.
 # Tra lại trang giá OpenAI trước khi đổi model.
-# Đã đối chiếu với developers.openai.com/api/docs/pricing ngày 2026-10-06.
+# Đã đối chiếu với developers.openai.com/api/docs/pricing ngày 2026-10-06 (bảng Standard, cột Input / Cached input /
+# Cache writes / Output, ngữ cảnh ngắn ≤ 272k token). Quy tắc ghi cache tính 1.25 lần giá input từ GPT-5.6 nằm ở
+# developers.openai.com/api/docs/guides/prompt-caching.
 [prices."text-embedding-3-small"]
 input = 0.02
 
@@ -81,8 +89,12 @@ input = 0.13
 
 [prices."gpt-6-luna"]
 input = 0.10
+cached_input = 0.01
+cache_write = 0.125
 output = 0.50
 
 [prices."gpt-6.1-sol"]
 input = 2.00
+cached_input = 0.10
+cache_write = 2.50
 output = 10.00
