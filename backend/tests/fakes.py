@@ -25,6 +25,26 @@ class FakeResponses:
         )
 
 
+class FakeChatCompletions:
+    """Giả lập `client.chat.completions`: ném lần lượt các lỗi trong `errors`, sau đó trả `content`."""
+
+    def __init__(self, content: str = "{}", finish_reason: str = "stop", errors: list[Exception] | None = None,
+                 model: str = "gemini-3.8-flash-001"):
+        self.content, self.finish_reason, self.model = content, finish_reason, model
+        self.errors, self.calls = list(errors or []), []
+
+    async def create(self, **kwargs):
+        self.calls.append(kwargs)
+        if self.errors:
+            raise self.errors.pop(0)
+        return SimpleNamespace(
+            model=self.model,
+            choices=[SimpleNamespace(message=SimpleNamespace(content=self.content), finish_reason=self.finish_reason)],
+            usage=SimpleNamespace(prompt_tokens=900, completion_tokens=300, prompt_tokens_details=None,
+                                  completion_tokens_details=SimpleNamespace(reasoning_tokens=200)),
+        )
+
+
 def fake_usage(input_tokens=1000, output_tokens=50, cached=0, written=0, reasoning=0):
     return SimpleNamespace(
         input_tokens=input_tokens,

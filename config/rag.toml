@@ -68,13 +68,50 @@ prompt_version = "answer-v1"   # prompt trong backend/app/generation/prompts.py
 max_output_tokens = 2000       # gồm cả token suy luận; chặn trên chi phí và thời gian của một câu trả lời
 
 [eval]
-judge_model = "gpt-6.1-sol"
-judge_reasoning_effort = "high"
+judge = "gemini"                    # hồ sơ judge mặc định, trong [judges.<tên>]; chọn hồ sơ khác bằng --judge
 judge_prompt_version = "judge-v1"   # file eval/judges/<judge_prompt_version>.md
-judge_max_output_tokens = 16000
-# "default" hoặc "flex" (giá bằng nửa, chậm hơn, có thể trả 429 khi thiếu tài nguyên). Bước trả lời luôn dùng tier
-# mặc định vì e2e đo TTFT.
-judge_service_tier = "default"
+
+# Hồ sơ judge (backend/app/evaluation/judge.py). Đổi judge không đổi kết quả RAG nên không cần tăng config_version;
+# kết quả eval ghi provider, model id do API trả về và prompt version của judge.
+# - api: "responses" (chỉ OpenAI) hoặc "chat" (Chat Completions, mọi endpoint tương thích OpenAI).
+# - rpm/tpm/rpd/tpd: giới hạn của provider, 0 = không giới hạn. Số request và token theo ngày được đếm trong ledger
+#   chi phí; hết quota ngày thì dừng gọn, chạy lại với --rejudge-missing để chấm nốt.
+# - service_tier "flex" (chỉ OpenAI): giá bằng nửa, chậm hơn, có thể trả 429.
+# Judge chính (Boss chốt 07/10/2026): Gemini free tier, 100 request/ngày.
+[judges.gemini]
+provider = "gemini"
+api = "chat"
+base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
+api_key_env = "GEMINI_API_KEY"
+model = "gemini-3.8-flash"
+reasoning_effort = "high"
+max_output_tokens = 8000
+rpm = 5
+rpd = 100
+quota_reset = "pacific"
+
+# Judge thứ hai: Groq free tier, 30 RPM, 8K TPM, 1K RPD, 200K TPD (khoảng 25 lời gọi judge mỗi ngày).
+[judges.groq]
+provider = "groq"
+api = "chat"
+base_url = "https://api.groq.com/openai/v1"
+api_key_env = "GROQ_API_KEY"
+model = "openai/gpt-oss-120b"
+reasoning_effort = "medium"
+max_output_tokens = 3000
+rpm = 30
+tpm = 8000
+rpd = 1000
+tpd = 200000
+
+# Judge theo kế hoạch ban đầu. Đang cấm dùng (ngân sách còn $3.26 cho cả dự án, 07/10/2026).
+[judges.sol]
+provider = "openai"
+api = "responses"
+api_key_env = "OPENAI_API_KEY"
+model = "gpt-6.1-sol"
+reasoning_effort = "high"
+max_output_tokens = 16000
 
 # Giá USD cho 1M token: `input` là token đầu vào, `output` là token đầu ra (model embedding không có output).
 # `cached_input`: token đầu vào đọc từ prompt cache; `cache_write`: token đầu vào ghi vào prompt cache
@@ -117,3 +154,10 @@ input = 1.00
 cached_input = 0.05
 cache_write = 1.25
 output = 5.00
+
+# Judge miễn phí (free tier). Khai báo giá 0 rõ ràng: model không có giá vẫn bị báo lỗi như trước.
+[prices."gemini-3.8-flash"]
+input = 0.0
+
+[prices."openai/gpt-oss-120b"]
+input = 0.0

@@ -3,7 +3,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, model_validator
 
 from app.core.config import REPO_ROOT
 
@@ -83,11 +83,28 @@ class GenerationConfig(_Section):
 
 
 class EvalConfig(_Section):
-    judge_model: str
-    judge_reasoning_effort: ReasoningEffort
+    judge: str  # tên hồ sơ trong [judges.<tên>]
     judge_prompt_version: str
-    judge_max_output_tokens: int
-    judge_service_tier: ServiceTier
+
+
+class JudgeProfile(_Section):
+    """Một model làm judge, gọi qua endpoint tương thích OpenAI. Giới hạn bằng 0 nghĩa là không giới hạn."""
+
+    provider: str  # tên ghi vào kết quả eval và ledger, ví dụ "gemini"
+    api: Literal["responses", "chat"]  # Responses API (chỉ OpenAI) hoặc Chat Completions
+    base_url: str | None = None  # None: API của OpenAI
+    api_key_env: str  # tên biến môi trường (hoặc dòng trong .env) chứa key
+    model: str
+    reasoning_effort: ReasoningEffort | None = None  # None: không gửi tham số này
+    max_output_tokens: int
+    service_tier: ServiceTier = "default"
+    timeout_seconds: float = 300
+    rpm: int = 0  # request mỗi phút
+    tpm: int = 0  # token mỗi phút (ước tính: token vào + max_output_tokens)
+    rpd: int = 0  # request mỗi ngày
+    tpd: int = 0  # token mỗi ngày
+    # Mốc tính "ngày" của quota phía provider: Gemini reset lúc nửa đêm giờ Pacific.
+    quota_reset: Literal["utc", "local", "pacific"] = "utc"
 
 
 class ModelPrice(_Section):
@@ -123,7 +140,20 @@ class RagConfig(_Section):
     index: IndexConfig
     generation: GenerationConfig
     eval: EvalConfig
+    judges: dict[str, JudgeProfile]
     prices: dict[str, ModelPrice]
+
+    @model_validator(mode="after")
+    def check_judge(self) -> "RagConfig":
+        if self.eval.judge not in self.judges:
+            raise ValueError(f"eval.judge = {self.eval.judge!r} không có trong [judges]: {sorted(self.judges)}")
+        return self
+
+    def judge_profile(self, name: str | None = None) -> JudgeProfile:
+        name = name or self.eval.judge
+        if name not in self.judges:
+            raise ValueError(f"không có hồ sơ judge {name!r}; có: {sorted(self.judges)}")
+        return self.judges[name]
 
     @property
     def collection_name(self) -> str:

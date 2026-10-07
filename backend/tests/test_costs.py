@@ -1,8 +1,12 @@
-from datetime import date
+import asyncio
+import sqlite3
+from datetime import UTC, date, datetime
 from types import SimpleNamespace
 
+import httpx
+import openai
 import pytest
-from fakes import FakeResponses, FakeStreamResponses, fake_usage
+from fakes import FakeChatCompletions, FakeResponses, FakeStreamResponses, fake_usage
 
 from app.core.costs import BudgetedClient, BudgetExceededError, CostLedger
 from app.core.rag_config import ModelPrice
@@ -85,3 +89,63 @@ async def test_unknown_model_has_no_price(tmp_path):
     client, _, _ = make_client(tmp_path, limit=1.0)
     with pytest.raises(KeyError):
         await client.responses.create(model="gpt-unknown", input="x")
+
+
+@pytest.mark.asyncio
+async def test_project_limit_counts_every_day(tmp_path):
+    path = tmp_path / "costs.sqlite"
+    CostLedger(10.0, path, today=lambda: date(2026, 10, 6)).settle(0.0, 2.79, "gpt-6.1-sol")
+    ledger = CostLedger(10.0, path, project_limit_usd=2.80, today=lambda: date(2026, 10, 7))
+    assert (ledger.spent_today(), ledger.spent_total()) == (0.0, pytest.approx(2.79))
+    client = BudgetedClient(SimpleNamespace(responses=FakeResponses({"ok": True}), embeddings=None), ledger, PRICES)
+    with pytest.raises(BudgetExceededError, match="PROJECT_COST_LIMIT_USD"):
+        await client.responses.create(model="gpt-6.1-sol", input="x", max_output_tokens=2000)
+
+
+def request_error(status: int) -> openai.APIStatusError:
+    request = httpx.Request("POST", "https://api.openai.com/v1/responses")
+    return openai.APIStatusError("lỗi", response=httpx.Response(status, request=request), body=None)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(("error", "charged"), [
+    (request_error(429), False),  # provider từ chối request: không tính tiền
+    (request_error(400), False),
+    (request_error(500), True),  # lỗi sau khi request đã gửi đi: ghi mức tối đa đã giữ chỗ
+    (openai.APITimeoutError(request=httpx.Request("POST", "https://api.openai.com/v1/responses")), True),
+    (asyncio.CancelledError(), True),  # huỷ do quá hạn (bước viết lại câu hỏi)
+])
+async def test_failed_call_records_zero_only_when_the_provider_refused(tmp_path, error, charged):
+    client, _, ledger = make_client(tmp_path, limit=1.0, responses=FakeResponses(error=error))
+    with pytest.raises(type(error)):
+        await client.responses.create(model="gpt-6.1-sol", input="Câu hỏi?", max_output_tokens=500)
+    worst = PRICES["gpt-6.1-sol"].cost(0, 500)  # mức tối đa gồm cả token vào ước tính
+    assert (ledger.spent_today() > worst) is charged
+    assert ledger._pending == 0
+
+
+@pytest.mark.asyncio
+async def test_chat_completions_are_budgeted_and_counted_per_provider(tmp_path):
+    prices = PRICES | {"gemini-3.8-flash": ModelPrice(input=0.0)}
+    ledger = CostLedger(1.0, tmp_path / "costs.sqlite")
+    chat = FakeChatCompletions()
+    inner = SimpleNamespace(responses=None, embeddings=None, chat=SimpleNamespace(completions=chat))
+    client = BudgetedClient(inner, ledger, prices, provider="gemini")
+    await client.chat.completions.create(model="gemini-3.8-flash", messages=[{"role": "user", "content": "x"}],
+                                         max_completion_tokens=100)
+    assert ledger.spent_today() == 0
+    assert ledger.usage_since("gemini", "gemini-3.8-flash", datetime(2000, 1, 1, tzinfo=UTC)) == (1, 1200)
+    assert ledger.usage_since("openai", "gemini-3.8-flash", datetime(2000, 1, 1, tzinfo=UTC)) == (0, 0)
+
+
+def test_old_ledger_table_gets_new_columns(tmp_path):
+    path = tmp_path / "costs.sqlite"
+    db = sqlite3.connect(path)
+    db.execute("CREATE TABLE costs (day TEXT, at TEXT, model TEXT, cost_usd REAL)")
+    db.execute("INSERT INTO costs VALUES ('2026-10-07', '2026-10-07T19:00:00+07:00', 'gpt-6-luna', 0.001)")
+    db.commit()
+    db.close()
+    ledger = CostLedger(1.0, path)
+    assert ledger.spent_total() == pytest.approx(0.001)
+    ledger.settle(0.0, 0.0, "gemini-3.8-flash", "gemini", 10, 5)
+    assert ledger.usage_since("gemini", "gemini-3.8-flash", datetime(2000, 1, 1, tzinfo=UTC)) == (1, 15)

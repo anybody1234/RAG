@@ -16,7 +16,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "backend"))
 import openai
 from langfuse import Langfuse
 
-from app.core.config import REPO_ROOT, get_settings
+from app.core.config import REPO_ROOT, get_secret, get_settings
 from app.core.rag_config import get_rag_config
 from app.main import DEPENDENCY_CHECKS, _run_check
 
@@ -41,6 +41,15 @@ def check_env_file() -> None:
     }
     for name, value in required.items():
         report(bool(value), name, "đã điền" if value else "còn trống")
+    # Key của các judge ngoài OpenAI: chỉ kiểm tra đã điền, không gọi API để khỏi tốn quota free tier.
+    for name, profile in sorted(get_rag_config().judges.items()):
+        if profile.provider != "openai":
+            try:
+                get_secret(profile.api_key_env)
+            except KeyError:
+                report(False, f"{profile.api_key_env} (judge {name})", "còn trống")
+            else:
+                report(True, f"{profile.api_key_env} (judge {name})", "đã điền")
 
 
 def check_openai() -> None:
@@ -54,8 +63,8 @@ def check_openai() -> None:
         config.generation.answer_model,
         config.query.model,
         config.rerank.model,
-        config.eval.judge_model,
         config.embedding.model,
+        *(profile.model for profile in config.judges.values() if profile.provider == "openai"),
     }
     client = openai.OpenAI(api_key=key, timeout=20, max_retries=1)
     for model in sorted(models):

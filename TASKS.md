@@ -231,21 +231,26 @@ Thứ tự từ 07/10: Boss duyệt từng commit. Chỉ tinh chỉnh prompt/con
 - [x] Viết lại câu hỏi multi-turn bằng `gpt-6-luna` (làm ở P4: `backend/app/retrieval/query.py`, `query.rewrite`).
 - [x] Code cho hạn của bước viết lại câu hỏi (`query.rewrite` = none | concat | llm, `query.rewrite_timeout_ms`): `concat` ghép câu hỏi trước của user với câu hiện tại, không gọi LLM; `llm` quá hạn hoặc lỗi thì dùng cách ghép.
 - [ ] Đo 3 cách (chỉ ghép, LLM, LLM có hạn 1.5 s) cả về chất lượng lẫn TTFT lượt hỏi tiếp, với Sol và Luna (`measure_ttft.py --follow-up-only`). Cần Docker.
-- [x] Trần chi phí theo ngày (`DAILY_COST_LIMIT_USD`, `backend/app/core/costs.py`): chặn trước khi gọi API, dựa trên ước tính chi phí tối đa của lời gọi; chi phí thật cộng dồn trong ngày ở ledger SQLite dùng chung cho mọi checkout (`COST_LEDGER_PATH`, mặc định `~/.rag-chatbot/costs.sqlite`).
+- [x] Trần chi phí (`backend/app/core/costs.py`), chặn trước khi gọi API, dựa trên ước tính chi phí tối đa của lời gọi:
+  - trần ngày `DAILY_COST_LIMIT_USD` = $0.50 và trần cả dự án `PROJECT_COST_LIMIT_USD` = $2.80 (07/10: tài khoản còn $3.26 cho cả dự án);
+  - chi phí thật ghi vào ledger SQLite dùng chung cho mọi checkout (`COST_LEDGER_PATH`, mặc định `~/.rag-chatbot/costs.sqlite`), kèm provider và số token để đếm quota của provider miễn phí;
+  - lời gọi bị huỷ, timeout, lỗi 5xx hoặc stream đứt thì ghi mức tối đa đã giữ chỗ; provider từ chối (4xx) thì ghi $0.
 - [x] Eval từ chối lưu kết quả khi code chưa commit, trừ khi chạy với `--allow-dirty`. Kết quả ghi định danh kho: sha256 của manifest và số chunk của từng văn bản trong index.
 - [x] LLM-judge (`backend/app/evaluation/judge.py`, prompt `eval/judges/judge-v1.md`):
   - Judge tách câu trả lời thành các ý. Faithfulness và citation precision/recall được tính trong code từ nhãn của từng ý; correctness và relevancy là nhãn 3 mức.
   - Từ chối đếm trực tiếp, không qua judge.
-  - Phần gọi model nằm sau interface `JudgeModel`, nên đổi provider không phải sửa logic chấm.
-  - `judge_service_tier` = default | flex. Flex rẻ bằng nửa; bước trả lời luôn dùng tier mặc định vì e2e đo TTFT.
+  - Judge theo hồ sơ `[judges.<tên>]`, chạy với mọi endpoint tương thích OpenAI (Responses API hoặc Chat Completions). Giới hạn rpm/tpm/rpd/tpd; retry 429 theo Retry-After hoặc `retryDelay`; hết quota ngày thì dừng gọn. Kết quả ghi provider và model id do API trả về.
+  - Judge chính: Gemini `gemini-3.8-flash` free tier (100 request/ngày); judge thứ hai: Groq `openai/gpt-oss-120b`. Sol bị cấm vì ngân sách (Boss chốt 07/10).
 - [x] `eval/run_e2e_eval.py`:
   - Ghi latency từng bước cho mọi câu, TTFT tách lượt đầu và lượt hỏi tiếp.
   - Ghi context đã đánh số kèm đủ text, để chấm lại bằng judge khác mà không chạy lại retrieval hay sinh câu trả lời.
   - Từ chối sai được tách theo context có chứa nguồn gold hay không.
-- [ ] Chạy thử 5 câu: chi phí judge mỗi lần gọi, cả tier standard lẫn flex. Cần Docker.
-- [ ] e2e đủ 100 câu v1 với Sol (chờ Long chốt ngân sách); sau đó so sánh Sol với Luna cho bước trả lời, cùng judge, cùng bộ câu.
-- [x] `eval/calibrate_judge.py`: `export` xuất ≥ 50 mẫu (`eval/judges/calibration_samples.jsonl`, không có điểm judge; điểm judge ở file riêng), `agreement` tính mức đồng thuận theo từng metric.
-- [ ] Hiệu chỉnh judge với 50 mẫu, cần đồng thuận ≥ 80%. Long quyết định 07/10: một agent độc lập với P5 chấm, không xem điểm judge.
+  - In chi phí dự kiến và quota còn lại trước khi chạy; dự kiến vượt $0.30 thì từ chối nếu không có `--max-cost`.
+  - Hết quota judge thì vẫn sinh câu trả lời; `--rejudge-missing FILE` chấm nốt vào hôm sau.
+- [ ] 2 lời gọi thử Gemini và Groq (kiểm tra base_url, json_schema; tính vào quota). Chờ Boss duyệt commit ngân sách.
+- [ ] e2e 5 câu (trả lời bằng Luna, judge Gemini), rồi đủ 100 câu v1. Sol trả lời 100 câu để so với Luna: duyệt riêng sau.
+- [x] `eval/calibrate_judge.py`: `export` xuất ≥ 50 mẫu (`eval/judges/calibration_samples.jsonl`, không có điểm judge; điểm judge ở `calibration_judge_scores_<hồ sơ>.jsonl`), `judge --judge <hồ sơ>` cho judge khác chấm cùng bộ mẫu (chấm tiếp được qua nhiều ngày), `agreement --judge <hồ sơ>` tính mức đồng thuận theo từng metric.
+- [ ] Hiệu chỉnh judge với 50 mẫu, cần đồng thuận ≥ 80%. Long quyết định 07/10: một agent độc lập với P5 chấm, không xem điểm judge. Gemini và Groq cùng chấm 50 mẫu để so.
 
 **Hoàn thành khi:** có số đo cho 5 chỉ số chất lượng mục tiêu và chi phí mỗi câu.
 

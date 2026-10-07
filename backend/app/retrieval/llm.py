@@ -67,6 +67,24 @@ def usage_from_response(usage: Any, price: ModelPrice) -> LlmUsage:
     )
 
 
+def usage_from_chat(usage: Any, price: ModelPrice) -> LlmUsage:
+    """`usage` của Chat Completions (OpenAI hoặc endpoint tương thích). Provider không trả usage thì chỉ đếm lần gọi."""
+    if usage is None:
+        return LlmUsage(calls=1)
+    prompt_details = getattr(usage, "prompt_tokens_details", None)
+    completion_details = getattr(usage, "completion_tokens_details", None)
+    prompt, completion = usage.prompt_tokens or 0, usage.completion_tokens or 0
+    cached = getattr(prompt_details, "cached_tokens", 0) or 0
+    return LlmUsage(
+        calls=1,
+        input_tokens=prompt,
+        cached_input_tokens=cached,
+        output_tokens=completion,
+        reasoning_tokens=getattr(completion_details, "reasoning_tokens", 0) or 0,
+        cost_usd=price.cost(prompt, completion, cached, 0),
+    )
+
+
 @dataclass
 class LlmResult:
     data: dict[str, Any]
