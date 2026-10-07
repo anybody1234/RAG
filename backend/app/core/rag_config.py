@@ -11,6 +11,14 @@ RAG_CONFIG_PATH = REPO_ROOT / "config" / "rag.toml"
 
 ReasoningEffort = Literal["none", "low", "medium", "high", "xhigh", "max"]
 RetrievalMode = Literal["dense", "sparse", "hybrid"]
+# Tier xử lý của OpenAI. "flex" rẻ bằng nửa nhưng chậm hơn và có thể trả 429 khi thiếu tài nguyên, nên chỉ dùng
+# cho việc không đo latency (judge), không dùng cho bước trả lời.
+ServiceTier = Literal["default", "flex"]
+
+
+def price_key(model: str, service_tier: str | None = None) -> str:
+    """Khoá trong [prices]: "<model>" cho tier mặc định, "<model>@flex" cho tier flex."""
+    return f"{model}@{service_tier}" if service_tier and service_tier not in ("default", "auto") else model
 
 
 class _Section(BaseModel):
@@ -38,7 +46,8 @@ class QueryConfig(_Section):
     model: str
     reasoning_effort: ReasoningEffort
     prompt_version: str
-    rewrite: bool
+    rewrite: Literal["none", "concat", "llm"]
+    rewrite_timeout_ms: int
     translate: bool
     translation_weight: float
 
@@ -70,18 +79,35 @@ class GenerationConfig(_Section):
     answer_model: str
     answer_reasoning_effort: ReasoningEffort
     prompt_version: str
+    max_output_tokens: int
 
 
 class EvalConfig(_Section):
     judge_model: str
     judge_reasoning_effort: ReasoningEffort
+    judge_prompt_version: str
+    judge_max_output_tokens: int
+    judge_service_tier: ServiceTier
 
 
 class ModelPrice(_Section):
-    """USD cho 1M token."""
+    """USD cho 1M token. Token đầu vào chia 3 loại: thường (`input`), đọc từ prompt cache (`cached_input`) và
+    ghi vào prompt cache (`cache_write`). Thiếu giá của loại nào thì tính bằng giá `input`."""
 
     input: float
     output: float = 0.0
+    cached_input: float | None = None
+    cache_write: float | None = None
+
+    def cost(self, input_tokens: int, output_tokens: int, cached_tokens: int = 0, cache_write_tokens: int = 0) -> float:
+        """`input_tokens` là tổng token đầu vào, đã gồm token đọc và ghi cache (giống `usage` của API)."""
+        ordinary = input_tokens - cached_tokens - cache_write_tokens
+        cached_price = self.input if self.cached_input is None else self.cached_input
+        write_price = self.input if self.cache_write is None else self.cache_write
+        return (
+            ordinary * self.input + cached_tokens * cached_price + cache_write_tokens * write_price
+            + output_tokens * self.output
+        ) / 1e6
 
 
 class RagConfig(_Section):
@@ -113,10 +139,11 @@ class RagConfig(_Section):
             "embed_title": self.index.embed_title,
         }
 
-    def price(self, model: str) -> ModelPrice:
-        if model not in self.prices:
-            raise KeyError(f"chưa có giá của {model} trong [prices] của config/rag.toml")
-        return self.prices[model]
+    def price(self, model: str, service_tier: str | None = None) -> ModelPrice:
+        key = price_key(model, service_tier)
+        if key not in self.prices:
+            raise KeyError(f"chưa có giá của {key} trong [prices] của config/rag.toml")
+        return self.prices[key]
 
 
 def apply_overrides(data: dict[str, Any], overrides: list[str]) -> None:

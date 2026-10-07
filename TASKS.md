@@ -211,16 +211,41 @@ Thứ tự xếp theo chỗ đang hụt (Long chốt 06/10). Số trước/sau v
 - Chi phí API của cả ngày thí nghiệm khoảng $0.46.
 
 ## P5. Sinh câu trả lời + eval end-to-end (tuần 5–6)
-- [ ] Prompt trả lời (version hoá):
-  - Bọc tài liệu trong tag `<document>`.
-  - Trích dẫn `[n]`.
-  - Trả "Không tìm thấy trong tài liệu" khi thiếu thông tin.
-- [ ] Gọi `gpt-6.1-sol` qua Responses API (streaming); kiểm tra mọi `[n]` hợp lệ; map `[n]` sang văn bản, Điều và trang
-- [x] Viết lại câu hỏi multi-turn bằng `gpt-6-luna` (làm ở P4: `backend/app/retrieval/query.py`, `query.rewrite`). Còn phải đo TTFT của lượt hỏi tiếp.
-- [ ] Trần chi phí theo ngày (`DAILY_COST_LIMIT_USD`)
-- [ ] LLM-judge chấm faithfulness, correctness, relevancy, citation precision/recall; abstention đếm trực tiếp
-- [ ] **[L]** Chấm tay 50 mẫu để hiệu chỉnh judge (cần đồng thuận ≥ 80%)
-- [ ] `eval/run_e2e_eval.py`; so sánh Sol và Luna cho bước trả lời
+Thứ tự từ 07/10: Boss duyệt từng commit. Chỉ tinh chỉnh prompt/config trên golden v1, vì golden v2 là bộ test giữ riêng.
+- [x] Prompt trả lời `answer-v1` (`backend/app/generation/prompts.py`):
+  - Mỗi chunk nằm trong `<document index="n" ...>`; text chunk không đóng được tag.
+  - Mỗi ý gắn trích dẫn `[n]`.
+  - Thiếu thông tin thì trả "Không tìm thấy trong tài liệu." (câu hỏi tiếng Anh: "Not found in the documents.").
+  - Hai bản lệch nhau thì bản tiếng Việt là căn cứ.
+- [x] Gọi LLM qua Responses API có streaming và đo TTFT (`answer.py`). Kiểm tra mọi `[n]`, map sang số hiệu, Điều/Khoản và trang (`citations.py`).
+- [x] Cảnh báo Điều bị sửa đổi, 2 lớp:
+  - Chunk có `amended` mang thuộc tính `amended_by` trong prompt; model dùng luật sửa đổi nếu có trong context.
+  - Backend sinh cảnh báo tất định cho mỗi Điều bị sửa được trích dẫn, nằm trong `AnswerResult`.
+  - Golden v1 không hỏi vào Điều bị sửa, nên đường này chỉ được kiểm tra bằng unit test.
+- [x] Giá có cache: `cached_input` và `cache_write` trong `[prices]`.
+  - Từ GPT-5.6, mặc định OpenAI tự ghi cache (1.25 lần giá input) cho prompt ≥ 1024 token. Context RAG không bao giờ dùng lại, nên mọi lời gọi LLM dùng mode `explicit`.
+- [x] Đo TTFT của Sol (`eval/measure_ttft.py`, 06/10, code chưa commit, 28 câu):
+  - TTFT của LLM: p50 1.71 s, p95 2.47 s.
+  - TTFT user lượt đầu: p95 3.00 s. Lượt hỏi tiếp: p95 4.87 s, vượt SLO, vì riêng bước viết lại câu hỏi đã mất p95 2.50 s.
+  - Sol chỉ nhận effort từ `low` trở lên; ở `low` model dùng 0 token suy luận.
+- [x] Viết lại câu hỏi multi-turn bằng `gpt-6-luna` (làm ở P4: `backend/app/retrieval/query.py`, `query.rewrite`).
+- [x] Code cho hạn của bước viết lại câu hỏi (`query.rewrite` = none | concat | llm, `query.rewrite_timeout_ms`): `concat` ghép câu hỏi trước của user với câu hiện tại, không gọi LLM; `llm` quá hạn hoặc lỗi thì dùng cách ghép.
+- [ ] Đo 3 cách (chỉ ghép, LLM, LLM có hạn 1.5 s) cả về chất lượng lẫn TTFT lượt hỏi tiếp, với Sol và Luna (`measure_ttft.py --follow-up-only`). Cần Docker.
+- [x] Trần chi phí theo ngày (`DAILY_COST_LIMIT_USD`, `backend/app/core/costs.py`): chặn trước khi gọi API, dựa trên ước tính chi phí tối đa của lời gọi; chi phí thật cộng dồn trong ngày ở ledger SQLite dùng chung cho mọi checkout (`COST_LEDGER_PATH`, mặc định `~/.rag-chatbot/costs.sqlite`).
+- [x] Eval từ chối lưu kết quả khi code chưa commit, trừ khi chạy với `--allow-dirty`. Kết quả ghi định danh kho: sha256 của manifest và số chunk của từng văn bản trong index.
+- [x] LLM-judge (`backend/app/evaluation/judge.py`, prompt `eval/judges/judge-v1.md`):
+  - Judge tách câu trả lời thành các ý. Faithfulness và citation precision/recall được tính trong code từ nhãn của từng ý; correctness và relevancy là nhãn 3 mức.
+  - Từ chối đếm trực tiếp, không qua judge.
+  - Phần gọi model nằm sau interface `JudgeModel`, nên đổi provider không phải sửa logic chấm.
+  - `judge_service_tier` = default | flex. Flex rẻ bằng nửa; bước trả lời luôn dùng tier mặc định vì e2e đo TTFT.
+- [x] `eval/run_e2e_eval.py`:
+  - Ghi latency từng bước cho mọi câu, TTFT tách lượt đầu và lượt hỏi tiếp.
+  - Ghi context đã đánh số kèm đủ text, để chấm lại bằng judge khác mà không chạy lại retrieval hay sinh câu trả lời.
+  - Từ chối sai được tách theo context có chứa nguồn gold hay không.
+- [ ] Chạy thử 5 câu: chi phí judge mỗi lần gọi, cả tier standard lẫn flex. Cần Docker.
+- [ ] e2e đủ 100 câu v1 với Sol (chờ Long chốt ngân sách); sau đó so sánh Sol với Luna cho bước trả lời, cùng judge, cùng bộ câu.
+- [x] `eval/calibrate_judge.py`: `export` xuất ≥ 50 mẫu (`eval/judges/calibration_samples.jsonl`, không có điểm judge; điểm judge ở file riêng), `agreement` tính mức đồng thuận theo từng metric.
+- [ ] Hiệu chỉnh judge với 50 mẫu, cần đồng thuận ≥ 80%. Long quyết định 07/10: một agent độc lập với P5 chấm, không xem điểm judge.
 
 **Hoàn thành khi:** có số đo cho 5 chỉ số chất lượng mục tiêu và chi phí mỗi câu.
 

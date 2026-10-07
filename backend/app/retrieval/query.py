@@ -1,11 +1,12 @@
-"""Xử lý câu hỏi trước khi truy xuất, gộp trong một lần gọi LLM (`[query]` trong config):
+"""Xử lý câu hỏi trước khi truy xuất (`[query]` trong config):
 
-- viết lại câu hỏi thành câu độc lập theo lịch sử hội thoại (chỉ gọi khi có lịch sử);
-- dịch sang ngôn ngữ còn lại (vi <-> en) để truy xuất được cả tài liệu khác ngôn ngữ với câu hỏi.
-
-Gọi LLM lỗi thì dùng nguyên câu hỏi gốc: truy xuất vẫn chạy, chỉ mất phần cải thiện.
+- viết lại câu hỏi ở lượt hỏi tiếp (`rewrite`): ghép câu hỏi trước của user với câu hiện tại (concat, không gọi
+  LLM), hoặc để LLM viết thành câu độc lập (llm). LLM quá hạn `rewrite_timeout_ms` hoặc lỗi thì dùng cách ghép;
+- dịch sang ngôn ngữ còn lại (vi <-> en) để truy xuất được cả tài liệu khác ngôn ngữ với câu hỏi. Viết lại và
+  dịch gộp trong một lần gọi LLM; gọi lỗi thì không có câu dịch.
 """
 
+import asyncio
 import json
 import time
 import unicodedata
@@ -50,6 +51,8 @@ class QueryPlan:
     language: Language
     standalone: str
     translation: str | None = None
+    # Cách tạo `standalone`: none (câu gốc), concat (ghép câu trước), llm, hoặc concat_fallback (LLM quá hạn/lỗi).
+    method: str = "none"
     usage: LlmUsage = field(default_factory=LlmUsage)
     latency_ms: float = 0.0
     error: str | None = None
@@ -72,6 +75,12 @@ def _format_input(question: str, history: Sequence[tuple[Role, str]]) -> str:
     return "\n".join(lines)
 
 
+def concat_question(question: str, history: Sequence[tuple[Role, str]]) -> str:
+    """Câu hỏi trước của user ghép với câu hiện tại: cách viết lại không cần LLM."""
+    previous = next((content for role, content in reversed(history) if role == "user"), None)
+    return f"{unicodedata.normalize('NFC', previous).strip()}\n{question}" if previous else question
+
+
 class QueryProcessor:
     def __init__(self, client: AsyncOpenAI, config: QueryConfig, price: ModelPrice):
         if config.prompt_version not in _INSTRUCTIONS:
@@ -82,7 +91,10 @@ class QueryProcessor:
         question = unicodedata.normalize("NFC", question).strip()
         language = detect_language(question)
         plan = QueryPlan(question=question, language=language, standalone=question)
-        rewrite = self.config.rewrite and bool(history)
+        mode = self.config.rewrite if history else "none"
+        if mode == "concat":
+            plan.standalone, plan.method = concat_question(question, history), "concat"
+        rewrite = mode == "llm"
         if not (rewrite or self.config.translate):
             return plan
 
@@ -95,20 +107,29 @@ class QueryProcessor:
             rules.append(_TRANSLATE_RULE.format(source=source, target=LANGUAGE_NAMES[_other(language)]))
             properties["translation"] = {"type": "string"}
         instructions = _INSTRUCTIONS[self.config.prompt_version].format(rules="\n".join(rules))
+        timeout = self.config.rewrite_timeout_ms / 1000 if self.config.rewrite_timeout_ms > 0 else None
         start = time.perf_counter()
         try:
-            result = await complete_json(
-                self.client, self.config.model, self.config.reasoning_effort, self.price, instructions,
-                _format_input(question, history if rewrite else ()), "search_queries", properties,
+            result = await asyncio.wait_for(
+                complete_json(
+                    self.client, self.config.model, self.config.reasoning_effort, self.price, instructions,
+                    _format_input(question, history if rewrite else ()), "search_queries", properties,
+                ),
+                timeout,
             )
-        except (openai.OpenAIError, json.JSONDecodeError) as exc:
-            # Thời gian chờ trước khi lỗi vẫn tính vào latency.
+        except (openai.OpenAIError, json.JSONDecodeError, TimeoutError) as exc:
+            # Thời gian chờ trước khi lỗi vẫn tính vào latency. Quá hạn thì request bị huỷ, không biết token nên
+            # không tính được chi phí (OpenAI có thể vẫn tính tiền phần đã sinh).
             plan.latency_ms = (time.perf_counter() - start) * 1000
-            plan.error = type(exc).__name__
+            plan.error = "timeout" if isinstance(exc, TimeoutError) else type(exc).__name__
+            if rewrite:
+                plan.standalone, plan.method = concat_question(question, history), "concat_fallback"
             return plan
         plan.usage, plan.latency_ms = result.usage, (time.perf_counter() - start) * 1000
-        if rewrite and (standalone := str(result.data.get("standalone", "")).strip()):
-            plan.standalone = unicodedata.normalize("NFC", standalone)
+        if rewrite:
+            standalone = str(result.data.get("standalone", "")).strip()
+            plan.standalone = unicodedata.normalize("NFC", standalone) if standalone else concat_question(question, history)
+            plan.method = "llm" if standalone else "concat_fallback"
         if self.config.translate:
             plan.translation = unicodedata.normalize("NFC", str(result.data.get("translation", "")).strip()) or None
         return plan

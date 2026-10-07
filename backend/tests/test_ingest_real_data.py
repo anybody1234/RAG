@@ -62,13 +62,10 @@ def test_no_page_furniture_or_broken_characters(results):
     assert [c.chunk_id for r in results.values() for c in r.chunks if junk.search(c.text)] == []
 
 
-@pytest.mark.xfail(strict=True, reason=(
-    "Lỗi đã biết (07/10/2026): khối chữ ký số trang 1 còn sót ở Luật Doanh nghiệp 2020 (dòng 'Ký bởi' bị ngắt "
-    "sang dòng 'phủ'), Luật BVDLCN 2025 và luật 76/2025 (không trích ra dòng 'Ký bởi'). Sửa sẽ đổi chunk đang "
-    "index, phải đo lại eval"
-))
 def test_no_leftover_signature_lines(results):
-    leftover = re.compile(r"Thời gian ký:|Email: thongtinchinhphu")
+    # Từng sót (sửa 07/10/2026): Luật Doanh nghiệp 2020 có tên người ký bị ngắt sang dòng "phủ"; Luật BVDLCN 2025
+    # và luật 76/2025 mở khối chữ ký bằng "Người ký:" thay cho "Ký bởi:".
+    leftover = re.compile(r"Người ký:|Thời gian ký:|Email: thongtinchinhphu|Cơ quan: Văn phòng Chính phủ", re.IGNORECASE)
     assert [c.chunk_id for r in results.values() for c in r.chunks if leftover.search(c.text)] == []
 
 

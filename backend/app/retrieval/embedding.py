@@ -15,6 +15,7 @@ from typing import Self
 from openai import AsyncOpenAI
 
 from app.core.config import REPO_ROOT, get_settings
+from app.core.costs import budgeted
 from app.core.rag_config import RagConfig
 from app.ingestion.tokens import TokenCounter
 
@@ -148,10 +149,13 @@ class Embedder:
 
 
 def build_embedder(config: RagConfig, cache: EmbeddingCache | None = None) -> Embedder:
-    client = AsyncOpenAI(
-        api_key=get_settings().openai_api_key.get_secret_value(),
-        max_retries=MAX_RETRIES,
-        timeout=TIMEOUT_SECONDS,
+    client = budgeted(
+        AsyncOpenAI(
+            api_key=get_settings().openai_api_key.get_secret_value(),
+            max_retries=MAX_RETRIES,
+            timeout=TIMEOUT_SECONDS,
+        ),
+        config.prices,
     )
     model = config.embedding.model
     return Embedder(client, model, config.embedding.dimensions, config.price(model).input, cache)

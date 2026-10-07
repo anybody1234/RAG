@@ -23,6 +23,9 @@ class Settings(BaseSettings):
 
     jwt_secret: SecretStr = SecretStr("")
     daily_cost_limit_usd: float = 1.0
+    # Ledger chi phí OpenAI theo ngày. Mặc định ở thư mục của user, để mọi checkout và worktree của repo dùng chung
+    # một trần chi phí.
+    cost_ledger_path: Path = Path.home() / ".rag-chatbot" / "costs.sqlite"
 
 
 @lru_cache

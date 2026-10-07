@@ -72,6 +72,27 @@ def test_pdf_law_drops_2026_signature_block(tmp_path):
     assert "Bộ luật này quy định tiêu chuẩn lao động." in joined
 
 
+@pytest.mark.parametrize("signature", [
+    # Công báo năm 2025 ghi "Người ký" thay cho "Ký bởi".
+    ["Người ký: CỔNG THÔNG TIN ĐIỆN TỬ CHÍNH PHỦ", "Email: thongtinchinhphu@chinhphu.vn",
+     "Cơ quan: VĂN PHÒNG CHÍNH PHỦ", "Thời gian ký: 28.07.2025 14:52:44 +07:00"],
+    # Tên người ký bị ngắt sang dòng sau (Luật Doanh nghiệp 2020).
+    ["Ký bởi: Cổng Thông tin điện tử Chính", "phủ", "Email: thongtinchinhphu@chinhphu.vn",
+     "Cơ quan: Văn phòng Chính phủ", "Thời gian ký: 31.07.2020 14:51:33 +07:00"],
+])
+def test_pdf_law_drops_signature_block_variants(tmp_path, signature):
+    pages = [list(page) for page in LAW_PAGES]
+    pages[0][-4:] = signature
+    # Dòng giống chữ ký nhưng nằm ngoài khối chữ ký (phụ lục mẫu biểu) thì giữ.
+    pages[2] = [*pages[2], "Email:……………………", "Cơ quan: ……………………"]
+    joined = "\n".join(texts(parse_file(make_pdf(tmp_path / "law.pdf", pages))))
+    for furniture in ["Người ký", "Ký bởi", "thongtinchinhphu", "Thời gian ký", "\nphủ\n", "Văn phòng Chính phủ",
+                      "VĂN PHÒNG CHÍNH PHỦ"]:
+        assert furniture not in joined
+    assert "Bộ luật này quy định tiêu chuẩn lao động." in joined
+    assert "Email:……………………" in joined and "Cơ quan: ……………………" in joined
+
+
 def test_pages_continue_across_files_of_one_document(tmp_path):
     first = make_pdf(tmp_path / "part1.pdf", LAW_PAGES[:2])
     second = make_pdf(tmp_path / "part2.pdf", [["(Tiếp theo Công báo số 993 + 994)"] + LAW_PAGES[2][1:], LAW_PAGES[3]])

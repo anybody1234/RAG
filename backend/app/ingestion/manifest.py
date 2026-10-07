@@ -1,5 +1,6 @@
 """Đọc data/manifest.json, danh sách văn bản của bộ dữ liệu phát triển."""
 
+import hashlib
 import json
 import re
 from datetime import date
@@ -64,6 +65,11 @@ def amended_article_numbers(amended_articles: list[str]) -> set[int]:
 
 def load_manifest(path: Path = MANIFEST_PATH) -> Manifest:
     return Manifest.model_validate(json.loads(path.read_text(encoding="utf-8")))
+
+
+def manifest_sha256(path: Path = MANIFEST_PATH) -> str:
+    """Định danh phiên bản bộ dữ liệu, ghi vào kết quả eval."""
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def read_pdf_pages(doc: ManifestDocument, raw_dir: Path = RAW_DIR) -> list[str]:

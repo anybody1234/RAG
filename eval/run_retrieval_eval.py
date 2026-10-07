@@ -10,7 +10,7 @@ Chạy từ thư mục gốc của repo, sau khi đã index (`python scripts/ind
 Kết quả lưu vào eval/results/<YYYY-MM-DD>_<config_version>_retrieval.json.
 
 - Câu unanswerable không có nguồn nên không tính metric, nhưng vẫn được truy vấn để đo latency.
-- Câu multi_turn: khi `query.rewrite = false` thì dùng nguyên câu hỏi cuối; bật thì viết lại theo `history`.
+- Câu multi_turn: viết lại câu hỏi cuối theo `history` bằng cách trong `query.rewrite` (none, concat, llm).
 - Mỗi câu chỉ xử lý câu hỏi (LLM) và embed một lần; các chế độ dùng chung kết quả đó. Latency của một chế độ:
   `retrieval` = embed + sparse + search + rerank (định nghĩa trong CLAUDE.md), `total` = rewrite + retrieval.
   Các câu chạy tuần tự, không có tải đồng thời. Truy vấn không lấy payload; payload chunk (để chấm và để
@@ -43,9 +43,15 @@ from app.evaluation.retrieval_metrics import (
     question_metrics,
     source_ranks,
 )
-from app.ingestion.manifest import load_manifest
+from app.ingestion.manifest import load_manifest, manifest_sha256
 from app.retrieval.embedding import EmbeddingUsage, build_embedder
-from app.retrieval.index import SYSTEM_USER_ID, IndexMismatchError, check_collection, user_filter
+from app.retrieval.index import (
+    SYSTEM_USER_ID,
+    IndexMismatchError,
+    check_collection,
+    indexed_documents,
+    user_filter,
+)
 from app.retrieval.llm import LlmUsage, build_llm_client
 from app.retrieval.query import QueryProcessor
 from app.retrieval.rerank import LlmReranker
@@ -74,16 +80,47 @@ async def load_index(client: AsyncQdrantClient, collection: str, user_id: str) -
             return payloads
 
 
+# File chưa track ở các thư mục này là code hoặc config, nên làm kết quả không tái lập được từ commit.
+_CODE_PATHS = ("backend/", "eval/", "config/", "scripts/")
+_NOT_CODE_PATHS = ("eval/results/",)
+
+
+class DirtyTreeError(RuntimeError):
+    """Code có thay đổi chưa commit mà không chạy với --allow-dirty."""
+
+
 def git_state() -> dict[str, str | bool | None]:
+    """Commit hiện tại và cờ `dirty`: có file đã track bị sửa, hoặc có file code/config chưa track."""
+
     def git(*args: str) -> str | None:
         try:
-            return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
+            return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=True).stdout
         except (OSError, subprocess.CalledProcessError):
             return None
 
-    # Giống `git describe --dirty`: chỉ tính thay đổi trên file đã track, bỏ qua file chưa track.
-    status = git("status", "--porcelain", "--untracked-files=no")
-    return {"commit": git("rev-parse", "--short", "HEAD"), "dirty": bool(status) if status is not None else None}
+    commit, status = git("rev-parse", "--short", "HEAD"), git("status", "--porcelain", "--untracked-files=all")
+    dirty = None if status is None else any(
+        line[:2] != "??" or (line[3:].startswith(_CODE_PATHS) and not line[3:].startswith(_NOT_CODE_PATHS))
+        for line in status.splitlines()
+    )
+    return {"commit": commit.strip() if commit else None, "dirty": dirty}
+
+
+def check_git_clean(allow_dirty: bool) -> dict[str, str | bool | None]:
+    """Gọi trước khi chạy eval, tức trước khi tốn tiền API: chỉ lưu kết quả tái lập được từ một commit."""
+    state = git_state()
+    if state["dirty"] is not False and not allow_dirty:
+        raise DirtyTreeError(
+            "code có thay đổi chưa commit (hoặc không đọc được git). Commit trước khi chạy eval, hoặc thêm "
+            "--allow-dirty để vẫn lưu kết quả (kết quả ghi git.dirty = true)."
+        )
+    return state
+
+
+async def corpus_identity(client: AsyncQdrantClient, collection: str, user_id: str) -> dict[str, Any]:
+    """Kho mà eval chạy trên: sha256 của manifest và số chunk của từng văn bản đang có trong index."""
+    documents = await indexed_documents(client, collection, user_id)
+    return {"manifest_sha256": manifest_sha256(), "documents": documents, "chunks": sum(documents.values())}
 
 
 def groups_of(item: GoldenItem, cross_lingual: bool) -> list[tuple[str, str]]:
@@ -159,6 +196,8 @@ class Evaluator:
             record["standalone"] = plan.standalone
         if plan.translation:
             record["translation"] = plan.translation
+        if plan.method != "none":
+            record["rewrite_method"] = plan.method
         if plan.error:
             record["query_error"] = plan.error
         record["modes"] = {}
@@ -227,6 +266,8 @@ def summarize(modes: list[RetrievalMode], items: list[GoldenItem], questions: li
             "errors": {
                 "query": sum("query_error" in record for record in questions),
                 "rerank": sum("rerank_error" in record["modes"][mode] for record in questions),
+                # Viết lại bằng LLM quá hạn hoặc lỗi nên dùng cách ghép câu.
+                "rewrite_fallback": sum(record.get("rewrite_method") == "concat_fallback" for record in questions),
             },
         }
     return summary
@@ -241,10 +282,11 @@ async def run(golden_path: Path, modes: list[RetrievalMode], overrides: list[str
         await check_collection(client, config.collection_name, config.index_signature())
         evaluator = Evaluator(config, client, modes)
         await evaluator.load()
+        corpus = await corpus_identity(client, config.collection_name, SYSTEM_USER_ID)
         sources = [source for item in items for source in item.gold_sources]
         in_index = sum(any(covers(chunk, source) for chunk in evaluator.chunks.values()) for source in sources)
         print(f"config_version={config.config_version}, collection={config.collection_name}: "
-              f"{len(evaluator.chunks)} chunk của user {SYSTEM_USER_ID}")
+              f"{len(evaluator.chunks)} chunk, {len(corpus['documents'])} văn bản của user {SYSTEM_USER_ID}")
         print(f"{in_index}/{len(sources)} nguồn gold nằm trọn trong một chunk của index")
         await evaluator.warm_up()
         questions = []
@@ -273,6 +315,7 @@ async def run(golden_path: Path, modes: list[RetrievalMode], overrides: list[str
             "chunks": len(evaluator.chunks),
             "gold_sources_in_index": in_index,
         },
+        "corpus": corpus,
         "config": config.model_dump(exclude={"prices"}),
         "usage": {"embedding": vars(evaluator.embedding_usage), "llm": vars(evaluator.llm_usage)},
         "notes": [
@@ -325,11 +368,14 @@ def main() -> int:
     parser.add_argument("--set", action="append", default=[], metavar="KHOÁ=GIÁ_TRỊ",
                         help="ghi đè config/rag.toml cho thí nghiệm, ví dụ retrieval.rrf_k=20")
     parser.add_argument("--only", nargs="+", metavar="ID", help="chỉ chạy các câu này (để soi lỗi, không lưu)")
+    parser.add_argument("--allow-dirty", action="store_true", help="vẫn chạy và lưu khi code chưa commit")
     args = parser.parse_args()
 
     try:
+        if not args.only:
+            check_git_clean(args.allow_dirty)
         results = asyncio.run(run(args.golden.resolve(), args.modes, args.set, args.only))
-    except (IndexMismatchError, ValueError) as exc:
+    except (DirtyTreeError, IndexMismatchError, ValueError) as exc:
         print(exc)
         return 1
     print_report(results)
